@@ -1,24 +1,22 @@
--- Generated from template
-
-if CAddonTemplateGameMode == nil then
-	CAddonTemplateGameMode = class({})
+if SkirmishGameMode == nil then
+	SkirmishGameMode = class({})
 end
 
 setupDone = false
 setupGameTicks = 0
 isRoshanDead = true
-require("string")
-local waypoints = require("waypoints")
-
-LinkLuaModifier( "test_modifier", LUA_MODIFIER_MOTION_NONE )
-
 ROSHAN_SPAWN_LOC = Vector(-2787, 2357)
 local waypointPossitions = {}
 
 
+require("string")
+local waypoints = require("waypoints")
+--local GameState = require("game_state_dev")
+local GameState = require("game_state_auto")
+roshanDeaths = GameState["roshan"]["deaths"]
+
 
 function Precache( context )
-	--Precache things we know we'll use.  Possible file types include (but not limited to):
 	PrecacheResource( "model", "*.vmdl", context )
 	PrecacheResource( "soundfile", "*.vsndevts", context )
 	PrecacheResource( "particle", "*.vpcf", context )
@@ -26,44 +24,39 @@ function Precache( context )
 	
 end
 
-local GameState = require("game_state_auto")
-roshanDeaths = GameState["roshan"]["deaths"]
 
--- Create the game mode when we activate
 function Activate()
 	print("Activate")
-	GameRules.AddonTemplate = CAddonTemplateGameMode()
+	GameRules.AddonTemplate = SkirmishGameMode()
 	GameRules.AddonTemplate:InitGameMode()
-
 end
 
-function CAddonTemplateGameMode:InitGameMode()
+function SkirmishGameMode:InitGameMode()
 	print( "InitGameMode." )
 	local GameMode = GameRules:GetGameModeEntity() 
-	GameMode:SetThink( "WaitForSetup", self, "GlobalThink", 1 )
-	GameMode:SetThink( "FixRoshan", self, "GlobalThink2", 1 )
-	GameMode:SetThink( "CheckWinCondition", self, "WinCon", 1 )
+	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
+	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
-	CAddonTemplateGameMode:init()
+	SkirmishGameMode:init()
 end
 
 
-function CAddonTemplateGameMode:DamageFilterRoshan(keys) 
-
+function SkirmishGameMode:DamageFilterRoshan(keys) 
 	if keys.entindex_attacker_const and keys.entindex_victim_const then
 		attacker = EntIndexToHScript(keys.entindex_attacker_const)
 		victim = EntIndexToHScript(keys.entindex_victim_const)
 		if victim:GetName() == "npc_dota_roshan" then
-			CAddonTemplateGameMode:FixRoshanHealth()
+			SkirmishGameMode:FixRoshanHealth()
 		end
 	else
 		return true
 	end
-
 	return true
 end
 
-function CAddonTemplateGameMode:CheckWinCondition()
+
+function SkirmishGameMode:CheckWinCondition()
 	local gameTime = GameRules:GetDOTATime(false, false)
 	if GameState["wincon"] ~= nil then
 		if gameTime >= GameState["wincon"]["time"] then
@@ -76,23 +69,23 @@ function CAddonTemplateGameMode:CheckWinCondition()
 	end
 end
 
-function CAddonTemplateGameMode:WaitForSetup()
-	print("CAddonTemplateGameMode:OnThink "..GameRules:State_Get())
+
+function SkirmishGameMode:WaitForSetup()
+	print("SkirmishGameMode:OnThink "..GameRules:State_Get())
 
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		print( "Template addon script is running." ..  setupGameTicks )
 		setupGameTicks = setupGameTicks + 1
 		if setupGameTicks > 2 then
 			if not setupDone then
-				CAddonTemplateGameMode:SetupGameState()
-				print("setup?")
+				SkirmishGameMode:SetupGameState()
+				print("setup maybe done")
 				return 0.1
 			else
-				print("setup done?")
 				if setupGameTicks > 5 then
-					CAddonTemplateGameMode:initWaypoints()
-					CAddonTemplateGameMode:MakeCreeps()				
-					--PauseGame(true)
+					SkirmishGameMode:initWaypoints()
+					SkirmishGameMode:MakeCreeps()				
+					PauseGame(true)
 					return nil
 				end
 				return 0.1	
@@ -103,18 +96,20 @@ function CAddonTemplateGameMode:WaitForSetup()
 	return 1
 end
 
-function CAddonTemplateGameMode:SetupGameState()
-	CAddonTemplateGameMode:FixPlayers()
-	CAddonTemplateGameMode:FixBuildings()
 
-	--GameRules:SpawnAndReleaseCreeps()
+function SkirmishGameMode:SetupGameState()
+	SkirmishGameMode:FixPlayers()
+	SkirmishGameMode:FixBuildings()
+	SkirmishGameMode:FixNeutralItems()
 	GameRules:SpawnNeutralCreeps()
-	CAddonTemplateGameMode:FixRoshanStatsDrops()
+	SkirmishGameMode:FixRoshanStatsDrops()
 end
+
 
 function sqr(a)
 	return a*a;
 end
+
 
 function dist2(a,b)
 	return sqr(a.x-b.x) + sqr(a.y-b.y);
@@ -128,7 +123,6 @@ function getClosestWaypoint(cPoz, team)
 	else
 		teamName = "badguys"
 	end
-
 
 	local bestDist = 9999999;
 	local bestWaypoint = "lane_mid_pathcorner_"..teamName.."_3";
@@ -171,7 +165,8 @@ function getClosestWaypointNext(cPoz, team)
 end
 
 
-function CAddonTemplateGameMode:MakeCreeps()
+function SkirmishGameMode:MakeCreeps()
+	print("making creepes")
 	for _, creepData in pairs(GameState["creeps"]) do
 		local cPoz = creepData["position"]
 		local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
@@ -180,14 +175,11 @@ function CAddonTemplateGameMode:MakeCreeps()
 		hCreep:SetInitialGoalEntity(waypoint)
 		hCreep:SetMustReachEachGoalEntity(true)	
 	end
-
 end
 
 
-
-function CAddonTemplateGameMode:FixBuildings()
-	print("fixing buildlings")	
-
+function SkirmishGameMode:FixBuildings()
+	print("fixing buildlings")
 	for _, building in pairs(GameState["buildings"]) do
 		local hBuilding = Entities:FindByName(nil, building["name"])
 		if building["health"] ~= -1 then
@@ -200,7 +192,30 @@ function CAddonTemplateGameMode:FixBuildings()
 	end
 end
 
-function CAddonTemplateGameMode:FixPlayers()
+
+function SkirmishGameMode:FixNeutralItems()
+	print("fixing neutral items")
+
+	for hID = 0, 9 do
+		local hHero = HeroList:GetHero(hID)
+		if hHero~= nil then
+			local playerID = hHero:GetPlayerID()
+			local hPlayer = PlayerResource:GetPlayer(playerID)
+			if GameState["neutrals"] ~= nil then
+				for _, item in pairs(GameState["neutrals"]["good"]) do
+					local cItem = CreateItem(item, hPlayer, nil)
+					PlayerResource:AddNeutralItemToStash(playerID, DOTA_TEAM_GOODGUYS, cItem)
+				end
+				for _, item in pairs(GameState["neutrals"]["bad"]) do
+					local cItem = CreateItem(item, hPlayer, nil)
+					PlayerResource:AddNeutralItemToStash(playerID, DOTA_TEAM_BADGUYS, cItem)
+				end
+			end
+		end
+	end
+end
+
+function SkirmishGameMode:FixPlayers()
 	print("fixing players")
 	for hID = 0, 9 do
 		local hHero = HeroList:GetHero(hID)
@@ -210,7 +225,6 @@ function CAddonTemplateGameMode:FixPlayers()
 			local playerID = hHero:GetPlayerID()
 			local hPlayer = PlayerResource:GetPlayer(playerID)
 			local niceHeroName = heroName:sub(15)
-
 			if GameState["heroes"][niceHeroName] ~= nil then
 				local heroData = GameState["heroes"][niceHeroName]
 
@@ -220,17 +234,14 @@ function CAddonTemplateGameMode:FixPlayers()
 					hPlayer:SpawnCourierAtPosition(Vector(7233,6476,128))
 				else
 					print("invalid player team")
-				end				
-
-				CAddonTemplateGameMode:FixHero(heroData, hHero)
-
+				end
+				SkirmishGameMode:FixHero(heroData, hHero)
 			end
 		end
 	end
 end
 
-function CAddonTemplateGameMode:FixHero(heroData, hHero)
-	
+function SkirmishGameMode:FixHero(heroData, hHero)
 	if heroData["gold_reliable"] ~= nil then
 		hHero:SetGold(heroData["gold_reliable"], true)
 	end
@@ -259,7 +270,6 @@ function CAddonTemplateGameMode:FixHero(heroData, hHero)
 	if heroData["talents"] ~= nil then
 		for _, talentIndex in pairs(heroData["talents"]) do
 			local hAbility = hHero:GetAbilityByIndex(talentIndex) --starts from 0!
-			--print(hAbility:GetAbilityName())
 			local abilityEntityIndex = hAbility:GetEntityIndex()
 			local newOrder = {
 				UnitIndex = entityIndex, 
@@ -273,7 +283,6 @@ function CAddonTemplateGameMode:FixHero(heroData, hHero)
 	for i=1, #heroData["cooldowns"] do
 		local hAbility = hHero:GetAbilityByIndex(i-1) --starts from 0!
 		if hAbility ~= nil then
-			--hAbility:SetLevel(heroData["abilities"][i])
 			hAbility:EndCooldown()
 			hAbility:StartCooldown(heroData["cooldowns"][i])
 		end				
@@ -282,7 +291,7 @@ end
 
 last_secs = 0
 
-function CAddonTemplateGameMode:FixRoshan()
+function SkirmishGameMode:FixRoshan()
 	local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
 	if hRosh == nil then
 		if isRoshanDead then
@@ -298,14 +307,14 @@ function CAddonTemplateGameMode:FixRoshan()
 		if isRoshanDead then
 			print("roshan just respawned")
 			isRoshanDead = false
-			CAddonTemplateGameMode:FixRoshanStatsDrops()
+			SkirmishGameMode:FixRoshanStatsDrops()
 		end
-		CAddonTemplateGameMode:FixRoshanHealth()
+		SkirmishGameMode:FixRoshanHealth()
 		return 0.001
 	end
 end 
 
-function CAddonTemplateGameMode:FixRoshanHealth() 
+function SkirmishGameMode:FixRoshanHealth() 
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		local gameTime = GameRules:GetDOTATime(false, false)
 		local realTime = gameTime + GameState["game"]["time"]
@@ -313,8 +322,7 @@ function CAddonTemplateGameMode:FixRoshanHealth()
 		local secs = math.floor(realTime)
 
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
-		--print("rosh ")
-		--print(hRosh)
+
 		if hRosh ~= nil then
 			local desired_max_health = 6000+mins*115
 
@@ -336,7 +344,7 @@ function CAddonTemplateGameMode:FixRoshanHealth()
 	end
 end
 
-function CAddonTemplateGameMode:FixRoshanStatsDrops()
+function SkirmishGameMode:FixRoshanStatsDrops()
 	print("fixing roshan")
 	local gameTime = GameRules:GetDOTATime(false, false)
 	local realTime = gameTime + GameState["game"]["time"]
@@ -350,7 +358,7 @@ function CAddonTemplateGameMode:FixRoshanStatsDrops()
 		hRosh:SetBaseDamageMin(75+6*mins)
 		hRosh:SetDeathXP(400+20*mins)
 
-
+		-- TODO
 		--local attackSpeed = 595 + 100*mins
 		--hRosh:SetBaseAttackTime(2+100*mins)
 
@@ -390,7 +398,7 @@ function CAddonTemplateGameMode:FixRoshanStatsDrops()
 	return 0.1
 end
  
-function CAddonTemplateGameMode:init()
+function SkirmishGameMode:init()
 	if IsInToolsMode() then
 		print("game setup init in tool mode")
 		GameRules:SetHeroSelectionTime(30)
@@ -400,7 +408,7 @@ function CAddonTemplateGameMode:init()
 	end
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
-	GameRules:SetStrategyTime(5)
+	GameRules:SetStrategyTime(0)
 	GameRules:SetPreGameTime(0)
 	GameRules:SetShowcaseTime(5)
 	GameRules:SetPostGameTime(30)	
@@ -411,19 +419,56 @@ function CAddonTemplateGameMode:init()
   end
   
 
-  function CAddonTemplateGameMode:OnStateChange()
+  function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
-		print("populating with bots")
-		GameRules:BotPopulate()
 		print("randoming for all unselected players")
-		CAddonTemplateGameMode:RandomForNoHeroSelected()
+		SkirmishGameMode:RandomForNoHeroSelected()
+
+		-- SkirmishGameMode:AddBots()
+
 		print("reassigning teams")
-		CAddonTemplateGameMode:FixTeams()
+		SkirmishGameMode:FixTeams()
 	end
 end
+
+function SkirmishGameMode:AddBots()
+
+	local playerIDs = {}
+	local pickedHeros = {}
+	local maxPlayers = 5
+	for _, teamNum in pairs({DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS}) do
+		for i=1, maxPlayers do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			playerIDs[#playerIDs+1] = playerID
+		end
+	end
+
+	for _, playerID in pairs(playerIDs) do
+		if PlayerResource:HasSelectedHero(playerID) then
+			local hPlayer = PlayerResource:GetPlayer(playerID)
+			local heroName = PlayerResource:GetSelectedHeroName(playerID)
+			local niceHeroName = heroName:sub(15)
+			pickedHeros[niceHeroName] = 1
+		end
+	end
+
+	print("populating with bots")
+	for hero, hdata in pairs(GameState["heroes"]) do
+		if pickedHeros[hero] == nil then
+			print(hero, " bot")
+			--TODO proper AI entityscript
+			GameRules:AddBotPlayerWithEntityScript("npc_dota_hero_"..hero, hero.." bot", hdata["team"], "", true)
+			PrecacheUnitByNameAsync(new_hero_name, function(...) end)
+		
+		else
+			print(hero, " player")
+		end
+	end
+
+end
 	
-function CAddonTemplateGameMode:FixTeams()
+function SkirmishGameMode:FixTeams()
 	for team = 0, (DOTA_TEAM_COUNT-1) do
 		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
 	end
@@ -448,7 +493,7 @@ function CAddonTemplateGameMode:FixTeams()
 	end
 end
 
-function CAddonTemplateGameMode:RandomForNoHeroSelected()
+function SkirmishGameMode:RandomForNoHeroSelected()
 	local maxPlayers = 5
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i=1, maxPlayers do
@@ -466,7 +511,7 @@ function CAddonTemplateGameMode:RandomForNoHeroSelected()
 end
 
 
-function CAddonTemplateGameMode:initWaypoints()
+function SkirmishGameMode:initWaypoints()
     for _, team in pairs({"goodguys", "badguys"}) do
         for _, path in pairs(waypoints[team]) do
             for _, point in pairs(path) do

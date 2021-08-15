@@ -309,6 +309,18 @@ local GameState = {
 	roshan = {
 		deaths = 2,
 	},
+	neutrals = {
+		good = {
+			"item_keen_optic", "item_ocean_heart", "item_trusty_shovel", "item_faded_broach", 
+			"item_ring_of_aquila", "item_philosophers_stone", "item_pupils_gift", "item_bullwhip",
+			"item_paladin_sword", "item_cloak_of_flames", "item_psychic_headband"
+		},
+		bad = {
+			"item_mysterious_hat", "item_chipped_vest", "item_faded_broach", "item_trusty_shovel",
+			"item_ring_of_aquila", "item_vambrace", "item_nether_shawl", "item_quicksilver_amulet",
+			"item_enchanted_quiver", "item_the_leveller", "item_stormcrafter"
+		},		
+	},
 	wincon = nil --{time = 100, default_winner = DOTA_TEAM_GOODGUYS}
 } 
 
@@ -329,4 +341,22 @@ juggernaut, 25, 2697, item_phase_boots, item_ultimate_scepter, item_maelstrom, i
 dark_seer, 25, 2783, item_solar_crest, item_guardian_greaves, item_magic_wand, item_soul_ring, item_recipe_pipe, item_ultimate_scepter, item_quicksilver_amulet, item_tpscroll (47s) 
 rattletrap, 24, 171, item_ultimate_scepter, item_urn_of_shadows (2), item_black_king_bar, item_tranquil_boots, item_cloak, item_smoke_of_deceit, item_dust, item_dust, item_ceremonial_robe, item_tpscroll
 drow_ranger, 27, 2950, item_manta, item_power_treads, item_blink, item_butterfly, item_hurricane_pike, item_black_king_bar, item_smoke_of_deceit, item_clarity, item_illusionsts_cape, item_tpscroll, item_tpscroll (19s)
+]]--
+
+
+--[[
+good
+item_keen_optic, item_ocean_heart, item_trusty_shovel, item_faded_broach
+item_ring_of_aquila, item_philosophers_stone, item_pupils_gift, item_bullwhip
+item_paladin_sword, item_cloak_of_flames, item_psychic_headband
+
+
+bad
+item_mysterious_hat, item_chipped_vest, item_faded_broach, item_trusty_shovel
+item_ring_of_aquila, item_vambrace, item_nether_shawl, item_quicksilver_amulet
+item_enchanted_quiver, 
+item_the_leveller, item_stormcrafter
+
+
+
 ]]--

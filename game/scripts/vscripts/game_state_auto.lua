@@ -118,7 +118,7 @@ local GameState = {
             level = 25,
             position = Vector(-3248.138427734375, -6108.0322265625, 0),
             abilities = {},
-            cooldowns = {4.968901638843959, 0, 9.96905423139134, 0, 0, 49.97027497177038, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_ghost",
                 "item_tranquil_boots",
@@ -141,24 +141,7 @@ local GameState = {
             level = 24,
             position = Vector(-4370.361328125, 225.09765625, 0),
             abilities = {},
-            cooldowns = {
-                11.969115268410292,
-                12.969145786919768,
-                0,
-                0,
-                0,
-                99.97180089724418,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            },
+            cooldowns = {0, 12.199996948242188, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_lotus_orb",
                 "item_force_staff",
@@ -180,7 +163,7 @@ local GameState = {
             level = 27,
             position = Vector(-3056.854248046875, -340.63720703125, 0),
             abilities = {},
-            cooldowns = {9.96905423139134, 0, 34.96981719412824, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_maelstrom",
                 "item_ethereal_blade",
@@ -233,24 +216,7 @@ local GameState = {
             level = 24,
             position = Vector(-3533.050537109375, -54.656982421875, 0),
             abilities = {},
-            cooldowns = {
-                13.969176305429244,
-                9.96905423139134,
-                0.18750572222052675,
-                0,
-                0,
-                59.97058015686514,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            },
+            cooldowns = {0, 5.699995040893555, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_blink",
                 "item_phase_boots",
@@ -275,23 +241,7 @@ local GameState = {
             level = 25,
             position = Vector(2437.957763671875, 2927.642822265625, 0),
             abilities = {},
-            cooldowns = {
-                17.969298379467148,
-                39.96996978667562,
-                0,
-                19.9693594164861,
-                0,
-                139.97302163762322,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            },
+            cooldowns = {10.699972152709961, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_phase_boots",
                 "item_ultimate_scepter",
@@ -317,7 +267,7 @@ local GameState = {
             level = 25,
             position = Vector(2022.4609375, 3520.233154296875, 0),
             abilities = {},
-            cooldowns = {26.37580492568743, 0, 8.781517990661335, 0, 0, 87.97143467513047, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            cooldowns = {0, 0, 3.1000022888183594, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_solar_crest",
                 "item_guardian_greaves",
@@ -338,7 +288,7 @@ local GameState = {
             level = 27,
             position = Vector(-3893.157958984375, -158.69140625, 0),
             abilities = {},
-            cooldowns = {7.968993194372387, 11.969115268410292, 0, 0, 0, 69.9708853419599, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            cooldowns = {0.20000538229942322, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_phase_boots",
                 "item_black_king_bar",
@@ -363,24 +313,7 @@ local GameState = {
             level = 23,
             position = Vector(330.9326171875, 2531.005859375, 0),
             abilities = {},
-            cooldowns = {
-                12.969145786919768,
-                10.969084749900816,
-                16.96926786095767,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            },
+            cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_gem",
                 "item_ultimate_scepter",
@@ -403,24 +336,7 @@ local GameState = {
             level = 24,
             position = Vector(2494.049072265625, 3301.57470703125, 0),
             abilities = {},
-            cooldowns = {
-                17.969298379467148,
-                14.96920682393872,
-                13.969176305429244,
-                59.97058015686514,
-                0,
-                29.96966460158086,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-            },
+            cooldowns = {0, 0, 0, 3.800339698791504, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_ultimate_scepter",
                 "item_urn_of_shadows",
@@ -442,7 +358,7 @@ local GameState = {
             level = 27,
             position = Vector(1853.363037109375, 1576.47705078125, 0),
             abilities = {},
-            cooldowns = {0, 9.094027527695548, 8.375255592516861, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             items = {
                 "item_manta",
                 "item_power_treads",
@@ -1142,6 +1058,18 @@ local GameState = {
     roshan = {
         deaths = 2
     },
+    neutrals = {
+		good = {
+			"item_keen_optic", "item_ocean_heart", "item_trusty_shovel", "item_faded_broach", 
+			"item_ring_of_aquila", "item_philosophers_stone", "item_pupils_gift", "item_bullwhip",
+			"item_paladin_sword", "item_cloak_of_flames", "item_psychic_headband"
+		},
+		bad = {
+			"item_mysterious_hat", "item_chipped_vest", "item_faded_broach", "item_trusty_shovel",
+			"item_ring_of_aquila", "item_vambrace", "item_nether_shawl", "item_quicksilver_amulet",
+			"item_enchanted_quiver", "item_the_leveller", "item_stormcrafter"
+		},		
+	},
     wincon = nil
 }
 return GameState
