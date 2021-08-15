@@ -8,9 +8,9 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 
 
 # Links
-Join the discord: [https://discord.gg/d8Wj9WqA](https://discord.gg/d8Wj9WqA)
-Workshop mod submission: [https://steamcommunity.com/sharedfiles/filedetails/?id=2487151715](https://steamcommunity.com/sharedfiles/filedetails/?id=2487151715)
-This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
+- Join the discord: [https://discord.gg/d8Wj9WqA](https://discord.gg/d8Wj9WqA)
+- Workshop mod submission: [https://steamcommunity.com/sharedfiles/filedetails/?id=2487151715](https://steamcommunity.com/sharedfiles/filedetails/?id=2487151715)
+- This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
 
 # Help wanted!
 There is a ton of things need to be added. check 
