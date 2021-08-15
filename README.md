@@ -13,4 +13,4 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
 
 # Help wanted!
-There is a ton of things need to be added. check 
+There is a ton of things need to be added. Check issues. 
