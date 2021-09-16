@@ -1061,7 +1061,7 @@ local GameState = {
     neutrals = {
 		good = {
 			"item_keen_optic", "item_ocean_heart", "item_trusty_shovel", "item_faded_broach", 
-			"item_ring_of_aquila", "item_philosophers_stone", "item_pupils_gift", "item_bullwhip",
+			"item_ring_of_aquila", "item_philosophers_stone", "item_pupils_gift",
 			"item_paladin_sword", "item_cloak_of_flames", "item_psychic_headband"
 		},
 		bad = {

@@ -10,4 +10,4 @@
     "npc_dota_hero_abaddon"  "1"
     "npc_dota_hero_sand_king"  "1"
     "npc_dota_hero_nyx_assassin"  "1"
-}
+}          

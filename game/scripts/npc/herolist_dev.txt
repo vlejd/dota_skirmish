@@ -1,0 +1,13 @@
+"CustomHeroList"
+{
+    "npc_dota_hero_grimstroke"  "1"
+    "npc_dota_hero_mirana"  "1"
+    "npc_dota_hero_ember_spirit"  "1"
+    "npc_dota_hero_mars"  "1"
+    "npc_dota_hero_bloodseeker"  "1"
+    "npc_dota_hero_brewmaster"  "1"
+    "npc_dota_hero_juggernaut"  "1"
+    "npc_dota_hero_dark_seer"  "1"
+    "npc_dota_hero_rattletrap"  "1"
+    "npc_dota_hero_drow_ranger"  "1"
+}
