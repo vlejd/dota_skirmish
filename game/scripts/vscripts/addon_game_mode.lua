@@ -514,7 +514,7 @@ function SkirmishGameMode:init()
 	GameRules:SetPostGameTime(30)	
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	--GameRules:SetCustomGameDifficulty(4)
+	--GameRules:SetCustomGameDifficulty(0)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
   end
@@ -566,12 +566,12 @@ function SkirmishGameMode:AddBots()
 			--PrecacheUnitByNameAsync(new_hero_name, function(...) end)
 			--FindClearSpaceForUnit(hHero, hdata["position"], true)
 			if hdata["team"] == 2 then
-				print(hero, "mid", "unfair", true)
-				Tutorial:AddBot(hero, "mid", "hard", true)
+				print(hero, "mid", "hard", true)
+				Tutorial:AddBot("", "", "hard", true)
 			end
 			if hdata["team"] == 3 then
-				print(hero, "mid", "unfair", false)
-				Tutorial:AddBot(hero, "mid", "hard", false)
+				print(hero, "mid", "hard", false)
+				Tutorial:AddBot("", "", "hard", false)
 			end
 		else
 			print(hero, " player")

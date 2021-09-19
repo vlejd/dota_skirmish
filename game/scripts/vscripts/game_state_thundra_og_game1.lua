@@ -356,30 +356,6 @@ local GameState = {
             },
             talents = {0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 5, 5, 5, 6, 8, 9, 15, 15, 16}
         },
-        naga_siren = {
-            name = "naga_siren",
-            team = 2,
-            gold_reliable = 118,
-            gold_reliable = 741,
-            level = 23,
-            position = Vector(-3237.6708984375, 722.808837890625, 0),
-            abilities = {},
-            cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            items = {
-                "item_butterfly",
-                "item_power_treads",
-                "item_diffusal_blade",
-                "item_sange_and_yasha",
-                "item_mithril_hammer",
-                "item_heart",
-                "item_tpscroll",
-                "item_tpscroll",
-                "item_spider_legs",
-                "item_orb_of_venom",
-                "item_wind_lace"
-            },
-            talents = {0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 5, 5, 5, 6, 8, 10, 12, 15, 15, 15, 15, 15, 16}
-        },
     },
     creeps = {
         {
