@@ -37,7 +37,7 @@ function SkirmishGameMode:InitGameMode()
 	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
 	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
-	GameMode:SetThink( "SecThinker", self, "SecThinkerGlobalThink", 1)
+	--GameMode:SetThink( "SecThinker", self, "SecThinkerGlobalThink", 1)
 	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
 	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
 
@@ -75,13 +75,82 @@ function SkirmishGameMode:CheckWinCondition()
 end
 
 
-function SkirmishGameMode:SecThinker()
-	print("Sec Thinker")
-	--GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 10)
-	--GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 20)
-	--SkirmishGameMode:FixShard()
+outposts_stage = 0
+outpost = nil
+outpost_capture_bots = {}
 
-	return 5
+function SkirmishGameMode:SecThinker()
+	local gameTime = GameRules:GetDOTATime(false, false)
+	
+	if gameTime > 1 and outposts_stage == 0 then
+		print("###############")
+		print("outpost capture")
+		outposts_stage = 1
+		local outpost_top = Entities:FindByName(nil, "npc_dota_watch_tower_top")
+		outpost = outpost_top
+		print(outpost_top)
+		print(outpost_top:GetAbsOrigin())
+
+		local hHero = CreateUnitByName("npc_dota_hero_wisp", outpost_top:GetAbsOrigin(), true, nil, nil, DOTA_TEAM_GOODGUYS)
+		table.insert(outpost_capture_bots, hHero)
+		outpost_capture_bot = hHero
+		print(hHero)
+		return 3
+	end
+	if outposts_stage == 1 then
+		outposts_stage = 2
+		print("###############")
+		print("outpost capture 2")
+		print(outpost)
+		print(outpost_capture_bot)
+		print(ability)
+		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
+
+			local ability = outpost_capture_bot:FindAbilityByName( "ability_capture" )
+			ExecuteOrderFromTable( {
+				UnitIndex = outpost_capture_bot:entindex(),
+				OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
+				AbilityIndex = ability:entindex(),
+				TargetIndex = outpost:entindex()
+			} )
+		end
+		return 10
+	end
+	if outposts_stage == 2 then
+		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
+			outpost_capture_bot:ForceKill(false)
+		end	
+	end
+	return 1
+end
+
+
+function DOES_NOT_WORK()
+	-- outpost
+	--DOTA_UNIT_ORDER_ATTACK_TARGET, 4 
+	local entityIndex = hHero:GetEntityIndex()
+	local newOrder = {
+		UnitIndex = entityIndex, 
+		OrderType = DOTA_UNIT_ORDER_ATTACK_MOVE,
+		TargetIndex = outpost_top:entindex(),
+	}
+	--Position = [-799.999939 4159.999512 256.000000
+	ExecuteOrderFromTable(newOrder)
+	--hHero:SetForceAttackTarget(outpost_top)
+	--hHero:SetAttacking(outpost_top)
+	--hHero:PerformAttack(outpost_top, true, true, true, true, true, true, true)
+	outpost_capture_bot:SetForceAttackTarget(outpost)
+	outpost_capture_bot:SetAttacking(outpost)
+	outpost_capture_bot:PerformAttack(outpost, true, true, true, true, true, true, true)
+
+	local entityIndex = outpost_capture_bot:GetEntityIndex()
+	local newOrder = {
+		UnitIndex = entityIndex, 
+		OrderType = DOTA_UNIT_ORDER_MOVE_TO_POSITION,
+		Position = Vector(0, 0),
+	}
+	--Position = [-799.999939 4159.999512 256.000000]
+	--ExecuteOrderFromTable(newOrder)
 end
 
 
@@ -139,8 +208,8 @@ function SkirmishGameMode:SetGliphOneTimeThinker()
 	local time = GameRules:GetDOTATime(false, false)
 	if time>5 then
 		print("SetGliphOneTimeThinker")
-		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 10)
-		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 20)
+		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
+		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
 		return nil
 	else
 		return 0.5
@@ -566,12 +635,12 @@ function SkirmishGameMode:AddBots()
 			--PrecacheUnitByNameAsync(new_hero_name, function(...) end)
 			--FindClearSpaceForUnit(hHero, hdata["position"], true)
 			if hdata["team"] == 2 then
-				print(hero, "mid", "hard", true)
-				Tutorial:AddBot("", "", "hard", true)
+				print(hero, true)
+				Tutorial:AddBot("", "", "", true)
 			end
 			if hdata["team"] == 3 then
-				print(hero, "mid", "hard", false)
-				Tutorial:AddBot("", "", "hard", false)
+				print(hero, false)
+				Tutorial:AddBot("", "", "", false)
 			end
 		else
 			print(hero, " player")
