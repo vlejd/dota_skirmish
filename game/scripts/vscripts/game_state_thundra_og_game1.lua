@@ -764,6 +764,44 @@ local GameState = {
     roshan = {
         deaths = 2
     },
+    neutrals_bad = {
+		good = {
+            "item_arcane_ring", "item_broom_handle", "item_chipped_vest", "item_mysterious_hat", "item_keen_optic",
+            "item_ocean_heart","item_unstable_wand","item_possessed_mask","item_trusty_shovel","item_pogo_stick",
+            --
+            "item_ring_of_aquila","item_nether_shawl","item_dragon_scale","item_pupils_gift","item_vambrace",
+            "item_misericorde","item_grove_bow","item_philosophers_stone","item_essence_ring","item_paintball",
+            "item_bullwhip","item_quicksilver_amulet",
+            --
+            "item_quickening_charm", "item_black_powder_bag", "item_spider_legs", "item_paladin_sword", "item_titan_sliver", 
+            "item_mind_breaker", "item_enchanted_quiver", "item_elven_tunic", "item_cloak_of_flames", "item_ceremonial_robe", 
+            "item_psychic_headband",
+            --
+            "item_timeless_relic","item_spell_prism","item_ascetic_cap","item_heavy_blade","item_flicker","item_ninja_gear",
+            "item_the_leveller","item_spy_gadget","item_trickster_cloak","item_stormcrafter","item_penta_edged_sword",
+            --
+            "item_force_boots","item_desolator_2","item_seer_stone","item_mirror_shield","item_apex","item_demonicon",
+            "item_fallen_sky","item_force_field","item_pirate_hat","item_ex_machina","item_giants_ring","item_book_of_shadows"
+		},
+		bad = {
+            "item_arcane_ring", "item_broom_handle", "item_chipped_vest", "item_mysterious_hat", "item_keen_optic",
+            "item_ocean_heart","item_unstable_wand","item_possessed_mask","item_trusty_shovel","item_pogo_stick",
+            --
+            "item_ring_of_aquila","item_nether_shawl","item_dragon_scale","item_pupils_gift","item_vambrace",
+            "item_misericorde","item_grove_bow","item_philosophers_stone","item_essence_ring","item_paintball",
+            "item_bullwhip","item_quicksilver_amulet",
+            --
+            "item_quickening_charm", "item_black_powder_bag", "item_spider_legs", "item_paladin_sword", "item_titan_sliver", 
+            "item_mind_breaker", "item_enchanted_quiver", "item_elven_tunic", "item_cloak_of_flames", "item_ceremonial_robe", 
+            "item_psychic_headband",
+            --
+            "item_timeless_relic","item_spell_prism","item_ascetic_cap","item_heavy_blade","item_flicker","item_ninja_gear",
+            "item_the_leveller","item_spy_gadget","item_trickster_cloak","item_stormcrafter","item_penta_edged_sword",
+            --
+            "item_force_boots","item_desolator_2","item_seer_stone","item_mirror_shield","item_apex","item_demonicon",
+            "item_fallen_sky","item_force_field","item_pirate_hat","item_ex_machina","item_giants_ring","item_book_of_shadows"
+		},		
+	},
     wincon = nil
 }
 return GameState

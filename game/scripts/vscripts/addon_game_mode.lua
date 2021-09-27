@@ -12,7 +12,7 @@ local waypointPossitions = {}
 require("string")
 local waypoints = require("waypoints")
 --local GameState = require("game_state_dev")
-local GameState = require("game_state_thundra_og_game1")
+local GameState = require("game_state_chicken_liquid_game_1")
 roshanDeaths = GameState["roshan"]["deaths"]
 
 
@@ -223,6 +223,9 @@ function SkirmishGameMode:WaitForSetup()
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		print( "Template addon script is running." ..  setupGameTicks )
 		setupGameTicks = setupGameTicks + 1
+		if not setupDone then
+			SkirmishGameMode:FixUpgrades();
+		end
 		if setupGameTicks > 2 then
 			if not setupDone then
 				SkirmishGameMode:SetupGameState()
@@ -242,6 +245,28 @@ function SkirmishGameMode:WaitForSetup()
 	return 1
 end
 
+function SkirmishGameMode:FixUpgrades()
+	print("fixing upgrades")
+	for hID = 0, 9 do
+		local hHero = HeroList:GetHero(hID)
+		if hHero ~= nil then
+			local heroName = hHero:GetUnitName()
+			local playerID = hHero:GetPlayerID()
+			local hPlayer = PlayerResource:GetPlayer(playerID)
+			local niceHeroName = heroName:sub(15)
+			if GameState["heroes"][niceHeroName] ~= nil then
+				local heroData = GameState["heroes"][niceHeroName]	
+				if heroData["has_shard"] then
+					hHero:AddItemByName("item_aghanims_shard")
+				end
+				if heroData["has_ags"] then
+					hHero:AddItemByName("item_ultimate_scepter_2")
+				end
+				
+			end
+		end
+	end
+end
 
 function SkirmishGameMode:SetupGameState()
 	--SendToServerConsole("sv_cheats 1; host_timescale 1000;")
@@ -361,6 +386,7 @@ function SkirmishGameMode:FixNeutralItems()
 				end
 			end
 		end
+		break
 	end
 end
 
@@ -394,9 +420,7 @@ function SkirmishGameMode:FixPlayers()
 			local hPlayer = PlayerResource:GetPlayer(playerID)
 			local niceHeroName = heroName:sub(15)
 			if GameState["heroes"][niceHeroName] ~= nil then
-				local heroData = GameState["heroes"][niceHeroName]
-				
-				
+				local heroData = GameState["heroes"][niceHeroName]	
 				if heroData["team"] == DOTA_TEAM_GOODGUYS then
 					hPlayer:SpawnCourierAtPosition(Vector(-7071,-6625,128))
 				elseif heroData["team"] == DOTA_TEAM_BADGUYS then
