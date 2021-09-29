@@ -263,6 +263,16 @@ function SkirmishGameMode:FixUpgrades()
 					hHero:AddItemByName("item_ultimate_scepter_2")
 				end
 				
+				local hTP = hHero:FindItemInInventory( "item_tpscroll" )
+				if hTP then
+					hTP:EndCooldown()
+				else
+					hTP = hHero:AddItemByName( "item_tpscroll" )
+					if hTP then
+						hTP:SetCurrentCharges( 1 )
+						hTP:EndCooldown()
+					end
+				end
 			end
 		end
 	end
@@ -457,18 +467,6 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 
 	for _, item in pairs(heroData["items"]) do
 		hHero:AddItemByName(item)
-	end
-
-	local hTP = hHero:FindItemInInventory( "item_tpscroll" )
-	if hTP then
-		hTP:EndCooldown()
-	else
-		hTP = hHero:AddItemByName( "item_tpscroll" )
-		if hTP then
-			hTP:SetCurrentCharges( 1 )
-			hTP:EndCooldown()
-			hTP:SetCurrentCharges( 0 )
-		end
 	end
 
 	local entityIndex = hHero:GetEntityIndex()
