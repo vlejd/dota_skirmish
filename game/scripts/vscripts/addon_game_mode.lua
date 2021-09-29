@@ -459,6 +459,18 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		hHero:AddItemByName(item)
 	end
 
+	local hTP = hHero:FindItemInInventory( "item_tpscroll" )
+	if hTP then
+		hTP:EndCooldown()
+	else
+		hTP = hHero:AddItemByName( "item_tpscroll" )
+		if hTP then
+			hTP:SetCurrentCharges( 1 )
+			hTP:EndCooldown()
+			hTP:SetCurrentCharges( 0 )
+		end
+	end
+
 	local entityIndex = hHero:GetEntityIndex()
 	if heroData["talents"] ~= nil then
 		for _, talentIndex in pairs(heroData["talents"]) do
