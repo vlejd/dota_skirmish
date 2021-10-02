@@ -115,8 +115,8 @@ local GameState = {
             cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             has_shard = true,
             has_ags = true,
+            has_moon_shard = true,
             items = {
-                "item_moon_shard",
                 "item_skadi",
                 "item_black_king_bar",
                 "item_greater_crit",
@@ -175,8 +175,8 @@ local GameState = {
             cooldowns = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             has_shard = true,
             has_ags = true,
+            has_moon_shard =true,
             items = {
-                "item_moon_shard",
                 "item_black_king_bar",
                 "item_rapier",
                 "item_power_treads",
@@ -263,8 +263,8 @@ local GameState = {
             position = Vector(-393.49365234375, 3036.31591796875, 0),
             abilities = {},
             cooldowns = {0.6000030040740967, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            has_moon_shard = true,
             items = {
-                "item_moon_shard",
                 "item_sheepstick",
                 "item_black_king_bar",
                 "item_satanic",
@@ -430,6 +430,7 @@ local GameState = {
             cooldowns = {0, 0, 2.630605936050415, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             has_shard = true,
             has_ags = true,
+            has_moon_shard = true,
             items = {
                 "item_butterfly",
                 "item_black_king_bar",
@@ -443,7 +444,6 @@ local GameState = {
                 "item_enchanted_mango",
                 "item_manta",
                 "item_hurricane_pike",
-                "item_moon_shard",
             },
             talents = {
                 0,

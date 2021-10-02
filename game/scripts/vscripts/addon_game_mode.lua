@@ -262,7 +262,20 @@ function SkirmishGameMode:FixUpgrades()
 				if heroData["has_ags"] then
 					hHero:AddItemByName("item_ultimate_scepter_2")
 				end
+				if heroData["has_moon_shard"] then
+					hHero:AddItemByName("item_moon_shard")
+					local hMoonShard = hHero:FindItemInInventory( "item_moon_shard" )
+					ExecuteOrderFromTable( {
+						UnitIndex = hHero:entindex(),
+						OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
+						AbilityIndex = hMoonShard:entindex(),
+						TargetIndex = hHero:entindex()
+					} )
+					--hMoonShard
+
+				end
 				
+
 				local hTP = hHero:FindItemInInventory( "item_tpscroll" )
 				if hTP then
 					hTP:EndCooldown()
