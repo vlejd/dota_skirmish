@@ -12,5 +12,9 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - Workshop mod submission: [https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333](https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333)
 - This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
 
+# Games
+- OG vs VP game 2 group stage 42nd min: https://steamcommunity.com/sharedfiles/filedetails/?id=2622200533
+- 
+
 # Help wanted!
 There is a ton of things need to be added. Check issues. 
