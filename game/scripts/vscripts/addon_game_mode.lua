@@ -12,7 +12,7 @@ local waypointPossitions = {}
 require("string")
 local waypoints = require("waypoints")
 --local GameState = require("game_state_dev")
-local GameState = require("game_state_chicken_liquid_game_1")
+local GameState = require("game_state_og_vp_g2")
 roshanDeaths = GameState["roshan"]["deaths"]
 
 
@@ -584,6 +584,7 @@ function SkirmishGameMode:FixRoshanStatsDrops()
 				hRosh:RemoveItem(hItem)
 			end
 		end
+		hRosh:ForceKill(true)
 
 		local roshan_items = {"item_aegis"}
 		if roshanDeaths >= 1 then
