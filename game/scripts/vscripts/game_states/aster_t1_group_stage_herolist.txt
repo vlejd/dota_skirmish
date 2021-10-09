@@ -10,4 +10,4 @@
     "npc_dota_hero_weaver"  "1"
     "npc_dota_hero_magnataur"  "1"
     "npc_dota_hero_life_stealer"  "1"
-}          
+}
