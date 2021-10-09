@@ -13,8 +13,9 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
 
 # Games
+- Liquid vs CH Fighters group stage 74th min: https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333
 - OG vs VP game 2 group stage 42nd min: https://steamcommunity.com/sharedfiles/filedetails/?id=2622200533
-- 
+- Secret vs Elephant game 1 group stage 53rd min: https://steamcommunity.com/sharedfiles/filedetails/?id=2623874668
 
 # Help wanted!
 There is a ton of things need to be added. Check issues. 
