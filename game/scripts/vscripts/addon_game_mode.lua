@@ -374,6 +374,13 @@ function SkirmishGameMode:MakeCreeps()
 	end
 end
 
+function SkirmishGameMode:FixWards()
+	print("fixing buildlings")
+	for _, ward in pairs(GameState["wards"]) do
+		local hWard = CreateUnitByName(ward["type"], ward["position"], true, nil, nil, ward["team"])
+		-- TODO need to apply some funky modifier here.
+	end
+end
 
 function SkirmishGameMode:FixBuildings()
 	print("fixing buildlings")
