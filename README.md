@@ -17,6 +17,7 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - OG vs VP game 2 group stage 42nd min, 6213144598: https://steamcommunity.com/sharedfiles/filedetails/?id=2622200533
 - Secret vs Elephant game 1 group stage 53rd min, 6214179880: https://steamcommunity.com/sharedfiles/filedetails/?id=2623874668
 - Aster vs T1 game 1 group stage 40th min, 6214919117: https://steamcommunity.com/sharedfiles/filedetails/?id=2623932473
+- LGD vs fnatic game 1 group stage 32:29, 6213829716: https://steamcommunity.com/sharedfiles/filedetails/?id=2625655651
 
 
 # Help wanted!
