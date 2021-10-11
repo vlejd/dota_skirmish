@@ -4,6 +4,12 @@ end
 
 setupDone = false
 setupGameTicks = 0
+state = 0
+-- 0 start
+-- 1 upgrades
+-- 2 possition
+-- 3 creeps
+
 isRoshanDead = true
 ROSHAN_SPAWN_LOC = Vector(-2787, 2357)
 local waypointPossitions = {}
@@ -12,7 +18,7 @@ local waypointPossitions = {}
 require("string")
 local waypoints = require("waypoints")
 --local GameState = require("game_state_dev")
-local GameState = require("game_state_chicken_liquid_game_1")
+local GameState = require("game_states/fnatic_lgd_group")
 roshanDeaths = GameState["roshan"]["deaths"]
 
 
@@ -234,7 +240,7 @@ function SkirmishGameMode:WaitForSetup()
 			else
 				if setupGameTicks > 5 then
 					SkirmishGameMode:initWaypoints()
-					SkirmishGameMode:MakeCreeps()							
+					SkirmishGameMode:MakeCreeps()
 					PauseGame(true)
 					return nil
 				end
@@ -466,10 +472,11 @@ end
 
 function SkirmishGameMode:FixHero(heroData, hHero)
 	if heroData["gold_reliable"] ~= nil then
-		hHero:SetGold(heroData["gold_reliable"], true)
+		-- This is somehow strange. apparently can not set unreliable gold
+		hHero:SetGold(heroData["gold_reliable"]+heroData["gold_unreliable"]-600, true)
 	end
 	if heroData["gold_unreliable"] ~= nil then
-		hHero:SetGold(heroData["gold_unreliable"], true)
+		--hHero:SetGold(heroData["gold_unreliable"], true)
 	end
 
 	FindClearSpaceForUnit(hHero, heroData["position"], true)
