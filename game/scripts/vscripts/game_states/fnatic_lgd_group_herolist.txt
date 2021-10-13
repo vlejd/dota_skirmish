@@ -1,0 +1,13 @@
+"CustomHeroList"
+{
+      "npc_dota_hero_tiny"  "1"
+    "npc_dota_hero_ogre_magi"  "1"
+    "npc_dota_hero_shredder"  "1"
+    "npc_dota_hero_luna"  "1"
+    "npc_dota_hero_queenofpain"  "1"
+    "npc_dota_hero_faceless_void"  "1"
+    "npc_dota_hero_invoker"  "1"
+    "npc_dota_hero_death_prophet"  "1"
+    "npc_dota_hero_winter_wyvern"  "1"
+    "npc_dota_hero_bane"  "1"
+}

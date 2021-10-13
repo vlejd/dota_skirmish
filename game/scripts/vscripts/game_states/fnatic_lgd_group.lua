@@ -1,0 +1,807 @@
+
+local GameState = {
+    game = {time = 1949},
+    buildings = {
+  
+              {
+                name = "dota_goodguys_tower3_bot",
+                health = 652,
+              },
+  
+              {
+                name = "dota_goodguys_tower3_mid",
+                health = 2500,
+              },
+  
+              {
+                name = "dota_goodguys_tower3_top",
+                health = 2500,
+              },
+  
+              {
+                name = "dota_goodguys_tower2_mid",
+                health = 2500,
+              },
+  
+              {
+                name = "dota_goodguys_tower2_top",
+                health = 2500,
+              },
+  
+              {
+                name = "dota_goodguys_tower1_top",
+                health = 659,
+              },
+  
+              {
+                name = "dota_goodguys_tower4_top",
+                health = 2600,
+              },
+  
+              {
+                name = "good_rax_melee_mid",
+                health = 2200,
+              },
+  
+              {
+                name = "good_rax_range_mid",
+                health = 1300,
+              },
+  
+              {
+                name = "good_rax_melee_bot",
+                health = 2200,
+              },
+  
+              {
+                name = "good_rax_range_bot",
+                health = 1300,
+              },
+  
+              {
+                name = "good_rax_melee_top",
+                health = 2200,
+              },
+  
+              {
+                name = "good_rax_range_top",
+                health = 1300,
+              },
+  
+              {
+                name = "bad_rax_range_mid",
+                health = 1300,
+              },
+  
+              {
+                name = "bad_rax_melee_mid",
+                health = 2200,
+              },
+  
+              {
+                name = "bad_rax_melee_top",
+                health = 2200,
+              },
+  
+              {
+                name = "bad_rax_range_top",
+                health = 1300,
+              },
+  
+              {
+                name = "dota_badguys_fort",
+                health = 4500,
+              },
+  
+              {
+                name = "dota_goodguys_fort",
+                health = 4500,
+              },
+  
+              {
+                name = "dota_badguys_tower4_top",
+                health = 2600,
+              },
+  
+              {
+                name = "dota_badguys_tower3_top",
+                health = 2445,
+              },
+  
+              {
+                name = "dota_badguys_tower3_mid",
+                health = 2500,
+              },
+  
+              {
+                name = "dota_badguys_tower4_bot",
+                health = 2600,
+              },
+  
+              {
+                name = "dota_goodguys_tower4_bot",
+                health = 2600,
+              },
+  
+              {
+                name = "dota_goodguys_tower1_mid",
+                health = 86,
+              },
+  
+              {
+                name = "npc_dota_watch_tower_bottom",
+                health = 450,
+              },
+  
+              {
+                name = "npc_dota_watch_tower_top",
+                health = 450,
+              },
+  {name = "dota_badguys_tower1_top",health = 0},
+  {name = "dota_badguys_tower2_top",health = 0},
+  {name = "dota_badguys_tower1_mid",health = 0},
+  {name = "dota_badguys_tower2_mid",health = 0},
+  {name = "dota_badguys_tower1_bot",health = 0},
+  {name = "dota_badguys_tower2_bot",health = 0},
+  {name = "dota_badguys_tower3_bot",health = 0},
+  {name = "bad_rax_melee_bot",health = 0},
+  {name = "bad_rax_range_bot",health = 0},
+  {name = "dota_goodguys_tower1_bot",health = 0},
+  {name = "dota_goodguys_tower2_bot",health = 0},
+    },
+    heroes = {
+          tiny = {
+                name = "tiny",
+                team = 2,
+                gold_reliable = 1176,
+                gold_unreliable = 1436,
+                level = 18,
+                position = Vector(1215.7138080596924,4137.589284896851,0),
+                abilities = {},
+                cooldowns = {0.7999829053878784,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_magic_stick","item_blink","item_cyclone","item_tranquil_boots","item_flask","item_tpscroll","item_spider_legs"},	
+                has_shard = false,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,2,5,5,5,6,6,6,6,7,10,15,16},
+              },
+          ogre_magi = {
+                name = "ogre_magi",
+                team = 2,
+                gold_reliable = 1480,
+                gold_unreliable = 931,
+                level = 15,
+                position = Vector(1038.0210571289062,3732.0970516204834,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_boots","item_magic_stick","item_ward_observer","item_dust","item_ring_of_basilius","item_aether_lens","item_tpscroll","item_philosophers_stone"},	
+                has_shard = true,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,2,4,5,5,6,15,16},
+              },
+          shredder = {
+                name = "shredder",
+                team = 2,
+                gold_reliable = 147,
+                gold_unreliable = 0,
+                level = 19,
+                position = Vector(2760.813766479492,2974.453977584839,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_cyclone","item_magic_wand","item_lotus_orb","item_boots","item_kaya_and_sange","item_tpscroll","item_tpscroll","item_essence_ring"},	
+                has_shard = false,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,5,5,5,6,6,6,7,7,7,8,10,16,16},
+              },
+          luna = {
+                name = "luna",
+                team = 2,
+                gold_reliable = 161,
+                gold_unreliable = 0,
+                level = 23,
+                position = Vector(3406.037109375,3077.6274604797363,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_dragon_lance","item_black_king_bar","item_skadi","item_satanic","item_butterfly","item_aegis","item_tpscroll","item_paintball","item_power_treads"},	
+                has_shard = true,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,2,5,5,5,7,8,11,14,14,14,14,14,15,16},
+              },
+          queenofpain = {
+                name = "queenofpain",
+                team = 2,
+                gold_reliable = 90,
+                gold_unreliable = 12,
+                level = 23,
+                position = Vector(2025.9964141845703,3028.741355895996,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,22.401153564453125,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_power_treads","item_bottle","item_bloodthorn","item_black_king_bar","item_magic_wand","item_sphere","item_tpscroll","item_quickening_charm","item_clarity"},	
+                has_shard = false,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,2,5,5,5,7,9,10,14,14,14,14,14,15,16},
+              },
+          faceless_void = {
+                name = "faceless_void",
+                team = 3,
+                gold_reliable = 155,
+                gold_unreliable = 558,
+                level = 20,
+                position = Vector(5697.947078704834,-4814.823566436768,0),
+                abilities = {},
+                cooldowns = {2.600001811981201,0,0,0,0,46.70051574707031,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_mask_of_madness","item_magic_stick","item_power_treads","item_black_king_bar","item_mjollnir","item_quelling_blade","item_tpscroll","item_paladin_sword"},	
+                has_shard = false,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,2,2,2,2,5,5,5,8,10,14,14,14,14,14,14,15,16},
+              },
+          invoker = {
+                name = "invoker",
+                team = 3,
+                gold_reliable = 1138,
+                gold_unreliable = 3002,
+                level = 21,
+                position = Vector(6997.6094970703125,6063.097595214844,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,7.10094690322876,0,0},
+                items = {"item_magic_wand","item_null_talisman","item_ultimate_scepter","item_black_king_bar","item_hand_of_midas","item_travel_boots","item_tpscroll","item_arcane_ring"},	
+                has_shard = true,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,4,5,6,7,8,9,10,11,14,15},
+              },
+          death_prophet = {
+                name = "death_prophet",
+                team = 3,
+                gold_reliable = 97,
+                gold_unreliable = 454,
+                level = 17,
+                position = Vector(4243.692272186279,3312.384515762329,0),
+                abilities = {},
+                cooldowns = {5,0,0,0,0,54.39978790283203,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_cyclone","item_force_staff","item_heavens_halberd","item_magic_wand","item_boots","item_falcon_blade","item_tpscroll","item_tpscroll","item_black_powder_bag","item_flask"},	
+                has_shard = true,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,2,5,5,7,8,14,15,16},
+              },
+          winter_wyvern = {
+                name = "winter_wyvern",
+                team = 3,
+                gold_reliable = 853,
+                gold_unreliable = 117,
+                level = 14,
+                position = Vector(3633.500919342041,4865.662673950195,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_orchid","item_force_staff","item_magic_wand","item_boots","item_tpscroll","item_tpscroll","item_tpscroll","item_tpscroll","item_tpscroll","item_spider_legs"},	
+                has_shard = false,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,0,0,1,1,1,1,2,2,2,5,5,7,15,16},
+              },
+          bane = {
+                name = "bane",
+                team = 3,
+                gold_reliable = 158,
+                gold_unreliable = 0,
+                level = 13,
+                position = Vector(5039.113746643066,-3067.6488361358643,0),
+                abilities = {},
+                cooldowns = {0,0,0,0,0,20.401145935058594,0,0,0,0,0,0,0,0,0,0,0},
+                items = {"item_tranquil_boots","item_magic_wand","item_cloak","item_ward_dispenser","item_black_king_bar","item_smoke_of_deceit","item_tpscroll","item_tpscroll","item_philosophers_stone","item_psychic_headband"},	
+                has_shard = false,
+                has_ags = false,
+                has_moon_shard = false,
+                talents = {0,0,1,1,1,1,2,2,2,2,5,5,6,8,16},
+              },
+    },
+    creeps = {
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1995.2671337127686,5940.119441986084),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1660.7543506622314,5946.253091812134),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1026.8218059539795,5954.889026641846),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1841.1019649505615,5942.621726989746),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1264.294755935669,5951.41024017334),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1464.6911659240723,5926.356874465942),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1170.062364578247,5952.844476699829),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-1357.1539421081543,5950.342191696167),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(1745.3743057250977,1222.7934436798096),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(5083.514047622681,-5704.843620300293),
+                },
+          {
+                  name = "npc_dota_creep_badguys_ranged",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(5972.130380630493,-3973.079303741455),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-5884.001123428345,4778.174245834351),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(2146.7469234466553,1518.3377151489258),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(5270.544593811035,-5637.526050567627),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6022.420206069946,-4371.8580894470215),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-5706.583013534546,5112.74806022644),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(1809.396183013916,1280.9563121795654),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(5609.268539428711,-5482.292833328247),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(5993.247224807739,-4296.94211769104),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-5776.708024978638,5047.5971031188965),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(2060.387575149536,1457.519983291626),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(5538.228057861328,-5514.517381668091),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(5952.569835662842,-4210.67431640625),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(1982.9693183898926,1403.3241519927979),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-5858.276412963867,4854.219297409058),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(5361.267683029175,-5595.322877883911),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(5952.722414016724,-4059.743808746338),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(1878.697271347046,1330.0255107879639),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-5825.350004196167,4932.73611831665),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(5450.953239440918,-5554.431879043579),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6006.124837875366,-4132.035432815552),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-5628.218770980835,5167.157501220703),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-3562.27734375,-5968.376953125),
+                },
+          {
+                  name = "npc_dota_creep_badguys_ranged",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6124.6171875,3562.27734375),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-4890.3193359375,-4382.53857421875),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_ranged",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-6468.345703125,-3968.501953125),
+                },
+          {
+                  name = "npc_dota_creep_badguys_ranged",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3093.556640625,5655.896484375),
+                },
+          {
+                  name = "npc_dota_creep_badguys_ranged",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3999.75,3499.78125),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-3515.161148071289,-6007.925262451172),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6186.136779785156,3562.27734375),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-6421.229507446289,-3928.9841594696045),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-4828.799743652344,-4382.53857421875),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-3620.104539871216,-5989.432765960693),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3104.2371253967285,5716.470090866089),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6066.789991378784,3541.2215309143066),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(4046.866195678711,3539.2990436553955),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-3515.161148071289,-5928.8591594696045),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6135.2976722717285,3501.6732215881348),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-6499.105499267578,-3915.2521076202393),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-4879.6388511657715,-4321.964967727661),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3155.0762329101562,5655.896484375),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3968.990203857422,3553.0310955047607),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-3593.037139892578,-5915.127107620239),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6135.2976722717285,3622.850950241089),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-6526.172899246216,-3989.5577659606934),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-4879.6388511657715,-4443.142696380615),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-3573.0188598632812,-6070.360324859619),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(6041.645078659058,3622.515277862549),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3035.729444503784,5676.921781539917),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(4046.866195678711,3460.232940673828),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-6345.3065185546875,-3968.501953125),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-4948.146532058716,-4361.513277053833),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3062.796844482422,5602.616123199463),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3941.922803878784,3478.7254371643066),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-6438.165704727173,-3849.246711730957),
+                },
+          {
+                  name = "npc_dota_creep_goodguys_melee_upgraded",
+                  team = 2,
+                  waypoint = "",
+                  position = Vector(-4973.291444778442,-4442.807024002075),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3134.5697021484375,5584.856002807617),
+                },
+          {
+                  name = "npc_dota_creep_badguys_melee_upgraded",
+                  team = 3,
+                  waypoint = "",
+                  position = Vector(3989.0084838867188,3397.797878265381),
+                },
+    },
+    wards = {
+              {
+                  type = "npc_dota_sentry_wards",
+                  team = 3,
+                  position = Vector(1950.4701290130615,3071.951545715332,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(-496.67305755615234,-3231.182315826416,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 3,
+                  position = Vector(3237.7737007141113,232.25477027893066,1000),
+                },
+          {
+                  type = "npc_dota_observer_wards",
+                  team = 3,
+                  position = Vector(3037.9876041412354,136.0693759918213,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(-2168.4740810394287,1564.4163780212402,1000),
+                },
+          {
+                  type = "npc_dota_observer_wards",
+                  team = 2,
+                  position = Vector(-882.0554637908936,-601.2197456359863,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 3,
+                  position = Vector(-2005.5509147644043,152.39525985717773,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(-964.2646808624268,445.62034034729004,1000),
+                },
+          {
+                  type = "npc_dota_observer_wards",
+                  team = 3,
+                  position = Vector(-172.6881809234619,6153.301918029785,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 3,
+                  position = Vector(-172.6881809234619,6153.301918029785,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 3,
+                  position = Vector(-760.6641254425049,2043.8480815887451,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(2013.4849891662598,-767.072416305542,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 3,
+                  position = Vector(5014.151927947998,3321.691795349121,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(6103.805500030518,3316.1684589385986,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(-2078.5138835906982,3824.3459243774414,1000),
+                },
+          {
+                  type = "npc_dota_sentry_wards",
+                  team = 2,
+                  position = Vector(505.76672744750977,3992.700880050659,1000),
+                },
+        },
+    roshan = {
+      deaths = 2,
+    },
+    neutrals = {
+          good = { "item_chipped_vest", "item_mysterious_hat", "item_ocean_heart", "item_pogo_stick", "item_trusty_shovel", "item_pupils_gift", "item_quicksilver_amulet", "item_cloak_of_flames", "item_enchanted_quiver", "item_ceremonial_robe"
+          },
+          bad = { "item_chipped_vest", "item_ocean_heart", "item_trusty_shovel", "item_keen_optic", "item_pupils_gift", "item_ring_of_aquila", "item_dragon_scale", "item_bullwhip", "item_titan_sliver"
+          },
+      },
+    wincon = nil,
+  }
+  return GameState
