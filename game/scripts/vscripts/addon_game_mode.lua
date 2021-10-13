@@ -300,6 +300,7 @@ function SkirmishGameMode:SetupGameState()
 	SkirmishGameMode:FixNeutralItems()
 	GameRules:SpawnNeutralCreeps()
 	SkirmishGameMode:FixRoshanStatsDrops()
+	SkirmishGameMode:FixWards()
 end
 
 
@@ -377,8 +378,19 @@ end
 function SkirmishGameMode:FixWards()
 	print("fixing buildlings")
 	for _, ward in pairs(GameState["wards"]) do
+		-- npc_dota_observer_wards
+		-- npc_dota_sentry_wards
 		local hWard = CreateUnitByName(ward["type"], ward["position"], true, nil, nil, ward["team"])
-		-- TODO need to apply some funky modifier here.
+		if ward["type"] == "npc_dota_observer_wards" then
+			hWard:AddNewModifier(nil,nil,"modifier_kill",{duration = 360}) 
+			hWard:AddNewModifier(nil,nil,"modifier_item_buff_ward",{})
+		end
+		if ward["type"] == "npc_dota_sentry_wards" then
+			hWard:AddNewModifier(nil,nil,"modifier_kill",{duration = 420})
+			hWard:AddNewModifier(nil,nil,"modifier_item_buff_ward",{})
+			hWard:AddNewModifier(nil,nil,"modifier_item_ward_true_sight",{true_sight_range=900})
+		end
+
 	end
 end
 
