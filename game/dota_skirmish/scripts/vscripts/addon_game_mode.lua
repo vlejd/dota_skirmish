@@ -11,7 +11,6 @@ local waypointPossitions = {}
 
 require("string")
 local waypoints = require("waypoints")
---local GameState = require("game_state_dev")
 local GameState = require("game_state_chicken_liquid_game_1")
 roshanDeaths = GameState["roshan"]["deaths"]
 
@@ -377,6 +376,7 @@ end
 
 function SkirmishGameMode:FixWards()
 	print("fixing buildlings")
+
 	for _, ward in pairs(GameState["wards"]) do
 		-- npc_dota_observer_wards
 		-- npc_dota_sentry_wards

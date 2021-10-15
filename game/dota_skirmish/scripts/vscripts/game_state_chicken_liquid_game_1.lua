@@ -1088,6 +1088,9 @@ local GameState = {
     roshan = {
         deaths = 2
     },
+    wards = {
+
+    },
     neutrals = {
 		good = {
 			"item_keen_optic", "item_ocean_heart", "item_trusty_shovel", "item_faded_broach", 
