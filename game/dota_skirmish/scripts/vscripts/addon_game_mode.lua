@@ -30,33 +30,20 @@ function Activate()
 	GameRules.AddonTemplate:InitGameMode()
 end
 
+
 function SkirmishGameMode:InitGameMode()
 	print( "InitGameMode." )
 	local GameMode = GameRules:GetGameModeEntity() 
 	-- Add thinkers
-	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
-	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
 	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
 	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
+	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
+	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
 	SkirmishGameMode:init()
 
-end
-
-
-function SkirmishGameMode:DamageFilterRoshan(keys) 
-	if keys.entindex_attacker_const and keys.entindex_victim_const then
-		attacker = EntIndexToHScript(keys.entindex_attacker_const)
-		victim = EntIndexToHScript(keys.entindex_victim_const)
-		if victim:GetName() == "npc_dota_roshan" then
-			SkirmishGameMode:FixRoshanHealth()
-		end
-	else
-		return true
-	end
-	return true
 end
 
 
@@ -114,11 +101,13 @@ function SkirmishGameMode:AgroFixer()
 	end
 end
 
+
 function getNextWaveTimeDiff()
 	local time = GameRules:GetDOTATime(false, false)
 	local offset = time%30
 	return 30-offset
 end
+
 
 function SkirmishGameMode:SetGliphOneTimeThinker()
 	print("SetGliphOneTimeThinker", time)
@@ -286,6 +275,7 @@ function SkirmishGameMode:MakeCreeps()
 	end
 end
 
+
 function SkirmishGameMode:FixWards()
 	print("fixing buildlings")
 
@@ -305,6 +295,7 @@ function SkirmishGameMode:FixWards()
 
 	end
 end
+
 
 function SkirmishGameMode:FixBuildings()
 	print("fixing buildlings")
@@ -388,6 +379,7 @@ function SkirmishGameMode:FixPlayers()
 	end
 end
 
+
 function SkirmishGameMode:FixHero(heroData, hHero)
 	if heroData["gold_reliable"] ~= nil then
 		hHero:SetGold(heroData["gold_reliable"], true)
@@ -436,6 +428,21 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	end
 end
 
+
+function SkirmishGameMode:DamageFilterRoshan(keys) 
+	if keys.entindex_attacker_const and keys.entindex_victim_const then
+		attacker = EntIndexToHScript(keys.entindex_attacker_const)
+		victim = EntIndexToHScript(keys.entindex_victim_const)
+		if victim:GetName() == "npc_dota_roshan" then
+			SkirmishGameMode:FixRoshanHealth()
+		end
+	else
+		return true
+	end
+	return true
+end
+
+
 last_secs = 0
 
 function SkirmishGameMode:FixRoshan()
@@ -461,35 +468,6 @@ function SkirmishGameMode:FixRoshan()
 	end
 end 
 
-function SkirmishGameMode:FixRoshanHealth() 
-	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		local gameTime = GameRules:GetDOTATime(false, false)
-		local realTime = gameTime + GameState["game"]["time"]
-		local mins = math.floor(realTime/60)
-		local secs = math.floor(realTime)
-
-		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
-
-		if hRosh ~= nil then
-			local desired_max_health = 6000+mins*115
-
-			local current_max_health = hRosh:GetMaxHealth()
-			local current_health = hRosh:GetHealth()
-			hRosh:SetMaxHealth(desired_max_health)
-			local new_health = math.floor(current_health/current_max_health*desired_max_health) 
-			if last_secs ~= secs then
-				new_health = new_health + 20
-			end
-			hRosh:SetHealth(new_health)
-			last_secs = secs
-
-			return 0.001
-		end
-		return 0.1
-	else 	
-		return 1
-	end
-end
 
 function SkirmishGameMode:FixRoshanStatsDrops()
 	print("fixing roshan")
@@ -542,6 +520,38 @@ function SkirmishGameMode:FixRoshanStatsDrops()
 	end
 	return 0.1
 end
+
+
+function SkirmishGameMode:FixRoshanHealth() 
+	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		local gameTime = GameRules:GetDOTATime(false, false)
+		local realTime = gameTime + GameState["game"]["time"]
+		local mins = math.floor(realTime/60)
+		local secs = math.floor(realTime)
+
+		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+
+		if hRosh ~= nil then
+			local desired_max_health = 6000+mins*115
+
+			local current_max_health = hRosh:GetMaxHealth()
+			local current_health = hRosh:GetHealth()
+			hRosh:SetMaxHealth(desired_max_health)
+			local new_health = math.floor(current_health/current_max_health*desired_max_health) 
+			if last_secs ~= secs then
+				new_health = new_health + 20
+			end
+			hRosh:SetHealth(new_health)
+			last_secs = secs
+
+			return 0.001
+		end
+		return 0.1
+	else 	
+		return 1
+	end
+end
+
  
 function SkirmishGameMode:init()
 	if IsInToolsMode() then
@@ -575,6 +585,7 @@ function SkirmishGameMode:init()
 		SkirmishGameMode:FixTeams()
 	end
 end
+
 
 function SkirmishGameMode:AddBots()
 
@@ -643,6 +654,7 @@ function SkirmishGameMode:FixTeams()
 		end
 	end
 end
+
 
 function SkirmishGameMode:RandomForNoHeroSelected()
 	local maxPlayers = 5
