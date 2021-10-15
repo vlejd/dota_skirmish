@@ -20,5 +20,11 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - LGD vs fnatic game 1 group stage 32:29, 6213829716: https://steamcommunity.com/sharedfiles/filedetails/?id=2625655651
 - T1 vs psg lgd game 2 47:29, 6220754493  https://steamcommunity.com/sharedfiles/filedetails/?id=2627767069
 
+
+- placeholders: 
+- https://steamcommunity.com/sharedfiles/filedetails/?id=2628286264
+- https://steamcommunity.com/sharedfiles/filedetails/?id=2628286713
+- https://steamcommunity.com/sharedfiles/filedetails/?id=2628286945
+
 # Help wanted!
 There is a ton of things need to be added. Check issues. 
