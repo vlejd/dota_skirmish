@@ -33,17 +33,23 @@ end
 
 function SkirmishGameMode:InitGameMode()
 	print( "InitGameMode." )
-	local GameMode = GameRules:GetGameModeEntity() 
-	-- Add thinkers
-	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
-	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
-	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
-	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
-	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 
-	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
-	SkirmishGameMode:init()
-
+	if IsInToolsMode() then
+		print("game setup init in tool mode")
+		GameRules:SetHeroSelectionTime(30)
+	else --release build
+		print("game setup init in release mode")
+		GameRules:SetHeroSelectionTime(60)
+	end
+	GameRules:EnableCustomGameSetupAutoLaunch(true)
+	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
+	GameRules:SetStrategyTime(5)
+	GameRules:SetPreGameTime(0)
+	GameRules:SetShowcaseTime(10)
+	GameRules:SetPostGameTime(30)	
+	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
+	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
+	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 end
 
 
@@ -552,29 +558,9 @@ function SkirmishGameMode:FixRoshanHealth()
 	end
 end
 
- 
-function SkirmishGameMode:init()
-	if IsInToolsMode() then
-		print("game setup init in tool mode")
-		GameRules:SetHeroSelectionTime(30)
-	else --release build
-		print("game setup init in release mode")
-		GameRules:SetHeroSelectionTime(60)
-	end
-	GameRules:EnableCustomGameSetupAutoLaunch(true)
-	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
-	GameRules:SetStrategyTime(5)
-	GameRules:SetPreGameTime(0)
-	GameRules:SetShowcaseTime(10)
-	GameRules:SetPostGameTime(30)	
-	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-
-  end
   
 
-  function SkirmishGameMode:OnStateChange()
+function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 		print("randoming for all unselected players")
@@ -584,6 +570,23 @@ function SkirmishGameMode:init()
 		SkirmishGameMode:RandomForNoHeroSelected()
 		SkirmishGameMode:FixTeams()
 	end
+
+	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		SkirmishGameMode:AddThinkers()
+	end
+end
+
+
+function SkirmishGameMode:AddThinkers()
+	local GameMode = GameRules:GetGameModeEntity() 
+	-- Add thinkers
+	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
+	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
+	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
+	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
+	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+
+	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
 end
 
 
