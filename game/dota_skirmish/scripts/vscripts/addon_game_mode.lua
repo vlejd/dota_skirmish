@@ -33,10 +33,10 @@ end
 function SkirmishGameMode:InitGameMode()
 	print( "InitGameMode." )
 	local GameMode = GameRules:GetGameModeEntity() 
+	-- Add thinkers
 	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
 	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
-	--GameMode:SetThink( "SecThinker", self, "SecThinkerGlobalThink", 1)
 	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
 	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
 
@@ -74,99 +74,18 @@ function SkirmishGameMode:CheckWinCondition()
 end
 
 
-outposts_stage = 0
-outpost = nil
-outpost_capture_bots = {}
-
-function SkirmishGameMode:SecThinker()
-	local gameTime = GameRules:GetDOTATime(false, false)
-	
-	if gameTime > 1 and outposts_stage == 0 then
-		print("###############")
-		print("outpost capture")
-		outposts_stage = 1
-		local outpost_top = Entities:FindByName(nil, "npc_dota_watch_tower_top")
-		outpost = outpost_top
-		print(outpost_top)
-		print(outpost_top:GetAbsOrigin())
-
-		local hHero = CreateUnitByName("npc_dota_hero_wisp", outpost_top:GetAbsOrigin(), true, nil, nil, DOTA_TEAM_GOODGUYS)
-		table.insert(outpost_capture_bots, hHero)
-		outpost_capture_bot = hHero
-		print(hHero)
-		return 3
-	end
-	if outposts_stage == 1 then
-		outposts_stage = 2
-		print("###############")
-		print("outpost capture 2")
-		print(outpost)
-		print(outpost_capture_bot)
-		print(ability)
-		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
-
-			local ability = outpost_capture_bot:FindAbilityByName( "ability_capture" )
-			ExecuteOrderFromTable( {
-				UnitIndex = outpost_capture_bot:entindex(),
-				OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
-				AbilityIndex = ability:entindex(),
-				TargetIndex = outpost:entindex()
-			} )
-		end
-		return 10
-	end
-	if outposts_stage == 2 then
-		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
-			outpost_capture_bot:ForceKill(false)
-		end	
-	end
-	return 1
-end
-
-
-function DOES_NOT_WORK()
-	-- outpost
-	--DOTA_UNIT_ORDER_ATTACK_TARGET, 4 
-	local entityIndex = hHero:GetEntityIndex()
-	local newOrder = {
-		UnitIndex = entityIndex, 
-		OrderType = DOTA_UNIT_ORDER_ATTACK_MOVE,
-		TargetIndex = outpost_top:entindex(),
-	}
-	--Position = [-799.999939 4159.999512 256.000000
-	ExecuteOrderFromTable(newOrder)
-	--hHero:SetForceAttackTarget(outpost_top)
-	--hHero:SetAttacking(outpost_top)
-	--hHero:PerformAttack(outpost_top, true, true, true, true, true, true, true)
-	outpost_capture_bot:SetForceAttackTarget(outpost)
-	outpost_capture_bot:SetAttacking(outpost)
-	outpost_capture_bot:PerformAttack(outpost, true, true, true, true, true, true, true)
-
-	local entityIndex = outpost_capture_bot:GetEntityIndex()
-	local newOrder = {
-		UnitIndex = entityIndex, 
-		OrderType = DOTA_UNIT_ORDER_MOVE_TO_POSITION,
-		Position = Vector(0, 0),
-	}
-	--Position = [-799.999939 4159.999512 256.000000]
-	--ExecuteOrderFromTable(newOrder)
-end
-
-
 creeps_to_kill = nil
 
 function SkirmishGameMode:AgroFixer()
+	-- Spawn enemy creeps for a moment on every wave spawn to fix their agro behavior
 	print("AgroFixer")
 	if creeps_to_kill == nil then
-		print("spawning creeps!")
 
 		creeps_to_kill = {}
 		for _, lane in pairs({"bot", "mid", "top"}) do
 			for _, team in pairs({"good", "bad"}) do
 				local spawn_name = "lane_"..lane.."_"..team.."guys_melee_spawner" 
-				print(spawn_name)
 				local spawner = Entities:FindByName ( nil, spawn_name )
-				print(spawner:GetAbsOrigin())
 				local other_team = ""
 				local other_team_int = 0
 
@@ -186,7 +105,6 @@ function SkirmishGameMode:AgroFixer()
 		end
 		return 0.001
 	else
-		print("killing creeps!")
 		for _, hCreep in pairs(creeps_to_kill) do
 			hCreep:ForceKill(false)
 		end
@@ -206,7 +124,7 @@ function SkirmishGameMode:SetGliphOneTimeThinker()
 	print("SetGliphOneTimeThinker", time)
 	local time = GameRules:GetDOTATime(false, false)
 	if time>5 then
-		print("SetGliphOneTimeThinker")
+		-- TODO get real glyph cooldowns
 		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
 		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
 		return nil
@@ -270,10 +188,7 @@ function SkirmishGameMode:FixUpgrades()
 						AbilityIndex = hMoonShard:entindex(),
 						TargetIndex = hHero:entindex()
 					} )
-					--hMoonShard
-
 				end
-				
 
 				local hTP = hHero:FindItemInInventory( "item_tpscroll" )
 				if hTP then
@@ -291,9 +206,6 @@ function SkirmishGameMode:FixUpgrades()
 end
 
 function SkirmishGameMode:SetupGameState()
-	--SendToServerConsole("sv_cheats 1; host_timescale 1000;")
-	--SendToServerConsole("sv_cheats 0;")
-
 	SkirmishGameMode:FixPlayers()
 	SkirmishGameMode:FixBuildings()
 	SkirmishGameMode:FixNeutralItems()
@@ -593,9 +505,7 @@ function SkirmishGameMode:FixRoshanStatsDrops()
 		hRosh:SetBaseDamageMin(75+6*mins)
 		hRosh:SetDeathXP(400+20*mins)
 
-		-- TODO
-		--local attackSpeed = 595 + 100*mins
-		--hRosh:SetBaseAttackTime(2+100*mins)
+		-- TODO attack speed
 
 		for i=0, 20 do
 			local hItem = hRosh:GetItemInSlot(i)
@@ -643,13 +553,12 @@ function SkirmishGameMode:init()
 	end
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
-	GameRules:SetStrategyTime(10)
+	GameRules:SetStrategyTime(5)
 	GameRules:SetPreGameTime(0)
-	GameRules:SetShowcaseTime(5)
+	GameRules:SetShowcaseTime(10)
 	GameRules:SetPostGameTime(30)	
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	--GameRules:SetCustomGameDifficulty(0)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
   end
@@ -659,14 +568,10 @@ function SkirmishGameMode:init()
 	print("state change", GameRules:State_Get())
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 		print("randoming for all unselected players")
-		--SkirmishGameMode:RandomForNoHeroSelected()
-
 		
-		print("reassigning teams for players")
 		SkirmishGameMode:FixTeams()
-		
-		print("Adding bots")
 		SkirmishGameMode:AddBots()
+		SkirmishGameMode:RandomForNoHeroSelected()
 		SkirmishGameMode:FixTeams()
 	end
 end
@@ -692,39 +597,25 @@ function SkirmishGameMode:AddBots()
 		end
 	end
 
-	print("populating with bots")
 	for hero, hdata in pairs(GameState["heroes"]) do
 		if pickedHeros[hero] == nil then
-			print(hero, " bot")
-			--TODO proper AI entityscript
-			--local hHero = GameRules:AddBotPlayerWithEntityScript("npc_dota_hero_"..hero, hero.." bot", hdata["team"], "", true)
-			--PrecacheUnitByNameAsync(new_hero_name, function(...) end)
-			--FindClearSpaceForUnit(hHero, hdata["position"], true)
 			if hdata["team"] == 2 then
-				print(hero, true)
+				print(hero, 2, true)
 				Tutorial:AddBot("", "", "", true)
 			end
 			if hdata["team"] == 3 then
-				print(hero, false)
+				print(hero, 3, false)
 				Tutorial:AddBot("", "", "", false)
 			end
 		else
 			print(hero, " player")
 		end
 	end
-	DONTUSE_POPULATBOTS()
-	SkirmishGameMode:RandomForNoHeroSelected()
-end
-
-
-function DONTUSE_POPULATBOTS()
-	--SendToServerConsole("sv_cheats 1; dota_bot_populate")
 	Tutorial:StartTutorialMode();
 	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)
 	GameRules:GetGameModeEntity():SetBotsInLateGame(true)
 	GameRules:GetGameModeEntity():SetBotsMaxPushTier(4)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-
 end
 
 	
