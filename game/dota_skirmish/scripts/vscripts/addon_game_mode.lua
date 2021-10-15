@@ -9,7 +9,9 @@ ROSHAN_SPAWN_LOC = Vector(-2787, 2357)
 local waypointPossitions = {}
 
 
+require("libraries/adv_log")
 require("string")
+
 local waypoints = require("waypoints")
 --local GameState = require("game_state_dev")
 local GameState = require("game_state_chicken_liquid_game_1")
@@ -21,7 +23,6 @@ function Precache( context )
 	PrecacheResource( "soundfile", "*.vsndevts", context )
 	PrecacheResource( "particle", "*.vpcf", context )
 	PrecacheResource( "particle_folder", "particles/folder", context )
-	
 end
 
 
@@ -43,7 +44,6 @@ function SkirmishGameMode:InitGameMode()
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
 	SkirmishGameMode:init()
-
 end
 
 
@@ -104,8 +104,8 @@ function SkirmishGameMode:SecThinker()
 		print(outpost)
 		print(outpost_capture_bot)
 		print(ability)
-		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
 
+		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
 			local ability = outpost_capture_bot:FindAbilityByName( "ability_capture" )
 			ExecuteOrderFromTable( {
 				UnitIndex = outpost_capture_bot:entindex(),
@@ -204,9 +204,10 @@ function getNextWaveTimeDiff()
 end
 
 function SkirmishGameMode:SetGliphOneTimeThinker()
-	print("SetGliphOneTimeThinker", time)
+--	print("SetGliphOneTimeThinker", time)
 	local time = GameRules:GetDOTATime(false, false)
-	if time>5 then
+
+	if time > 5 then
 		print("SetGliphOneTimeThinker")
 		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
 		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
@@ -218,7 +219,7 @@ end
 
 
 function SkirmishGameMode:WaitForSetup()
-	print("SkirmishGameMode:OnThink "..GameRules:State_Get())
+--	print("SkirmishGameMode:OnThink "..GameRules:State_Get())
 
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		print( "Template addon script is running." ..  setupGameTicks )
@@ -376,7 +377,13 @@ function SkirmishGameMode:MakeCreeps()
 end
 
 function SkirmishGameMode:FixWards()
-	print("fixing buildlings")
+	print("fixing wards")
+
+	if not GameState["wards"] then
+		print("Wards table is nil!")
+		return
+	end
+	
 	for _, ward in pairs(GameState["wards"]) do
 		-- npc_dota_observer_wards
 		-- npc_dota_sentry_wards
@@ -630,9 +637,10 @@ function SkirmishGameMode:FixRoshanStatsDrops()
 
 		return 0.1
 	end
+
 	return 0.1
 end
- 
+
 function SkirmishGameMode:init()
 	if IsInToolsMode() then
 		print("game setup init in tool mode")
@@ -641,30 +649,32 @@ function SkirmishGameMode:init()
 		print("game setup init in release mode")
 		GameRules:SetHeroSelectionTime(60)
 	end
+
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
-	GameRules:SetStrategyTime(10)
+	GameRules:SetStrategyTime(0)
 	GameRules:SetPreGameTime(0)
-	GameRules:SetShowcaseTime(5)
+	GameRules:SetShowcaseTime(0)
 	GameRules:SetPostGameTime(30)	
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
+	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
+
 	--GameRules:SetCustomGameDifficulty(0)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-
-  end
+end
   
 
-  function SkirmishGameMode:OnStateChange()
+function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
+
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 		print("randoming for all unselected players")
 		--SkirmishGameMode:RandomForNoHeroSelected()
 
-		
 		print("reassigning teams for players")
 		SkirmishGameMode:FixTeams()
-		
+
 		print("Adding bots")
 		SkirmishGameMode:AddBots()
 		SkirmishGameMode:FixTeams()
@@ -735,12 +745,15 @@ function SkirmishGameMode:FixTeams()
 	
 	local playerIDs = {}
 	local maxPlayers = 5
+
 	for _, teamNum in pairs({DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS}) do
-		for i=1, maxPlayers do
+		for i = 1, maxPlayers do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			playerIDs[#playerIDs+1] = playerID
+			playerIDs[#playerIDs + 1] = playerID
 		end
 	end
+
+	print(GameState)
 
 	for _, playerID in pairs(playerIDs) do
 		if PlayerResource:HasSelectedHero(playerID) then
