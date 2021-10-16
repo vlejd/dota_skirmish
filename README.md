@@ -19,7 +19,7 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - Aster vs T1 game 1 group stage 40th min, 6214919117: https://steamcommunity.com/sharedfiles/filedetails/?id=2623932473
 - LGD vs fnatic game 1 group stage 32:29, 6213829716: https://steamcommunity.com/sharedfiles/filedetails/?id=2625655651
 - T1 vs psg lgd game 2 47:29, 6220754493  https://steamcommunity.com/sharedfiles/filedetails/?id=2627767069
-
+- spirit vs IG game 2 27:29 6225461282 https://steamcommunity.com/sharedfiles/filedetails/?id=2628286945
 
 - placeholders: 
 - https://steamcommunity.com/sharedfiles/filedetails/?id=2628286264
