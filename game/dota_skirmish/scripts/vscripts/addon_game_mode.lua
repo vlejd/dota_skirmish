@@ -53,20 +53,6 @@ function SkirmishGameMode:InitGameMode()
 end
 
 
-function SkirmishGameMode:CheckWinCondition()
-	local gameTime = GameRules:GetDOTATime(false, false)
-	if GameState["wincon"] ~= nil then
-		if gameTime >= GameState["wincon"]["time"] then
-			GameRules:SetGameWinner(GameState["wincon"]["default_winner"])
-			return nil
-		end
-		return 0.1
-	else
-		return nil
-	end
-end
-
-
 creeps_to_kill = nil
 
 function SkirmishGameMode:AgroFixer()
@@ -115,7 +101,7 @@ function getNextWaveTimeDiff()
 end
 
 
-function SkirmishGameMode:SetGliphOneTimeThinker()
+function SkirmishGameMode:SetGliphCooldowns()
 	print("SetGliphOneTimeThinker", time)
 	local time = GameRules:GetDOTATime(false, false)
 	if time>5 then
@@ -129,32 +115,70 @@ function SkirmishGameMode:SetGliphOneTimeThinker()
 end
 
 
-function SkirmishGameMode:WaitForSetup()
-	print("SkirmishGameMode:OnThink "..GameRules:State_Get())
+setup_stage = 0
 
-	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		print( "Template addon script is running." ..  setupGameTicks )
-		setupGameTicks = setupGameTicks + 1
-		if not setupDone then
-			SkirmishGameMode:FixUpgrades();
+function SkirmishGameMode:WaitForSetup()
+	print("SkirmishGameMode:WaitForSetup "..GameRules:State_Get())
+	if setup_stage == 0 then
+		if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+			setup_stage = 1
+			return 0.1
 		end
-		if setupGameTicks > 2 then
-			if not setupDone then
-				SkirmishGameMode:SetupGameState()
-				print("setup maybe done")
-				return 0.1
-			else
-				if setupGameTicks > 5 then
-					SkirmishGameMode:initWaypoints()
-					SkirmishGameMode:MakeCreeps()							
-					PauseGame(true)
-					return nil
-				end
-				return 0.1	
-			end
+	elseif setup_stage == 1 then
+		local has_unloaded_player = SkirmishGameMode:HasUnloadedPlayer()
+		if has_unloaded_player then
+			print("Waiting for unloaded players")
+			return 0.1
+		else
+			setup_stage = 2
+			return 0.001
+		end
+
+	elseif setup_stage == 2 then
+		SkirmishGameMode:FixUpgrades();
+		SkirmishGameMode:initWaypoints()
+		SkirmishGameMode:FixBuildings()
+		SkirmishGameMode:FixWards()
+		SkirmishGameMode:FixNeutralItems()
+		setup_stage = 3
+		return 0.1
+
+	elseif setup_stage == 3 then
+		local GameMode = GameRules:GetGameModeEntity() 
+
+		SkirmishGameMode:MakeCreeps()							
+		SkirmishGameMode:FixPlayers()
+		GameRules:SpawnNeutralCreeps()
+		GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+		SkirmishGameMode:FixRoshanStatsDrops()
+		setup_stage = 4
+		return 0.1
+
+	elseif setup_stage == 4 then
+		setup_stage = 5
+		PauseGame(true)
+		return 4
+	elseif setup_stage == 5 then
+		SkirmishGameMode:SetGliphCooldowns()
+		return nil
+	else
+		print("Unexpected state: setup_stage", setup_stage)
+		return nil
+	end
+end
+
+
+function SkirmishGameMode:HasUnloadedPlayer()
+	print("Checking for unloaded players.")
+	local unloaded_player = false
+	for hID = 0, 9 do
+		local hHero = HeroList:GetHero(hID)
+		if hHero == nil then
+			unloaded_player = true
+			print("Unloaded player", hID)
 		end
 	end
-	return 1
+	return unloaded_player
 end
 
 function SkirmishGameMode:FixUpgrades()
@@ -198,15 +222,6 @@ function SkirmishGameMode:FixUpgrades()
 			end
 		end
 	end
-end
-
-function SkirmishGameMode:SetupGameState()
-	SkirmishGameMode:FixPlayers()
-	SkirmishGameMode:FixBuildings()
-	SkirmishGameMode:FixNeutralItems()
-	GameRules:SpawnNeutralCreeps()
-	SkirmishGameMode:FixRoshanStatsDrops()
-	SkirmishGameMode:FixWards()
 end
 
 
@@ -290,13 +305,17 @@ function SkirmishGameMode:FixWards()
 		-- npc_dota_sentry_wards
 		local hWard = CreateUnitByName(ward["type"], ward["position"], true, nil, nil, ward["team"])
 		if ward["type"] == "npc_dota_observer_wards" then
-			hWard:AddNewModifier(nil,nil,"modifier_kill",{duration = 360}) 
-			hWard:AddNewModifier(nil,nil,"modifier_item_buff_ward",{})
-		end
-		if ward["type"] == "npc_dota_sentry_wards" then
-			hWard:AddNewModifier(nil,nil,"modifier_kill",{duration = 420})
-			hWard:AddNewModifier(nil,nil,"modifier_item_buff_ward",{})
-			hWard:AddNewModifier(nil,nil,"modifier_item_ward_true_sight",{true_sight_range=900})
+			local kill_buff = hWard:AddNewModifier(hWard,nil,"modifier_kill",{duration = 360}) 
+			local ward_buff = hWard:AddNewModifier(hWard,nil,"modifier_item_buff_ward",{})
+			print(kill_buff, ward_buff)
+		elseif ward["type"] == "npc_dota_sentry_wards" then
+			local kill_buff = hWard:AddNewModifier(hWard,nil,"modifier_kill",{duration = 420})
+			local ward_buff = hWard:AddNewModifier(hWard,nil,"modifier_item_buff_ward",{})
+			local sentry_buff = hWard:AddNewModifier(hWard,nil,"modifier_item_ward_true_sight",{true_sight_range=900})
+			print(kill_buff, ward_buff, sentry_buff)
+
+		else
+			print("Unexpected ward type", ward["type"])
 		end
 
 	end
@@ -365,7 +384,6 @@ function SkirmishGameMode:FixPlayers()
 	for hID = 0, 9 do
 		local hHero = HeroList:GetHero(hID)
 		if hHero ~= nil then
-			setupDone = true  -- this is shit :(
 			local heroName = hHero:GetUnitName()
 			local playerID = hHero:GetPlayerID()
 			local hPlayer = PlayerResource:GetPlayer(playerID)
@@ -582,11 +600,23 @@ function SkirmishGameMode:AddThinkers()
 	-- Add thinkers
 	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
 	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
-	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
-	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
-	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 0.1 )
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
+end
+
+
+function SkirmishGameMode:CheckWinCondition()
+	local gameTime = GameRules:GetDOTATime(false, false)
+	if GameState["wincon"] ~= nil then
+		if gameTime >= GameState["wincon"]["time"] then
+			GameRules:SetGameWinner(GameState["wincon"]["default_winner"])
+			return nil
+		end
+		return 0.1
+	else
+		return nil
+	end
 end
 
 
