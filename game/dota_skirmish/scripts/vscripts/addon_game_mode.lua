@@ -11,7 +11,7 @@ local waypointPossitions = {}
 
 require("string")
 local waypoints = require("waypoints")
-local GameState = require("game_states/t1_lgd")
+local GameState = require("game_states/spirit_ig_game2")
 roshanDeaths = GameState["roshan"]["deaths"]
 
 
