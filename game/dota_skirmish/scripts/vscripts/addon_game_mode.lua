@@ -11,6 +11,8 @@ local waypointPossitions = {}
 
 require("string")
 local waypoints = require("waypoints")
+require("neutral_items")
+
 local GameState = require("game_states/spirit_lgd_g4")
 roshanDeaths = GameState["roshan"]["deaths"]
 
@@ -140,6 +142,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:FixBuildings()
 		SkirmishGameMode:FixWards()
 		SkirmishGameMode:FixNeutralItems()
+		NeutralItems:Setup()
 		setup_stage = 3
 		return 0.1
 
