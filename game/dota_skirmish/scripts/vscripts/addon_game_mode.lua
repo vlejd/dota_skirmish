@@ -11,6 +11,8 @@ local waypointPossitions = {}
 
 require("string")
 local waypoints = require("waypoints")
+require("neutral_items")
+
 local GameState = require("game_states/spirit_lgd_g4")
 roshanDeaths = GameState["roshan"]["deaths"]
 
@@ -20,7 +22,6 @@ function Precache( context )
 	PrecacheResource( "soundfile", "*.vsndevts", context )
 	PrecacheResource( "particle", "*.vpcf", context )
 	PrecacheResource( "particle_folder", "particles/folder", context )
-	
 end
 
 
@@ -118,7 +119,7 @@ end
 setup_stage = 0
 
 function SkirmishGameMode:WaitForSetup()
-	print("SkirmishGameMode:WaitForSetup "..GameRules:State_Get())
+	print("SkirmishGameMode:WaitForSetup "..GameRules:State_Get() .. "  " .. setup_stage)
 	if setup_stage == 0 then
 		if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 			setup_stage = 1
@@ -139,7 +140,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:initWaypoints()
 		SkirmishGameMode:FixBuildings()
 		SkirmishGameMode:FixWards()
-		SkirmishGameMode:FixNeutralItems()
+		NeutralItems:Setup(GameState["game"]["time"])
 		setup_stage = 3
 		return 0.1
 
@@ -156,6 +157,7 @@ function SkirmishGameMode:WaitForSetup()
 
 	elseif setup_stage == 4 then
 		setup_stage = 5
+		SkirmishGameMode:FixNeutralItems()
 		PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
@@ -347,12 +349,12 @@ function SkirmishGameMode:FixNeutralItems()
 			local hPlayer = PlayerResource:GetPlayer(playerID)
 			if GameState["neutrals"] ~= nil then
 				for _, item in pairs(GameState["neutrals"]["good"]) do
-					local cItem = CreateItem(item, hPlayer, nil)
-					PlayerResource:AddNeutralItemToStash(playerID, DOTA_TEAM_GOODGUYS, cItem)
+					print("good", item)
+					NeutralItems:AddItemToStash(item, DOTA_TEAM_GOODGUYS)
 				end
 				for _, item in pairs(GameState["neutrals"]["bad"]) do
-					local cItem = CreateItem(item, hPlayer, nil)
-					PlayerResource:AddNeutralItemToStash(playerID, DOTA_TEAM_BADGUYS, cItem)
+					print("bad", item)
+					NeutralItems:AddItemToStash(item, DOTA_TEAM_BADGUYS)
 				end
 			end
 		end
@@ -426,7 +428,13 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	end
 
 	for _, item in pairs(heroData["items"]) do
-		hHero:AddItemByName(item)
+		if NeutralItems:IsItemNeutral(item) then
+			NeutralItems:AddNeutralItemToHero(hHero, item)
+			hHero:AddItemByName(item)
+		else
+			hHero:AddItemByName(item)
+		end
+		
 	end
 
 	local entityIndex = hHero:GetEntityIndex()
