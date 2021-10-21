@@ -803,7 +803,7 @@ local GameState = {
                 },
         },
     roshan = {
-      deaths = 2,
+      deaths = 0,
     },
     neutrals = {
           good = { "item_chipped_vest", "item_arcane_ring", "item_ocean_heart", "item_misericorde", "item_vambrace"

@@ -692,8 +692,8 @@ local GameState = {
                 position = Vector(4521.293329238892,708.5738754272461,1000),
               },
       },
-  roshan = {
-    deaths = 0,
+  roshan = { -- died at 14:43
+    deaths = 1,
   },
   neutrals = {
 		good = { "item_possessed_mask", "item_mysterious_hat", "item_ring_of_aquila", "item_nether_shawl"

@@ -13,7 +13,7 @@ require("string")
 local waypoints = require("waypoints")
 require("neutral_items")
 
-local GameState = require("game_states/spirit_lgd_g4")
+local GameState = require("game_states/spirit_lgd_g5")
 roshanDeaths = GameState["roshan"]["deaths"]
 
 

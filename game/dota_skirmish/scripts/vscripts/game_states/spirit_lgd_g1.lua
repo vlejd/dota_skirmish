@@ -705,8 +705,8 @@ local GameState = {
                 position = Vector(3624.43776512146,-507.78076171875,1000),
               },
       },
-  roshan = {
-    deaths = 0,
+  roshan = { -- should be killed at 23:04
+    deaths = 1,
   },
   neutrals = {
 		good = { "item_trusty_shovel", "item_unstable_wand", "item_ocean_heart", "item_pupils_gift", "item_grove_bow", "item_titan_sliver"

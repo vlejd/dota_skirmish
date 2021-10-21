@@ -10,6 +10,4 @@
     "npc_dota_hero_tiny"  "1"
     "npc_dota_hero_skywrath_mage"  "1"
     "npc_dota_hero_enchantress"  "1"
-    "npc_dota_hero_terrorblade"  "1"
-    "npc_dota_hero_terrorblade"  "1"
 }          
