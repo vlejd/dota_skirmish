@@ -5,7 +5,6 @@ end
 setupDone = false
 setupGameTicks = 0
 isRoshanDead = true
-ROSHAN_SPAWN_LOC = Vector(-2787, 2357)
 local waypointPossitions = {}
 
 
@@ -54,7 +53,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 	-- TODO add after hero picking is done
-	--ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+	-- ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 end
 
@@ -155,7 +154,6 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:MakeCreeps()							
 		SkirmishGameMode:FixPlayers()
 		GameRules:SpawnNeutralCreeps()
-		GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 		SkirmishGameMode:FixRoshanStatsDrops()
 		setup_stage = 4
 		return 0.1
@@ -163,6 +161,7 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 4 then
 		setup_stage = 5
 		SkirmishGameMode:FixNeutralItems()
+		SkirmishGameMode:InitialRoshanSetup()
 		PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
@@ -174,6 +173,34 @@ function SkirmishGameMode:WaitForSetup()
 	end
 end
 
+function SkirmishGameMode:InitialRoshanSetup()
+	local GameMode = GameRules:GetGameModeEntity()
+
+	if GameState["roshan"]["alive"] then
+		GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+	else
+		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+		hRosh:SetAbsOrigin(Vector(20000,20000))
+		local time_passed = GameState["roshan"]["time_since_death"]
+		local rosh_sudo_respaun = RandomInt(math.max(0, 8*60-time_passed), math.max(0, 11*60-time_passed))
+
+		print("respawn time", rosh_sudo_respaun)
+		GameMode:SetThink( "PutRoshanBack", self, "PutRoshBackTinker", rosh_sudo_respaun)
+	end
+end
+
+function SkirmishGameMode:PutRoshanBack()
+	local GameMode = GameRules:GetGameModeEntity()
+
+	local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+	local hRoshanSpawner = Entities:FindByName( nil, "roshan_location" )
+	print("hRoshanSpawner", hRoshanSpawner)
+	print(hRosh:GetAbsOrigin())
+	FindClearSpaceForUnit(hRosh, hRoshanSpawner:GetAbsOrigin(), true)
+
+	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+	return nil
+end
 
 function SkirmishGameMode:HasUnloadedPlayer()
 	print("Checking for unloaded players.")
@@ -615,7 +642,7 @@ end
 
 
 function SkirmishGameMode:AddThinkers()
-	local GameMode = GameRules:GetGameModeEntity() 
+	local GameMode = GameRules:GetGameModeEntity()
 	-- Add thinkers
 	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
 	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())

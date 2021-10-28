@@ -804,6 +804,8 @@ local GameState = {
         },
     roshan = {
       deaths = 0,
+      alive = true,
+      time_since_death = 0,
     },
     neutrals = {
           good = { "item_chipped_vest", "item_arcane_ring", "item_ocean_heart", "item_misericorde", "item_vambrace"
