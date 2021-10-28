@@ -9,7 +9,9 @@ ROSHAN_SPAWN_LOC = Vector(-2787, 2357)
 local waypointPossitions = {}
 
 
+require("libraries/adv_log")
 require("string")
+
 local waypoints = require("waypoints")
 require("neutral_items")
 
@@ -34,6 +36,32 @@ end
 
 function SkirmishGameMode:InitGameMode()
 	print( "InitGameMode." )
+	local GameMode = GameRules:GetGameModeEntity() 
+	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
+	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
+	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
+	--GameMode:SetThink( "SecThinker", self, "SecThinkerGlobalThink", 1)
+	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
+	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
+
+	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
+	SkirmishGameMode:init()
+end
+
+
+function SkirmishGameMode:DamageFilterRoshan(keys) 
+	if keys.entindex_attacker_const and keys.entindex_victim_const then
+		attacker = EntIndexToHScript(keys.entindex_attacker_const)
+		victim = EntIndexToHScript(keys.entindex_victim_const)
+		if victim:GetName() == "npc_dota_roshan" then
+			SkirmishGameMode:FixRoshanHealth()
+		end
+	else
+		return true
+	end
+	return true
+end
+
 
 	if IsInToolsMode() then
 		print("game setup init in tool mode")
@@ -42,6 +70,7 @@ function SkirmishGameMode:InitGameMode()
 		print("game setup init in release mode")
 		GameRules:SetHeroSelectionTime(60)
 	end
+
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
 	GameRules:SetStrategyTime(5)
@@ -51,6 +80,85 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+end
+
+
+outposts_stage = 0
+outpost = nil
+outpost_capture_bots = {}
+
+function SkirmishGameMode:SecThinker()
+	local gameTime = GameRules:GetDOTATime(false, false)
+	
+	if gameTime > 1 and outposts_stage == 0 then
+		print("###############")
+		print("outpost capture")
+		outposts_stage = 1
+		local outpost_top = Entities:FindByName(nil, "npc_dota_watch_tower_top")
+		outpost = outpost_top
+		print(outpost_top)
+		print(outpost_top:GetAbsOrigin())
+
+		local hHero = CreateUnitByName("npc_dota_hero_wisp", outpost_top:GetAbsOrigin(), true, nil, nil, DOTA_TEAM_GOODGUYS)
+		table.insert(outpost_capture_bots, hHero)
+		outpost_capture_bot = hHero
+		print(hHero)
+		return 3
+	end
+	if outposts_stage == 1 then
+		outposts_stage = 2
+		print("###############")
+		print("outpost capture 2")
+		print(outpost)
+		print(outpost_capture_bot)
+		print(ability)
+
+		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
+			local ability = outpost_capture_bot:FindAbilityByName( "ability_capture" )
+			ExecuteOrderFromTable( {
+				UnitIndex = outpost_capture_bot:entindex(),
+				OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
+				AbilityIndex = ability:entindex(),
+				TargetIndex = outpost:entindex()
+			} )
+		end
+		return 10
+	end
+	if outposts_stage == 2 then
+		for _, outpost_capture_bot in pairs(outpost_capture_bots) do
+			outpost_capture_bot:ForceKill(false)
+		end	
+	end
+	return 1
+end
+
+
+function DOES_NOT_WORK()
+	-- outpost
+	--DOTA_UNIT_ORDER_ATTACK_TARGET, 4 
+	local entityIndex = hHero:GetEntityIndex()
+	local newOrder = {
+		UnitIndex = entityIndex, 
+		OrderType = DOTA_UNIT_ORDER_ATTACK_MOVE,
+		TargetIndex = outpost_top:entindex(),
+	}
+	--Position = [-799.999939 4159.999512 256.000000
+	ExecuteOrderFromTable(newOrder)
+	--hHero:SetForceAttackTarget(outpost_top)
+	--hHero:SetAttacking(outpost_top)
+	--hHero:PerformAttack(outpost_top, true, true, true, true, true, true, true)
+	outpost_capture_bot:SetForceAttackTarget(outpost)
+	outpost_capture_bot:SetAttacking(outpost)
+	outpost_capture_bot:PerformAttack(outpost, true, true, true, true, true, true, true)
+
+	local entityIndex = outpost_capture_bot:GetEntityIndex()
+	local newOrder = {
+		UnitIndex = entityIndex, 
+		OrderType = DOTA_UNIT_ORDER_MOVE_TO_POSITION,
+		Position = Vector(0, 0),
+	}
+	--Position = [-799.999939 4159.999512 256.000000]
+	--ExecuteOrderFromTable(newOrder)
 end
 
 
@@ -101,12 +209,12 @@ function getNextWaveTimeDiff()
 	return 30-offset
 end
 
-
-function SkirmishGameMode:SetGliphCooldowns()
-	print("SetGliphOneTimeThinker", time)
+function SkirmishGameMode:SetGliphOneTimeThinker()
+--	print("SetGliphOneTimeThinker", time)
 	local time = GameRules:GetDOTATime(false, false)
-	if time>5 then
-		-- TODO get real glyph cooldowns
+
+	if time > 5 then
+		print("SetGliphOneTimeThinker")
 		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
 		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
 		return nil
@@ -134,6 +242,7 @@ function SkirmishGameMode:WaitForSetup()
 			setup_stage = 2
 			return 0.001
 		end
+--	print("SkirmishGameMode:OnThink "..GameRules:State_Get())
 
 	elseif setup_stage == 2 then
 		SkirmishGameMode:FixUpgrades();
@@ -300,8 +409,13 @@ end
 
 
 function SkirmishGameMode:FixWards()
-	print("fixing buildlings")
+	print("fixing wards")
 
+	if not GameState["wards"] then
+		print("Wards table is nil!")
+		return
+	end
+	
 	for _, ward in pairs(GameState["wards"]) do
 		-- npc_dota_observer_wards
 		-- npc_dota_sentry_wards
@@ -550,9 +664,9 @@ function SkirmishGameMode:FixRoshanStatsDrops()
 
 		return 0.1
 	end
+
 	return 0.1
 end
-
 
 function SkirmishGameMode:FixRoshanHealth() 
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
@@ -584,14 +698,41 @@ function SkirmishGameMode:FixRoshanHealth()
 	end
 end
 
+function SkirmishGameMode:init()
+	if IsInToolsMode() then
+		print("game setup init in tool mode")
+		GameRules:SetHeroSelectionTime(30)
+	else --release build
+		print("game setup init in release mode")
+		GameRules:SetHeroSelectionTime(60)
+	end
+
+	GameRules:EnableCustomGameSetupAutoLaunch(true)
+	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
+	GameRules:SetStrategyTime(0)
+	GameRules:SetPreGameTime(0)
+	GameRules:SetShowcaseTime(0)
+	GameRules:SetPostGameTime(30)	
+	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
+	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
+	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
+
+	--GameRules:SetCustomGameDifficulty(0)
+	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+end
   
 
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
+
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 		print("randoming for all unselected players")
-		
+		--SkirmishGameMode:RandomForNoHeroSelected()
+
+		print("reassigning teams for players")
 		SkirmishGameMode:FixTeams()
+
+		print("Adding bots")
 		SkirmishGameMode:AddBots()
 		SkirmishGameMode:RandomForNoHeroSelected()
 		SkirmishGameMode:FixTeams()
@@ -678,12 +819,15 @@ function SkirmishGameMode:FixTeams()
 	
 	local playerIDs = {}
 	local maxPlayers = 5
+
 	for _, teamNum in pairs({DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS}) do
-		for i=1, maxPlayers do
+		for i = 1, maxPlayers do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			playerIDs[#playerIDs+1] = playerID
+			playerIDs[#playerIDs + 1] = playerID
 		end
 	end
+
+	print(GameState)
 
 	for _, playerID in pairs(playerIDs) do
 		if PlayerResource:HasSelectedHero(playerID) then
