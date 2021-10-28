@@ -756,13 +756,13 @@ end
 
 
 function SkirmishGameMode:initWaypoints()
-    for _, team in pairs({"goodguys", "badguys"}) do
-        for _, path in pairs(waypoints[team]) do
-            for _, point in pairs(path) do
-                local waypoint = Entities:FindByName ( nil, point )
-                local poz = waypoint:GetAbsOrigin();
+	for _, team in pairs({"goodguys", "badguys"}) do
+		for _, path in pairs(waypoints[team]) do
+			for _, point in pairs(path) do
+				local waypoint = Entities:FindByName ( nil, point )
+				local poz = waypoint:GetAbsOrigin();
 				waypointPossitions[point] = poz				
-            end
-        end
-    end
+			end
+		end
+	end
 end
