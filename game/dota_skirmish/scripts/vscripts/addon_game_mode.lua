@@ -37,11 +37,7 @@ end
 function SkirmishGameMode:InitGameMode()
 	print( "InitGameMode." )
 	local GameMode = GameRules:GetGameModeEntity() 
-	GameMode:SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 1 )
-	GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
-	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
 	--GameMode:SetThink( "SecThinker", self, "SecThinkerGlobalThink", 1)
-	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
 	GameMode:SetThink( "SetGliphOneTimeThinker", self, "SetGliphOneTimeThinkerGlobalThink", 1)
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
@@ -61,27 +57,6 @@ function SkirmishGameMode:DamageFilterRoshan(keys)
 	end
 	return true
 end
-
-
-	if IsInToolsMode() then
-		print("game setup init in tool mode")
-		GameRules:SetHeroSelectionTime(30)
-	else --release build
-		print("game setup init in release mode")
-		GameRules:SetHeroSelectionTime(60)
-	end
-
-	GameRules:EnableCustomGameSetupAutoLaunch(true)
-	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
-	GameRules:SetStrategyTime(5)
-	GameRules:SetPreGameTime(0)
-	GameRules:SetShowcaseTime(10)
-	GameRules:SetPostGameTime(30)	
-	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-end
-
 
 outposts_stage = 0
 outpost = nil
@@ -280,13 +255,13 @@ end
 
 
 function SkirmishGameMode:HasUnloadedPlayer()
-	print("Checking for unloaded players.")
+--	print("Checking for unloaded players.")
 	local unloaded_player = false
 	for hID = 0, 9 do
 		local hHero = HeroList:GetHero(hID)
 		if hHero == nil then
 			unloaded_player = true
-			print("Unloaded player", hID)
+--			print("Unloaded player", hID)
 		end
 	end
 	return unloaded_player
@@ -574,21 +549,6 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	end
 end
 
-
-function SkirmishGameMode:DamageFilterRoshan(keys) 
-	if keys.entindex_attacker_const and keys.entindex_victim_const then
-		attacker = EntIndexToHScript(keys.entindex_attacker_const)
-		victim = EntIndexToHScript(keys.entindex_victim_const)
-		if victim:GetName() == "npc_dota_roshan" then
-			SkirmishGameMode:FixRoshanHealth()
-		end
-	else
-		return true
-	end
-	return true
-end
-
-
 last_secs = 0
 
 function SkirmishGameMode:FixRoshan()
@@ -699,20 +659,12 @@ function SkirmishGameMode:FixRoshanHealth()
 end
 
 function SkirmishGameMode:init()
-	if IsInToolsMode() then
-		print("game setup init in tool mode")
-		GameRules:SetHeroSelectionTime(30)
-	else --release build
-		print("game setup init in release mode")
-		GameRules:SetHeroSelectionTime(60)
-	end
-
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
-	GameRules:SetCustomGameSetupAutoLaunchDelay(0)
-	GameRules:SetStrategyTime(0)
-	GameRules:SetPreGameTime(0)
-	GameRules:SetShowcaseTime(0)
-	GameRules:SetPostGameTime(30)	
+	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
+	GameRules:SetStrategyTime(0.0)
+	GameRules:SetPreGameTime(0.0)
+	GameRules:SetShowcaseTime(0.0)
+	GameRules:SetPostGameTime(30.0)	
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
@@ -804,6 +756,7 @@ function SkirmishGameMode:AddBots()
 			print(hero, " player")
 		end
 	end
+
 	Tutorial:StartTutorialMode();
 	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)
 	GameRules:GetGameModeEntity():SetBotsInLateGame(true)
