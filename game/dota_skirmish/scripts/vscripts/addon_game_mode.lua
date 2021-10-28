@@ -193,16 +193,15 @@ end
 
 function SkirmishGameMode:HasUnloadedPlayer()
 	--	print("Checking for unloaded players.")
-		local unloaded_player = false
-		for hID = 0, 9 do
-			local hHero = HeroList:GetHero(hID)
-			if hHero == nil then
-				unloaded_player = true
+	local unloaded_player = false
+	for hID = 0, 9 do
+		local hHero = HeroList:GetHero(hID)
+		if hHero == nil then
+			unloaded_player = true
 	--			print("Unloaded player", hID)
-			end
 		end
-		return unloaded_player
 	end
+	return unloaded_player
 end
 
 function SkirmishGameMode:FixUpgrades()
