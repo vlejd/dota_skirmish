@@ -46,6 +46,8 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 
+	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+
 	CustomGameEventManager:RegisterListener("request_hero_pick", Dynamic_Wrap(SkirmishGameMode, "RequestHeroPick"))
 end
 
@@ -525,7 +527,6 @@ function SkirmishGameMode:DamageFilterRoshan(keys)
 		return true
 	end
 	return true
-end
 end 
 
 
@@ -612,11 +613,6 @@ function SkirmishGameMode:FixRoshanHealth()
 	end
 end
 
-function SkirmishGameMode:init()
-	--GameRules:SetCustomGameDifficulty(0)
-	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-end
-
 
 function SkirmishGameMode:RequestHeroPick(data)
 	if SkirmishGameMode.player_picked_hero[data.PlayerID] == true then
@@ -688,6 +684,7 @@ function SkirmishGameMode:OnStateChange()
 
 		-- This could also be created by tracking if all player heroes spawned in the game but sometimes it doesn't init for all players because their client did not init base UI's yet
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
+			print("Create Hero UI!")
 			CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", SkirmishGameMode.heroes_picked)
 		end, 3.0)
 	end
