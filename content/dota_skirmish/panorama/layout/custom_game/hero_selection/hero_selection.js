@@ -98,11 +98,8 @@ function ShowPlayerName(panel, playerID) {
 }
 
 // End hero selection
-function ConfirmHeroSelection() {
+function FinishHeroSelection(pls) {
 	$.GetContextPanel().style.opacity = 0;
-
-	// Send the hero selection phase end event to the server
-	GameEvents.SendCustomGameEventToServer("finish_hero_selection", {});
 }
 
 // Update the glyph button's cooldown
@@ -174,4 +171,5 @@ function GenerateHeroUI(data) {
 	GameEvents.Subscribe( "hero_assigned", HeroAssigned );
 	GameEvents.Subscribe( "glyph_cooldown", GlyphUpdated );
 	GameEvents.Subscribe( "scan_cooldown", ScanUpdated );
+	GameEvents.Subscribe( "finish_hero_selection", FinishHeroSelection );
 })();

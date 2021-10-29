@@ -31,10 +31,6 @@
 					<!--Panels are filled dynamically through js-->
 				</Panel>
 			</Panel>
-
-			<Button id="ConfirmHeroSelectionButton" onactivate="ConfirmHeroSelection()" >
-				<Label id="ConfirmHeroSelectionButtonTxt" text="#skirmish_hero_selection_confirm" />
-			</Button>
 		</Panel>
 	</Panel>
 </root>

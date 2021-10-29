@@ -39,7 +39,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
 	GameRules:SetStrategyTime(0.0)
-	GameRules:SetPreGameTime(0.0)
+	GameRules:SetPreGameTime(5.0)
 	GameRules:SetShowcaseTime(0.0)
 	GameRules:SetPostGameTime(30.0)	
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
@@ -615,14 +615,14 @@ end
 
 
 function SkirmishGameMode:RequestHeroPick(data)
+	print(SkirmishGameMode.player_picked_hero)
+	print(SkirmishGameMode.heroes_picked)
+	print(data)
 	if SkirmishGameMode.player_picked_hero[data.PlayerID] == true then
 		DisplayError(data.PlayerID, "#dota_hud_error_player_picked_hero_already")
 		print("Player picked hero already!")
 		return
 	end
-
-	print(data)
-	print(SkirmishGameMode.heroes_picked)
 
 	if SkirmishGameMode.heroes_picked[data.sHeroName] ~= nil then
 		if SkirmishGameMode.heroes_picked[data.sHeroName] == true then
@@ -634,6 +634,28 @@ function SkirmishGameMode:RequestHeroPick(data)
 		end
 	else
 		print("CRITICAL ERROR: No such hero in table:", data.sHeroName)
+	end
+
+	local all_picked = true
+
+	local maxPlayers = 5
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i=1, maxPlayers do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local hPlayer = PlayerResource:GetPlayer(playerID)
+				if hPlayer ~= nil then
+					if SkirmishGameMode.player_picked_hero[playerID] == nil then
+						all_picked = false
+					end
+				end
+			end
+		end
+	end
+
+	if all_picked then
+		GameRules:ForceGameStart()
+		SkirmishGameMode:FinishHeroSelection()
 	end
 end
 
@@ -661,22 +683,7 @@ end
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 
-	if GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
-		print("randoming for all unselected players")
-		--SkirmishGameMode:RandomForNoHeroSelected()
-
-		print("reassigning teams for players")
---		SkirmishGameMode:FixTeams()
-
-		print("Adding bots")
-		SkirmishGameMode:AddBots()
-		SkirmishGameMode:RandomForNoHeroSelected()
---		SkirmishGameMode:FixTeams()
-	end
-
-	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		SkirmishGameMode:AddThinkers()
-
+	if GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		-- add hero names in table
 		for k, v in pairs(GameReader:GetHeroesInfo()) do
 			SkirmishGameMode.heroes_picked[k] = false
@@ -687,7 +694,18 @@ function SkirmishGameMode:OnStateChange()
 			print("Create Hero UI!")
 			CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", SkirmishGameMode.heroes_picked)
 		end, 3.0)
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		SkirmishGameMode:RandomForNoHeroSelected()
 	end
+	
+end
+
+
+function SkirmishGameMode:FinishHeroSelection()
+	print("finishing hero selection")	
+	local pls = {"pls"}
+	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
+	-- if yes, add bots, random for unselected heroes, fix teams, start setup.
 end
 
 
@@ -788,15 +806,30 @@ end
 
 
 function SkirmishGameMode:RandomForNoHeroSelected()
+	print(SkirmishGameMode.player_picked_hero)
 	local maxPlayers = 5
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i=1, maxPlayers do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil then
-				if not PlayerResource:HasSelectedHero(playerID) then
+			if playerID ~= nil and playerID ~= -1 then
+				if SkirmishGameMode.player_picked_hero[playerID] == nil then
 					local hPlayer = PlayerResource:GetPlayer(playerID)
 					if hPlayer ~= nil then
-						hPlayer:MakeRandomHeroSelection()
+						-- get random hero
+						local available_heroes = {}
+						print(SkirmishGameMode.heroes_picked)
+						for hname, picked  in pairs(SkirmishGameMode.heroes_picked) do
+							if not picked then
+								table.insert(available_heroes, hname) 
+							end
+						end
+						print(available_heroes)
+						local hname = available_heroes[RandomInt(1, #available_heroes)]
+						-- assign to this player
+						if hname == nil then
+							print("CRITICAL ERROR: invalid random hero:")
+						end
+						SkirmishGameMode:RequestHeroPick({PlayerID = playerID, sHeroName = hname})
 					end
 				end
 			end
