@@ -1,5 +1,6 @@
 if SkirmishGameMode == nil then
 	SkirmishGameMode = class({})
+	SkirmishGameMode.player_picked_hero = {}
 	SkirmishGameMode.heroes_picked = {}
 end
 
@@ -10,6 +11,7 @@ ROSHAN_SPAWN_LOC = Vector(-2787, 2357)
 local waypointPossitions = {}
 
 
+require("internal/util")
 require("libraries/adv_log")
 require("string")
 require("game_states/game_reader")
@@ -193,12 +195,14 @@ end
 
 function SkirmishGameMode:HasUnloadedPlayer()
 	--	print("Checking for unloaded players.")
+--	print("Checking for unloaded players.")
 	local unloaded_player = false
 	for hID = 0, 9 do
 		local hHero = HeroList:GetHero(hID)
 		if hHero == nil then
 			unloaded_player = true
 	--			print("Unloaded player", hID)
+--			print("Unloaded player", hID)
 		end
 	end
 	return unloaded_player
@@ -522,6 +526,7 @@ function SkirmishGameMode:DamageFilterRoshan(keys)
 	end
 	return true
 end
+end 
 
 
 function SkirmishGameMode:FixRoshanStatsDrops()
@@ -614,9 +619,16 @@ end
 
 
 function SkirmishGameMode:RequestHeroPick(data)
-	print(data)
+	if SkirmishGameMode.player_picked_hero[data.PlayerID] == true then
+		DisplayError(data.PlayerID, "#dota_hud_error_player_picked_hero_already")
+		print("Player picked hero already!")
+		return
+	end
 
-	if SkirmishGameMode.heroes_picked[data.sHeroName] then
+	print(data)
+	print(SkirmishGameMode.heroes_picked)
+
+	if SkirmishGameMode.heroes_picked[data.sHeroName] ~= nil then
 		if SkirmishGameMode.heroes_picked[data.sHeroName] == true then
 			print("Hero picked already:", data.sHeroName)
 			return false
@@ -631,17 +643,21 @@ end
 
 
 function SkirmishGameMode:ConfirmHeroSelection(data)
+	SkirmishGameMode.player_picked_hero[data.PlayerID] = true
+	SkirmishGameMode.heroes_picked[data.sHeroName] = true
 	CustomGameEventManager:Send_ServerToAllClients("hero_assigned", data)
 
-	PrecacheUnitByNameAsync(data.sHeroName, function()
-		local wisp = PlayerResource:GetSelectedHeroEntity(data.PlayerID)
-		local new_hero = PlayerResource:ReplaceHeroWith(data.PlayerID, data.sHeroName, 0, 0)
+	local hero_name = "npc_dota_hero_"..data.sHeroName
 
-		Timers:CreateTimer(1.0, function()
+	PrecacheUnitByNameAsync(hero_name, function()
+		local wisp = PlayerResource:GetSelectedHeroEntity(data.PlayerID)
+		local new_hero = PlayerResource:ReplaceHeroWith(data.PlayerID, hero_name, 0, 0)
+
+		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 			if wisp then
 				UTIL_Remove(wisp)
 			end
-		end)
+		end, 1.0)
 	end)
 end
 
@@ -669,6 +685,11 @@ function SkirmishGameMode:OnStateChange()
 		for k, v in pairs(GameReader:GetHeroesInfo()) do
 			SkirmishGameMode.heroes_picked[k] = false
 		end
+
+		-- This could also be created by tracking if all player heroes spawned in the game but sometimes it doesn't init for all players because their client did not init base UI's yet
+		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
+			CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", SkirmishGameMode.heroes_picked)
+		end, 3.0)
 	end
 end
 
