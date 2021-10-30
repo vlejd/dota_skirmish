@@ -60,7 +60,7 @@ function SkirmishGameMode:AgroFixer()
 	-- Spawn enemy creeps for a moment on every wave spawn to fix their agro behavior
 	print("AgroFixer")
 	if creeps_to_kill == nil then
-
+		GameRules:SpawnAndReleaseCreeps()
 		creeps_to_kill = {}
 		for _, lane in pairs({"bot", "mid", "top"}) do
 			for _, team in pairs({"good", "bad"}) do
@@ -188,6 +188,9 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = 5
 		SkirmishGameMode:FixNeutralItems()
 		SkirmishGameMode:AddThinkers()
+		GameRules:ResetGameTime()
+		GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
+		GameRules:SetTimeOfDay(140)
 		PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
@@ -365,7 +368,7 @@ function SkirmishGameMode:MakeCreeps()
 		local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
 		local waypoint = Entities:FindByName ( nil, waypointName )
 		hCreep:SetInitialGoalEntity(waypoint)
-		hCreep:SetMustReachEachGoalEntity(true)	
+		hCreep:SetMustReachEachGoalEntity(true)
 	end
 end
 
