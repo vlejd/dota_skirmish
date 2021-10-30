@@ -141,8 +141,8 @@ function GenerateHeroUI(data) {
 	for (var hero in data) {
 		var hero_name = "npc_dota_hero_" + hero;
 		var parent = $.GetContextPanel().FindChildTraverse("HeroSelectionRow1");
-
-		if (index >= 5)
+	
+		if (data[hero] == 3)
 			parent = $.GetContextPanel().FindChildTraverse("HeroSelectionRow2");
 
 		var hero_button = $.CreatePanel("Panel", parent, hero);

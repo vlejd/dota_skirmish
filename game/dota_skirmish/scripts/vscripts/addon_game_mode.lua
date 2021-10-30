@@ -2,6 +2,7 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode = class({})
 	SkirmishGameMode.player_picked_hero = {}
 	SkirmishGameMode.heroes_picked = {}
+	SkirmishGameMode.heroes_replaced = {}
 end
 
 setupDone = false
@@ -39,7 +40,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
 	GameRules:SetStrategyTime(0.0)
-	GameRules:SetPreGameTime(5.0)
+	GameRules:SetPreGameTime(10.0)
 	GameRules:SetShowcaseTime(0.0)
 	GameRules:SetPostGameTime(30.0)	
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
@@ -49,6 +50,10 @@ function SkirmishGameMode:InitGameMode()
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	CustomGameEventManager:RegisterListener("request_hero_pick", Dynamic_Wrap(SkirmishGameMode, "RequestHeroPick"))
+	for team = 0, (DOTA_TEAM_COUNT-1) do
+		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
+	end
+
 end
 
 creeps_to_kill = nil
@@ -655,7 +660,6 @@ function SkirmishGameMode:RequestHeroPick(data)
 
 	if all_picked then
 		GameRules:ForceGameStart()
-		SkirmishGameMode:FinishHeroSelection()
 	end
 end
 
@@ -663,22 +667,32 @@ end
 function SkirmishGameMode:ConfirmHeroSelection(data)
 	SkirmishGameMode.player_picked_hero[data.PlayerID] = true
 	SkirmishGameMode.heroes_picked[data.sHeroName] = true
+
+	PlayerResource:SetCustomTeamAssignment(data.PlayerID, GameReader:GetHeroTeam(data.sHeroName))
 	CustomGameEventManager:Send_ServerToAllClients("hero_assigned", data)
 
 	local hero_name = "npc_dota_hero_"..data.sHeroName
 
 	PrecacheUnitByNameAsync(hero_name, function()
-		local wisp = PlayerResource:GetSelectedHeroEntity(data.PlayerID)
+		local old_hero = PlayerResource:GetSelectedHeroEntity(data.PlayerID)
 		local new_hero = PlayerResource:ReplaceHeroWith(data.PlayerID, hero_name, 0, 0)
-
+		-- TODO, make sure they do not die in some stupid way
+		new_hero:AddNewModifier(new_hero, nil, "modifier_eul_cyclone", {duration = 6})
+		SkirmishGameMode.heroes_replaced[hero_name] = true
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
-			if wisp then
-				UTIL_Remove(wisp)
+			if old_hero then
+				UTIL_Remove(old_hero)
 			end
 		end, 1.0)
 	end)
 end
 
+function tablelength(T)
+	local count = 0
+	for _ in pairs(T) do count = count + 1 end
+	return count
+  end
+  
 
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
@@ -690,27 +704,34 @@ function SkirmishGameMode:OnStateChange()
 		end
 
 		-- This could also be created by tracking if all player heroes spawned in the game but sometimes it doesn't init for all players because their client did not init base UI's yet
+		local heroes = {}
+		for hero, _ in pairs(GameReader:GetHeroesInfo()) do
+			heroes[hero] = GameReader:GetHeroTeam(hero)
+		end
+		
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 			print("Create Hero UI!")
-			CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", SkirmishGameMode.heroes_picked)
+			CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
 		end, 3.0)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		SkirmishGameMode:RandomForNoHeroSelected()
+		SkirmishGameMode:FinishHeroSelection()
 	end
 	
 end
 
 
 function SkirmishGameMode:FinishHeroSelection()
-	print("finishing hero selection")	
+	SkirmishGameMode:RandomForNoHeroSelected()
+	print("finishing hero selection")
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
 	-- if yes, add bots, random for unselected heroes, fix teams, start setup.
+
 end
 
 
 function SkirmishGameMode:AddThinkers()
-	local GameMode = GameRules:GetGameModeEntity() 
+	local GameMode = GameRules:GetGameModeEntity()
 	-- Add thinkers
 	GameMode:SetThink( "CheckWinCondition", self, "CheckWinConditionGlobalThink", 1 )
 	GameMode:SetThink( "AgroFixer", self, "AgroFixerGlobalThink", getNextWaveTimeDiff())
@@ -778,11 +799,7 @@ function SkirmishGameMode:AddBots()
 end
 
 	
-function SkirmishGameMode:FixTeams()
-	for team = 0, (DOTA_TEAM_COUNT-1) do
-		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
-	end
-	
+function SkirmishGameMode:FixTeams()	
 	local playerIDs = {}
 	local maxPlayers = 5
 
