@@ -691,11 +691,12 @@ function SkirmishGameMode:ConfirmHeroSelection(data)
 	PrecacheUnitByNameAsync(hero_name, function()
 		local old_hero = PlayerResource:GetSelectedHeroEntity(data.PlayerID)
 		if old_hero ~= nil then
+			-- TODO, make sure they do not die in some stupid way
+			--new_hero:AddNewModifier(new_hero, nil, "modifier_eul_cyclone", {duration = 6})
+			old_hero:SetAbsOrigin(Vector(-500*data.PlayerID,500*data.PlayerID))
 			PlayerResource:SetCustomTeamAssignment(data.PlayerID, GameReader:GetHeroTeam(data.sHeroName))
 
 			local new_hero = PlayerResource:ReplaceHeroWith(data.PlayerID, hero_name, 0, 0)
-			-- TODO, make sure they do not die in some stupid way
-			--new_hero:AddNewModifier(new_hero, nil, "modifier_eul_cyclone", {duration = 6})
 	
 			SkirmishGameMode.heroes_replaced[hero_name] = true
 			GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
