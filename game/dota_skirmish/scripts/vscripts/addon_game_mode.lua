@@ -151,9 +151,19 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = 101
 		return 0.1
 	elseif setup_stage == 101 then
-		setup_stage = 2
+		setup_stage = 102
 		SkirmishGameMode:FixBotHeroes()
-		--return 0.001
+		return 0.001
+	elseif setup_stage == 102 then
+		if 10 > tablelength(SkirmishGameMode.heroes_replaced) then
+			print("Waiting for unloaded bots")
+			--return nil
+			return 0.1
+		else
+			print("bots loaded")
+			setup_stage = 2
+			return 0.001
+		end
 	elseif setup_stage == 2 then
 		SkirmishGameMode:FixUpgrades();
 		SkirmishGameMode:initWaypoints()
@@ -189,6 +199,18 @@ function SkirmishGameMode:WaitForSetup()
 	end
 end
 
+function SkirmishGameMode:SetGliphCooldowns()
+	local time = GameRules:GetDOTATime(false, false)
+
+	if time > 5 then
+		-- TODO get real glyph cooldowns
+		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
+		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
+		return nil
+	else
+		return 0.5
+	end
+end
 
 function SkirmishGameMode:InitialRoshanSetup()
 	local GameMode = GameRules:GetGameModeEntity()
@@ -706,6 +728,7 @@ function SkirmishGameMode:ConfirmHeroSelection(data)
 			end, 1.0)
 		else
 			local hero = CreateHeroForPlayer(hero_name, PlayerResource:GetPlayer(data.PlayerID))
+			SkirmishGameMode.heroes_replaced[hero_name] = true
 			hero:RespawnHero(false, false)
 		end
 	end)
@@ -739,7 +762,6 @@ function SkirmishGameMode:OnStateChange()
 		end, 3.0)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		SkirmishGameMode:FinishHeroSelection()
-		GameRules:GetGameModeEntity():SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 0.1 )
 	end
 end
 
@@ -749,8 +771,7 @@ function SkirmishGameMode:FinishHeroSelection()
 	print("finishing hero selection")
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
-	-- if yes, add bots, random for unselected heroes, fix teams, start setup.
-
+	GameRules:GetGameModeEntity():SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 0.1 )
 end
 
 
