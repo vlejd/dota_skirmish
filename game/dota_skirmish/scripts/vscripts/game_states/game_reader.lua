@@ -145,6 +145,14 @@ function GameReader:GetRoshanInfo()
 	end
 end
 
+function GameReader:GetRoshanDeaths()
+	if GameState.roshan~=nil and GameState.roshan.deaths~=nil then
+		return GameState.roshan.deaths
+	else
+		print("ERROR: Missing Roshan info.")
+	end
+end
+
 function GameReader:SetRoshanInfo(iAmount)
 	if not GameState.roshan.deaths then
 		print("WARNING: Roshan deaths nil! set to "..iAmount)
