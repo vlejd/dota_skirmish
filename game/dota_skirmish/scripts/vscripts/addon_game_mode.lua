@@ -188,7 +188,6 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = 5
 		SkirmishGameMode:FixNeutralItems()
 		SkirmishGameMode:AddThinkers()
-		GameRules:ResetGameTime()
 		GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		GameRules:SetTimeOfDay(140)
 		PauseGame(true)
