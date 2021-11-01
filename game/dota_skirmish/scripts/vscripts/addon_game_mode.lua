@@ -182,8 +182,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:MakeCreeps()							
 		SkirmishGameMode:FixPlayers()
 		GameRules:SpawnNeutralCreeps()
-		GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
-		SkirmishGameMode:FixRoshanStatsDrops()
+		SkirmishGameMode:InitialRoshanSetup()
 		setup_stage = 4
 		return 0.1
 
@@ -220,13 +219,15 @@ end
 
 function SkirmishGameMode:InitialRoshanSetup()
 	local GameMode = GameRules:GetGameModeEntity()
-	if GameState["roshan"]["alive"] then
+	SkirmishGameMode:FixRoshanStatsDrops()
+
+	if GameReader:GetRoshanInfo()["alive"] then
 		GameMode:SetThink( "FixRoshan", self, "FixRoshanGlobalThink", 1 )
 	else
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
 		hRosh:SetAbsOrigin(Vector(20000,20000))
-		local time_passed = GameState["roshan"]["time_since_death"]
-		local rosh_sudo_respaun = RandomInt(math.max(0, 8*60-time_passed), math.max(0, 11*60-time_passed))
+		local time_passed = GameReader:GetRoshanInfo()["time_since_death"]
+		local rosh_sudo_respaun = RandomInt(math.max(0, (8*60)-time_passed), math.max(0, (11*60)-time_passed))
 		print("respawn time", rosh_sudo_respaun)
 		GameMode:SetThink( "PutRoshanBack", self, "PutRoshBackTinker", rosh_sudo_respaun)
 	end
@@ -552,7 +553,7 @@ function SkirmishGameMode:FixRoshan()
 		else
 			print("roshan just died")
 			isRoshanDead = true
-			GameReader:SetRoshanInfo(GameReader:GetRoshanInfo() + 1)
+			GameReader:SetRoshanInfo(GameReader:GetRoshanInfo()["deaths"] + 1)
 			return 300
 		end
 	else
