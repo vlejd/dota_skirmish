@@ -754,8 +754,10 @@ local GameState = {
                   position = Vector(-1971.2207851409912,-2008.2057781219482,1000),
                 },
         },
-    roshan = {
+    roshan = { -- TODO check this!
       deaths = 2,
+	  alive = true,
+	  time_since_death = nil,
     },
     neutrals = {
           good = { "item_unstable_wand", "item_chipped_vest", "item_trusty_shovel", "item_pogo_stick", "item_essence_ring"

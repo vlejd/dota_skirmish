@@ -898,8 +898,10 @@ local GameState = {
                   position = Vector(3284.279582977295,778.6683712005615,1000),
                 },
         },
-    roshan = {
+    roshan = { -- TODO check this
       deaths = 2,
+	  alive = true,
+      time_since_death = 0,
     },
     neutrals = {
           good = { "item_chipped_vest", "item_arcane_ring", "item_broom_handle", "item_trusty_shovel", "item_unstable_wand", "item_vambrace", "item_dragon_scale", "item_quicksilver_amulet", "item_essence_ring", "item_paladin_sword", "item_ceremonial_robe", "item_black_powder_bag", "item_quickening_charm",  "item_penta_edged_sword", "item_the_leveller", "item_flicker"

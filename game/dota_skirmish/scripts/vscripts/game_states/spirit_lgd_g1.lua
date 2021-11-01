@@ -707,6 +707,8 @@ local GameState = {
       },
   roshan = { -- should be killed at 23:04
     deaths = 1,
+	alive = false,
+	time_since_death = 324,
   },
   neutrals = {
 		good = { "item_trusty_shovel", "item_unstable_wand", "item_ocean_heart", "item_pupils_gift", "item_grove_bow", "item_titan_sliver"
