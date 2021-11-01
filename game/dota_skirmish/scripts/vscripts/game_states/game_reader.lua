@@ -2,7 +2,7 @@ local GameState
 
 if GameReader == nil then
 	GameReader = class({})
-	GameState = require("game_states/spirit_lgd_g5")
+	GameState = require("game_states/spirit_lgd_g4")
 end
 
 function GameReader:GetGameInfo()
@@ -59,7 +59,7 @@ end
 
 function GameReader:GetNeutralItemsInfo()
 	if GameState.neutrals then
-		return GameReader.neutrals
+		return GameState.neutrals
 	else
 		print("ERROR: Missing neutral items info.")
 	end

@@ -44,7 +44,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
-
+	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	CustomGameEventManager:RegisterListener("request_hero_pick", Dynamic_Wrap(SkirmishGameMode, "RequestHeroPick"))
@@ -97,6 +97,9 @@ end
 
 function getNextWaveTimeDiff()
 	local time = GameRules:GetDOTATime(false, false)
+	if time < 0 then
+		return 0 - time
+	end
 	local offset = time%30
 	return 30-offset
 end
@@ -506,6 +509,7 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 
 	for _, item in pairs(heroData["items"] or {}) do
 		if NeutralItems:IsItemNeutral(item) then
+			print("AddNeutralItemToHero", heroData["name"], item)
 			NeutralItems:AddNeutralItemToHero(hHero, item)
 			hHero:AddItemByName(item)
 		else

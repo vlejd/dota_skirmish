@@ -694,6 +694,8 @@ local GameState = {
       },
   roshan = { -- died at 14:43
     deaths = 1,
+	alive = false,
+	time_since_death = 6*30+17,
   },
   neutrals = {
 		good = { "item_possessed_mask", "item_mysterious_hat", "item_ring_of_aquila", "item_nether_shawl"

@@ -131,6 +131,7 @@ function NeutralItems:AddNeutralItemToHero(hHero, item)
         local team = hHero:GetTeam()
         local team_str = GetTeamString(team)
         table.insert(neutral_items_in_game[team_str][item_tier], item)
+		print(neutral_items_in_game)
         return true
     else
         print("Adding invalid neutral item to hero")
@@ -279,7 +280,7 @@ function NeutralItems:OnEntityKilled(event)
                 local rng = RandomInt(1,1000)
                 local item_tier = GetNeutralItemTier(potential_drop)
                 if rng <= drop_probability*1000 then
-                    DeepPrintTable(neutral_items_in_game)
+                    print(neutral_items_in_game)
                     DropNeutralItemAtPositionForHero(potential_drop, victim_poz, hAttacker, item_tier, true)
                     NeutralItems:AddNeutralItemToHero(hAttacker, potential_drop)
                     return
