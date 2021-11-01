@@ -19,17 +19,24 @@
 	</snippets>
 
 	<Panel hittest="false" style="width: 100%; height: 100%;">
-		<Panel hittest="true" id="HeroSelectionContainer">
-			<Label id="HeroSelectionTitle" text="#skirmish_hero_selection" />
+		<!--Hack to make the timer visible-->
+		<Panel hittest="true" style="width: 48%; height: 10%;horizontal-align: right ;background-color: #000000FF;"></Panel>
+		<Panel hittest="true" style="width: 48%; height: 10%;horizontal-align: left ;background-color: #000000FF;"></Panel>
+		<Panel hittest="false" style="width: 100%; height: 96%;vertical-align: bottom;">
+			<Panel hittest="true" id="HeroSelectionContainer">
+				<Label id="HeroSelectionTitle" text="#skirmish_hero_selection" />
+				<Panel id="HeroSelectionPanel">
+					<Panel id="HeroSelectionRow1" class="HeroSelectionRow">
+						<!--Panels are filled dynamically through js-->
+					</Panel>
 
-			<Panel id="HeroSelectionPanel">
-				<Panel id="HeroSelectionRow1" class="HeroSelectionRow">
-					<!--Panels are filled dynamically through js-->
+					<Panel id="HeroSelectionRow2" class="HeroSelectionRow">
+						<!--Panels are filled dynamically through js-->
+					</Panel>
 				</Panel>
-
-				<Panel id="HeroSelectionRow2" class="HeroSelectionRow">
-					<!--Panels are filled dynamically through js-->
-				</Panel>
+			</Panel>
+			<Panel hittest="true" id="LoadingPanel">
+				<Label id="HeroSelectionTitleLoading" text="#loading" />
 			</Panel>
 		</Panel>
 	</Panel>

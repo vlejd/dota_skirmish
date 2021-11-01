@@ -190,6 +190,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:AddThinkers()
 		GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		GameRules:SetTimeOfDay(140)
+		CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
 		PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
@@ -783,7 +784,6 @@ function SkirmishGameMode:FinishHeroSelection()
 	SkirmishGameMode:RandomForNoHeroSelected()
 	print("finishing hero selection")
 	local pls = {"pls"}
-	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
 	GameRules:GetGameModeEntity():SetThink( "WaitForSetup", self, "WaitForSetupGlobalThink", 0.1 )
 end
 

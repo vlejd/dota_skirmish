@@ -23,11 +23,12 @@
 /* Hero selection panel
 =================================================================*/
 #HeroSelectionContainer,
+#LoadingPanel,
 #GameSetupContainer {
-	width: 900px;
-	height: 420px;
+	width: 100%;
+	height: 100%;
 	align: center center;
-	background-color: #000000da;
+	background-color: #000000FF;
 	border-radius: 5px;
 	visibility: visible;
 	flow-children: down;
@@ -40,7 +41,8 @@
 }
 
 #TimeSelectionTitle,
-#HeroSelectionTitle
+#HeroSelectionTitle,
+#HeroSelectionTitleLoading
 {
 	horizontal-align: center;
 	margin-top: 5%;
