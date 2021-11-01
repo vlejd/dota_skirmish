@@ -717,7 +717,18 @@ function SkirmishGameMode:ConfirmHeroSelection(data)
 		if old_hero ~= nil then
 			-- TODO, make sure they do not die in some stupid way
 			--new_hero:AddNewModifier(new_hero, nil, "modifier_eul_cyclone", {duration = 6})
-			old_hero:SetAbsOrigin(Vector(-500*data.PlayerID,500*data.PlayerID))
+
+			local spawner_name = ""
+			if GameReader:GetHeroTeam(data.sHeroName) == 2 then
+				spawner_name = "info_player_start_goodguys"
+			else
+				spawner_name = "info_player_start_badguys"
+			end
+			print(spawner_name)
+			local spawner = Entities:FindByClassname( nil, spawner_name )
+			-- FindClearSpaceForUnit
+			old_hero:SetAbsOrigin(spawner:GetAbsOrigin())
+
 			PlayerResource:SetCustomTeamAssignment(data.PlayerID, GameReader:GetHeroTeam(data.sHeroName))
 
 			local new_hero = PlayerResource:ReplaceHeroWith(data.PlayerID, hero_name, 0, 0)
