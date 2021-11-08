@@ -130,7 +130,8 @@ function GameReader:GetHeroInfo(sHeroName)
 end
 
 function GameReader:GetHeroTeam(sHeroName)
-	if GameReader:GetHeroesInfo() and GameReader:GetHeroesInfo()[sHeroName] and GameReader:GetHeroesInfo()[sHeroName]["team"] then
+	if GameReader:GetHeroesInfo() and GameReader:GetHeroesInfo()[sHeroName] and
+		GameReader:GetHeroesInfo()[sHeroName]["team"] then
 		return GameReader:GetHeroesInfo()[sHeroName]["team"]
 	else
 		print("ERROR: Missing team for hero:", sHeroName)
@@ -146,7 +147,7 @@ function GameReader:GetRoshanInfo()
 end
 
 function GameReader:GetRoshanDeaths()
-	if GameState.roshan~=nil and GameState.roshan.deaths~=nil then
+	if GameState.roshan ~= nil and GameState.roshan.deaths ~= nil then
 		return GameState.roshan.deaths
 	else
 		print("ERROR: Missing Roshan info.")
@@ -155,7 +156,7 @@ end
 
 function GameReader:SetRoshanInfo(iAmount)
 	if not GameState.roshan.deaths then
-		print("WARNING: Roshan deaths nil! set to "..iAmount)
+		print("WARNING: Roshan deaths nil! set to " .. iAmount)
 	end
 
 	GameState.roshan.deaths = iAmount
