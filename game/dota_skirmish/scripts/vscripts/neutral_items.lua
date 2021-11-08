@@ -6,6 +6,8 @@
 -- if time for neutral item, and conditions are met, 
 -- GetPotentialNeutralItemDrop and drop it. 
 
+require("internal/util")
+
 
 if NeutralItems == nil then
 	NeutralItems = class({})
@@ -208,16 +210,6 @@ function NeutralItems:SetTime(time)
         end
         table.insert(DROP_TIMES, real_time)
     end
-end
-
-
-function sqr(a)
-	return a*a;
-end
-
-
-function dist2(a,b)
-	return sqr(a.x-b.x) + sqr(a.y-b.y);
 end
 
 

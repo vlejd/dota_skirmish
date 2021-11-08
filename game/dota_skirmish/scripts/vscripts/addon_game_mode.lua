@@ -305,16 +305,6 @@ function SkirmishGameMode:FixUpgrades()
 end
 
 
-function sqr(a)
-	return a*a;
-end
-
-
-function dist2(a,b)
-	return sqr(a.x-b.x) + sqr(a.y-b.y);
-end
-
-
 function getClosestWaypoint(cPoz, team)
 	local teamName = ""
 	if team == 2 then
@@ -753,12 +743,6 @@ function SkirmishGameMode:ConfirmHeroSelection(data)
 	end)
 end
 
-function tablelength(T)
-	local count = 0
-	for _ in pairs(T) do count = count + 1 end
-	return count
-  end
-  
 
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
