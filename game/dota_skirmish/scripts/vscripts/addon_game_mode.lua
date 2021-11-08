@@ -670,7 +670,7 @@ function SkirmishGameMode:OnStateChange()
 
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 			print("Create Hero UI!")
-			HeroSelection:StartHeroSelection()
+			HeroSelection:StartHeroSelection(heroes)
 		end, 3.0)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		SkirmishGameMode:FinishHeroSelection()

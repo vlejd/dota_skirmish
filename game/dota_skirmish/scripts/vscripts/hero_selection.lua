@@ -5,7 +5,7 @@ if HeroSelection == nil then
 	HeroSelection.heroes_replaced = {}
 end
 
-function HeroSelection:StartHeroSelection()
+function HeroSelection:StartHeroSelection(heroes)
 	CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
 end
 
