@@ -14,7 +14,6 @@ local waypoints = require("waypoints")
 require("neutral_items")
 require("hero_selection")
 
-
 function Precache(context)
 	PrecacheResource("model", "*.vmdl", context)
 	PrecacheResource("soundfile", "*.vsndevts", context)
@@ -42,7 +41,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
-	CustomGameEventManager:RegisterListener("request_hero_pick", Dynamic_Wrap(HeroSelection, "RequestHeroPick"))
+	HeroSelection:ListenToHeroPick()
 	for team = 0, (DOTA_TEAM_COUNT - 1) do
 		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
 	end
@@ -57,9 +56,9 @@ function SkirmishGameMode:AgroFixer()
 	print("AgroFixer")
 	if creeps_to_kill == nil then
 		local time = GameRules:GetDOTATime(false, false)
-		if time < last_min*30 then 
+		if time < last_min * 30 then
 			print("No time yet", time)
-			return 1 
+			return 1
 		end
 		print("Time to spawn creeps")
 
@@ -104,7 +103,7 @@ function getNextWaveTimeDiff()
 		ret = 0 - time
 	else
 		local offset = time % 30
-		ret =  1 + 30 - offset
+		ret = 1 + 30 - offset
 	end
 	print(ret)
 	return ret
@@ -196,7 +195,8 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:AddThinkers()
 		GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		GameRules:SetTimeOfDay(140)
-		CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
+		HeroSelection:FinishHeroSelection()
+
 		PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
@@ -653,7 +653,6 @@ function SkirmishGameMode:FixRoshanHealth()
 	end
 end
 
-
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 
@@ -671,21 +670,18 @@ function SkirmishGameMode:OnStateChange()
 
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 			print("Create Hero UI!")
-			CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
+			HeroSelection:StartHeroSelection()
 		end, 3.0)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		SkirmishGameMode:FinishHeroSelection()
 	end
 end
 
-
 function SkirmishGameMode:FinishHeroSelection()
 	HeroSelection:RandomForNoHeroSelected()
 	print("finishing hero selection")
-	local pls = {"pls"}
 	GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 end
-
 
 function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
@@ -768,7 +764,6 @@ function SkirmishGameMode:FixBotHeroes()
 		end
 	end
 end
-
 
 function SkirmishGameMode:initWaypoints()
 	for _, team in pairs({"goodguys", "badguys"}) do

@@ -5,6 +5,19 @@ if HeroSelection == nil then
 	HeroSelection.heroes_replaced = {}
 end
 
+function HeroSelection:StartHeroSelection()
+	CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
+end
+
+function HeroSelection:ListenToHeroPick()
+	CustomGameEventManager:RegisterListener("request_hero_pick", Dynamic_Wrap(HeroSelection, "RequestHeroPick"))
+end
+
+function HeroSelection:FinishHeroSelection()
+	local pls = {"pls"}
+	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
+end
+
 function HeroSelection:RequestHeroPick(data)
 	print(HeroSelection.player_picked_hero)
 	print(HeroSelection.heroes_picked)
@@ -49,7 +62,6 @@ function HeroSelection:RequestHeroPick(data)
 	end
 end
 
-
 function HeroSelection:ConfirmHeroSelection(data)
 	HeroSelection.player_picked_hero[data.PlayerID] = true
 	HeroSelection.heroes_picked[data.sHeroName] = true
@@ -91,7 +103,6 @@ function HeroSelection:ConfirmHeroSelection(data)
 		end
 	end)
 end
-
 
 function HeroSelection:RandomForNoHeroSelected()
 	print(HeroSelection.player_picked_hero)
