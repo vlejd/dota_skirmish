@@ -1,5 +1,7 @@
 require("internal/globals")
 require("internal/util")
+require("game_states/game_reader")
+
 
 if ScenarioSelection == nil then
 	ScenarioSelection = class({})
@@ -10,22 +12,27 @@ if ScenarioSelection == nil then
 		spirit_lgd_g1 = {
 			name = "Spirit vs LGD game 1",
 			description = "",
+			fname = "game_states/spirit_lgd_g1",
 		},
 		spirit_lgd_g2 = {
 			name = "Spirit vs LGD game 2",
 			description = "b",
+			fname = "game_states/spirit_lgd_g2",
 		},
 		spirit_lgd_g3 = {
 			name = "Spirit vs LGD game 3",
 			description = "b",
+			fname = "game_states/spirit_lgd_g3",
 		},
 		spirit_lgd_g4 = {
 			name = "Spirit vs LGD game 4",
 			description = "b",
+			fname = "game_states/spirit_lgd_g4",
 		},
 		spirit_lgd_g5 = {
 			name = "Spirit vs LGD game 5",
 			description = "b",
+			fname = "game_states/spirit_lgd_g5",
 		},
 	}
 end
@@ -33,7 +40,7 @@ end
 function ScenarioSelection:StartScenarioSelection(fun)
 	CustomGameEventManager:Send_ServerToAllClients("generate_scenario_ui", ScenarioSelection.scenarios)
 	GameRules:GetGameModeEntity():SetThink("FinishScenarioSelection", self, "FinishScenarioSelection", SCENARIO_SELECTION_LENGTH)
-	ScenarioSelection.onFinish = fun()
+	ScenarioSelection.onFinish = fun
 end
 
 function ScenarioSelection:ListenToScenarioPick()
@@ -60,10 +67,12 @@ function ScenarioSelection:FinishScenarioSelection()
 	print("viable scenarios", scenraio_with_max)
 	local selected_scenario = getRandomValueFromArray(scenraio_with_max)
 	print(selected_scenario)
-
+	
+	local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
+	GameReader:Init(scenario_fname)
 	local pls = {"pls"}
-	CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", pls)
 	ScenarioSelection.onFinish()
+	CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", pls)
 end
 
 function ScenarioSelection:RequestScenarioPick(data)

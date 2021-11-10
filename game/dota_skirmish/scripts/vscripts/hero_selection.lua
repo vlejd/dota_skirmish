@@ -1,3 +1,5 @@
+require("game_states/game_reader")
+
 if HeroSelection == nil then
 	HeroSelection = class({})
 	HeroSelection.player_picked_hero = {}
@@ -5,7 +7,17 @@ if HeroSelection == nil then
 	HeroSelection.heroes_replaced = {}
 end
 
-function HeroSelection:StartHeroSelection(heroes)
+function HeroSelection:StartHeroSelection()
+	for k, v in pairs(GameReader:GetHeroesInfo()) do
+		HeroSelection.heroes_picked[k] = false
+	end
+
+	-- This could also be created by tracking if all player heroes spawned in the game but sometimes it doesn't init for all players because their client did not init base UI's yet
+	heroes = {}
+	for hero, _ in pairs(GameReader:GetHeroesInfo()) do
+		heroes[hero] = GameReader:GetHeroTeam(hero)
+	end
+
 	CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
 end
 

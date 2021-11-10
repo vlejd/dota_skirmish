@@ -2,7 +2,11 @@ local GameState
 
 if GameReader == nil then
 	GameReader = class({})
-	GameState = require("game_states/spirit_lgd_g4")
+end
+
+
+function GameReader:Init(fname)
+	GameState = require(fname)
 end
 
 function GameReader:GetGameInfo()

@@ -661,26 +661,7 @@ function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
-		-- add hero names in table
-		for k, v in pairs(GameReader:GetHeroesInfo()) do
-			HeroSelection.heroes_picked[k] = false
-		end
 
-		-- This could also be created by tracking if all player heroes spawned in the game but sometimes it doesn't init for all players because their client did not init base UI's yet
-		SkirmishGameMode.heroes = {}
-		for hero, _ in pairs(GameReader:GetHeroesInfo()) do
-			SkirmishGameMode.heroes[hero] = GameReader:GetHeroTeam(hero)
-		end
-
-		-- TODO fix me 
-
-		if false then 
-			SkirmishGameMode:TriggerStartHeroSelection()
-		end
-
-
-
-		-- TODO proper scenario selection flow
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 			print("Create Scenario UI!")
 			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection)
@@ -695,7 +676,7 @@ end
 function TriggerStartHeroSelection()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
-		HeroSelection:StartHeroSelection(SkirmishGameMode.heroes)
+		HeroSelection:StartHeroSelection()
 	end, 3.0)
 end
 
