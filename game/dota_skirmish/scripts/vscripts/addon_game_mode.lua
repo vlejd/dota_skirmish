@@ -13,6 +13,8 @@ require("game_states/game_reader")
 local waypoints = require("waypoints")
 require("neutral_items")
 require("hero_selection")
+require("scenario_selection")
+require("internal/globals")
 
 function Precache(context)
 	PrecacheResource("model", "*.vmdl", context)
@@ -32,7 +34,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
 	GameRules:SetStrategyTime(0.0)
-	GameRules:SetPreGameTime(60.0)
+	GameRules:SetPreGameTime(PREGAME_LENGTH)
 	GameRules:SetShowcaseTime(0.0)
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
@@ -42,6 +44,8 @@ function SkirmishGameMode:InitGameMode()
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	HeroSelection:ListenToHeroPick()
+	ScenarioSelection:ListenToScenarioPick()
+
 	for team = 0, (DOTA_TEAM_COUNT - 1) do
 		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
 	end
@@ -663,18 +667,36 @@ function SkirmishGameMode:OnStateChange()
 		end
 
 		-- This could also be created by tracking if all player heroes spawned in the game but sometimes it doesn't init for all players because their client did not init base UI's yet
-		local heroes = {}
+		SkirmishGameMode.heroes = {}
 		for hero, _ in pairs(GameReader:GetHeroesInfo()) do
-			heroes[hero] = GameReader:GetHeroTeam(hero)
+			SkirmishGameMode.heroes[hero] = GameReader:GetHeroTeam(hero)
 		end
 
+		-- TODO fix me 
+
+		if false then 
+			SkirmishGameMode:TriggerStartHeroSelection()
+		end
+
+
+
+		-- TODO proper scenario selection flow
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
-			print("Create Hero UI!")
-			HeroSelection:StartHeroSelection(heroes)
+			print("Create Scenario UI!")
+			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection)
 		end, 3.0)
+
+
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 		SkirmishGameMode:FinishHeroSelection()
 	end
+end
+
+function TriggerStartHeroSelection()
+	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
+		print("Create Hero UI!")
+		HeroSelection:StartHeroSelection(SkirmishGameMode.heroes)
+	end, 3.0)
 end
 
 function SkirmishGameMode:FinishHeroSelection()
@@ -746,6 +768,7 @@ function SkirmishGameMode:FixBotHeroes()
 							end
 
 						end
+						-- TODO getRandomValueFromArray
 						print(unpicked_heros)
 						local hname = unpicked_heros[RandomInt(1, #unpicked_heros)]
 						-- assign to this player

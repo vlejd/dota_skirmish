@@ -168,6 +168,65 @@ function GenerateHeroUI(data) {
 	}
 }
 
+// Scenario selection
+function RequestScenarioPick(scenario) {
+	$.Msg("RequestScenarioPick");
+	$.Msg(scenario);
+	GameEvents.SendCustomGameEventToServer("request_scenario_pick", {scenario: scenario});
+}
+
+function GenerateScenarioUI(data) {
+	$.Msg("GenerateScenarioUI");
+
+	// Generate hero buttons
+	for (var scenario in data) {
+		$.Msg(scenario);
+		$.Msg(data[scenario]);
+
+		var parent = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
+	
+		var scenario_button = $.CreatePanel("Panel", parent, scenario);
+		scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
+
+		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+		
+		label.text = $.Localize(scenario);
+
+		(function (scenario) {
+			scenario_button.SetPanelEvent("onactivate", function () {
+				RequestScenarioPick(scenario);
+			})
+		})(scenario);
+
+	}
+}
+
+function ScenarioAssigned(data) {
+	$.Msg("ScenarioAssigned");
+	$.Msg(data);
+
+	var panel = $("#ScenarioSelectionContainer").FindChildTraverse(data.scenario);
+
+//	$.Msg(panel);
+	if (panel) {
+		var label = panel.FindChildrenWithClassTraverse("ScenarioSelectionLabelPlayer")[0];
+
+		if (label)
+		AddPlayerName(label, data.PlayerID);
+	}
+}
+
+function AddPlayerName(panel, playerID) {
+	$.Msg(playerID);
+	if (panel.text == "") {
+		panel.text = Players.GetPlayerName(playerID);
+	} else {
+		panel.text = panel.text + " | "+  Players.GetPlayerName(playerID);
+	}  
+}
+
+// Scenario selection end
+
 (function () {
 	//Subscribe to events
 	GameEvents.Subscribe( "generate_hero_ui", GenerateHeroUI );
@@ -176,4 +235,8 @@ function GenerateHeroUI(data) {
 	GameEvents.Subscribe( "glyph_cooldown", GlyphUpdated );
 	GameEvents.Subscribe( "scan_cooldown", ScanUpdated );
 	GameEvents.Subscribe( "finish_hero_selection", FinishHeroSelection );
+	//Scenario selection 
+	GameEvents.Subscribe( "generate_scenario_ui", GenerateScenarioUI );
+	GameEvents.Subscribe( "vote_received", ScenarioAssigned );
+	
 })();

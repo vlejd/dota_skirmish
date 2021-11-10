@@ -22,3 +22,8 @@ end
 function dist2(a, b)
 	return sqr(a.x - b.x) + sqr(a.y - b.y);
 end
+
+function getRandomValueFromArray(myArray)
+	local val = myArray[RandomInt(1, #myArray)]
+	return val
+end
