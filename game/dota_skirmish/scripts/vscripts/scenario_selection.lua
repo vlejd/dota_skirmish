@@ -10,27 +10,27 @@ if ScenarioSelection == nil then
 	ScenarioSelection.finished = false
 	ScenarioSelection.scenarios = {
 		spirit_lgd_g1 = {
-			name = "Spirit vs LGD game 1",
+			name = "game 1",
 			description = "",
 			fname = "game_states/spirit_lgd_g1",
 		},
 		spirit_lgd_g2 = {
-			name = "Spirit vs LGD game 2",
+			name = "game 2",
 			description = "b",
 			fname = "game_states/spirit_lgd_g2",
 		},
 		spirit_lgd_g3 = {
-			name = "Spirit vs LGD game 3",
+			name = "game 3",
 			description = "b",
 			fname = "game_states/spirit_lgd_g3",
 		},
 		spirit_lgd_g4 = {
-			name = "Spirit vs LGD game 4",
+			name = "game 4",
 			description = "b",
 			fname = "game_states/spirit_lgd_g4",
 		},
 		spirit_lgd_g5 = {
-			name = "Spirit vs LGD game 5",
+			name = "game 5",
 			description = "b",
 			fname = "game_states/spirit_lgd_g5",
 		},
@@ -51,8 +51,11 @@ function ScenarioSelection:FinishScenarioSelection()
 	print("finish")
 	ScenarioSelection.finished = true
 
-	local max_num = -1
+	local max_num = 0
 	local scenraio_with_max = {}
+	for scenario, _ in pairs(ScenarioSelection.scenarios) do
+		table.insert(scenraio_with_max, scenario)
+	end
 
 	for scenario, players in pairs(ScenarioSelection.scenarios_picked) do
 		local num_players = tablelength(players)

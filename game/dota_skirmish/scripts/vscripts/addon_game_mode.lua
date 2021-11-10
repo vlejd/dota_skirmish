@@ -677,7 +677,7 @@ function TriggerStartHeroSelection()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
 		HeroSelection:StartHeroSelection()
-	end, 3.0)
+	end, 0.01)
 end
 
 function SkirmishGameMode:FinishHeroSelection()

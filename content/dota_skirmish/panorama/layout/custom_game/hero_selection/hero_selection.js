@@ -179,7 +179,13 @@ function GenerateScenarioUI(data) {
 	$.Msg("GenerateScenarioUI");
 
 	// Generate hero buttons
-	for (var scenario in data) {
+	var sorted = [];
+	for(var key in data) {
+		sorted[sorted.length] = key;
+	}
+	sorted.sort()
+	for (var i=0; i<sorted.length; i++) {
+		var scenario = sorted[i];
 		$.Msg(scenario);
 		$.Msg(data[scenario]);
 
@@ -190,7 +196,7 @@ function GenerateScenarioUI(data) {
 
 		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
 		
-		label.text = $.Localize(scenario);
+		label.text = $.Localize(data[scenario]["name"]);
 
 		(function (scenario) {
 			scenario_button.SetPanelEvent("onactivate", function () {
