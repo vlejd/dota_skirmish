@@ -73,9 +73,8 @@ function ScenarioSelection:FinishScenarioSelection()
 	
 	local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
 	GameReader:Init(scenario_fname)
-	local pls = {"pls"}
 	ScenarioSelection.onFinish()
-	CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", pls)
+	CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", ScenarioSelection.scenarios[selected_scenario])
 end
 
 function ScenarioSelection:RequestScenarioPick(data)

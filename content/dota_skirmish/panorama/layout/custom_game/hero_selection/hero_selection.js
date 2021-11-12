@@ -177,6 +177,9 @@ function RequestScenarioPick(scenario) {
 
 function GenerateScenarioUI(data) {
 	$.Msg("GenerateScenarioUI");
+	//$('#HeroSelectionContainerWrapper').style.visibility = 'collapse';
+	// LoadingPanel
+	$('#HeroSelectionTitleLoading').text = "Select Scenario";
 
 	// Generate hero buttons
 	var sorted = [];
@@ -231,6 +234,13 @@ function AddPlayerName(panel, playerID) {
 	}  
 }
 
+function FinishScenratioSelection(data) {
+	$.Msg("FinishScenratioSelection");
+	$.Msg(data);
+	$('#ScenarioSelectionContainer').style.visibility = 'collapse';
+	$('#ScenarioSelectionContainer').style.opacity = 0;	
+	$('#ScenarioDescriptionName').text = data.name;	
+}
 // Scenario selection end
 
 (function () {
@@ -244,5 +254,6 @@ function AddPlayerName(panel, playerID) {
 	//Scenario selection 
 	GameEvents.Subscribe( "generate_scenario_ui", GenerateScenarioUI );
 	GameEvents.Subscribe( "vote_received", ScenarioAssigned );
+	GameEvents.Subscribe( "finish_scenario_selection", FinishScenratioSelection );
 	
 })();

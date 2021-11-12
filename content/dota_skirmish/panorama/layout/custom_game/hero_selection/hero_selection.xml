@@ -30,9 +30,12 @@
 		<!--Hack to make the timer visible-->
 		<Panel hittest="true" style="width: 48%; height: 10%;horizontal-align: right ;background-color: #000000FF;"></Panel>
 		<Panel hittest="true" style="width: 48%; height: 10%;horizontal-align: left ;background-color: #000000FF;"></Panel>
-		<Panel hittest="false" style="width: 100%; height: 96%;vertical-align: bottom;">
+		<Panel hittest="false" id="HeroSelectionContainerWrapper" style="width: 100%; height: 96%;vertical-align: bottom;">
 			<Panel hittest="true" id="HeroSelectionContainer">
 				<Label id="HeroSelectionTitle" text="#skirmish_hero_selection" />
+				<Panel id="ScenarioDescription" style="width: 100%; height: 20%;horizontal-align: center ;background-color: #000000FF;">
+					<Label id="ScenarioDescriptionName" text="" />
+				</Panel>
 				<Panel id="HeroSelectionPanel">
 					<Panel id="HeroSelectionRow1" class="HeroSelectionRow">
 						<!--Panels are filled dynamically through js-->

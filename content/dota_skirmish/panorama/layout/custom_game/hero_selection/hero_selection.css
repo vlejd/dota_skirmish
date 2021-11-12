@@ -42,7 +42,8 @@
 
 #TimeSelectionTitle,
 #HeroSelectionTitle,
-#HeroSelectionTitleLoading
+#HeroSelectionTitleLoading,
+#ScenarioDescriptionName
 {
 	horizontal-align: center;
 	margin-top: 5%;
