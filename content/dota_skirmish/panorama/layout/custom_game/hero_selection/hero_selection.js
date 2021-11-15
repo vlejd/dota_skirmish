@@ -202,6 +202,16 @@ function GenerateScenarioUI(data) {
 		label.text = $.Localize(data[scenario]["name"]);
 
 		(function (scenario) {
+			scenario_button.SetPanelEvent("onmouseover", function () {
+				$.Msg("hover");
+				$.Msg(scenario);
+				$.Msg(data[scenario].img);
+				$('#ScenarioImg').SetImage("file://{resources}/imgs/"+data[scenario].img);
+
+			})
+		})(scenario);
+
+		(function (scenario) {
 			scenario_button.SetPanelEvent("onactivate", function () {
 				RequestScenarioPick(scenario);
 			})
@@ -237,8 +247,8 @@ function AddPlayerName(panel, playerID) {
 function FinishScenratioSelection(data) {
 	$.Msg("FinishScenratioSelection");
 	$.Msg(data);
-	$('#ScenarioSelectionContainer').style.visibility = 'collapse';
-	$('#ScenarioSelectionContainer').style.opacity = 0;	
+	$('#ScenarioSelectionContainerWrapper').style.visibility = 'collapse';
+	$('#ScenarioSelectionContainerWrapper').style.opacity = 0;	
 	$('#ScenarioDescriptionName').text = data.name;	
 }
 // Scenario selection end

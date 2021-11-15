@@ -159,9 +159,18 @@
 
 
 /* Scenario selection */
+#ScenarioSelectionContainerWrapper {
+	horizontal-align: center;
+	flow-children: down;
+}
+
 #ScenarioSelectionContainer {
 	horizontal-align: center;
 	flow-children: right;
+}
+
+#ScenarioImg {
+	margin-bottom: 50px;
 }
 
 
