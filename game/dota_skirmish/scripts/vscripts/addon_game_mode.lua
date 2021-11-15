@@ -1,5 +1,6 @@
 if SkirmishGameMode == nil then
 	SkirmishGameMode = class({})
+	SkirmishGameMode.num_human_players = nil
 end
 
 isRoshanDead = true
@@ -33,9 +34,10 @@ function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
+	GameRules:SetHeroSelectionTime(0.0)
 	GameRules:SetStrategyTime(0.0)
-	GameRules:SetPreGameTime(PREGAME_LENGTH)
 	GameRules:SetShowcaseTime(0.0)
+	GameRules:SetPreGameTime(HERO_SELECTION_LENGTH + SCENARIO_SELECTION_LENGTH)
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
@@ -201,7 +203,7 @@ function SkirmishGameMode:WaitForSetup()
 		GameRules:SetTimeOfDay(140)
 		HeroSelection:FinishHeroSelection()
 
-		PauseGame(true)
+		--PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
 		SkirmishGameMode:SetGliphCooldowns()
@@ -660,11 +662,18 @@ end
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 
-	if GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
+	SkirmishGameMode:SetHumanPlayersCount()
+	if false then
+		print("nope")
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
+		print("strategy")
+
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 
 		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 			print("Create Scenario UI!")
-			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection)
+			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
 		end, 3.0)
 
 
@@ -676,7 +685,7 @@ end
 function TriggerStartHeroSelection()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
-		HeroSelection:StartHeroSelection()
+		HeroSelection:StartHeroSelection(SkirmishGameMode.num_human_players)
 	end, 0.01)
 end
 
@@ -708,22 +717,62 @@ function SkirmishGameMode:CheckWinCondition()
 	end
 end
 
-function SkirmishGameMode:AddBots()
-
-	for hero, hdata in pairs(GameReader:GetHeroesInfo() or {}) do
-		if HeroSelection.heroes_picked[hero] == false then
-			if hdata["team"] == 2 then
-				print(hero, 2, true)
-				Tutorial:AddBot("", "", "", true)
+function SkirmishGameMode:SetHumanPlayersCount()
+	local num_human_players = 0
+	local maxPlayers = 5
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, maxPlayers do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local hPlayer = PlayerResource:GetPlayer(playerID)
+				if hPlayer ~= nil then
+					num_human_players = num_human_players+1
+				end
 			end
-			if hdata["team"] == 3 then
-				print(hero, 3, false)
-				Tutorial:AddBot("", "", "", false)
-			end
-		else
-			print(hero, " player")
 		end
 	end
+	SkirmishGameMode.num_human_players = num_human_players
+	print("SetHumanPlayersCount", SkirmishGameMode.num_human_players)
+end
+
+
+function SkirmishGameMode:AddBots()
+	print("AddBots")
+	local n_good_players = 0;
+	local n_bad_players = 0;
+	local maxPlayers = 5;
+
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, maxPlayers do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local hPlayer = PlayerResource:GetPlayer(playerID)
+				if hPlayer ~= nil then
+					if teamNum == DOTA_TEAM_GOODGUYS then
+						n_good_players = n_good_players + 1
+					else
+						n_bad_players = n_bad_players + 1
+					end
+				end
+			end
+		end
+	end
+
+	if not SkirmishGameMode.num_human_players == n_good_players + n_bad_players then
+		print("CRITICAL ERROR")
+	end
+
+	print(n_good_players, n_bad_players)
+	for i = 1, (5 - n_good_players) do
+		print("good bot")
+		Tutorial:AddBot("", "", "", true)
+	end
+
+	for i = 1, (5 - n_bad_players) do
+		print("good bot")
+		Tutorial:AddBot("", "", "", false)
+	end
+
 
 	Tutorial:StartTutorialMode();
 	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)

@@ -1,13 +1,19 @@
 require("game_states/game_reader")
+require("libraries/adv_log")
 
 if HeroSelection == nil then
 	HeroSelection = class({})
 	HeroSelection.player_picked_hero = {}
 	HeroSelection.heroes_picked = {}
 	HeroSelection.heroes_replaced = {}
+	HeroSelection.n_players = nil
+	HeroSelection.finished = false
 end
 
-function HeroSelection:StartHeroSelection()
+function HeroSelection:StartHeroSelection(n_players)
+	print(n_players)
+
+	HeroSelection.n_players = n_players
 	for k, v in pairs(GameReader:GetHeroesInfo()) do
 		HeroSelection.heroes_picked[k] = false
 	end
@@ -52,24 +58,7 @@ function HeroSelection:RequestHeroPick(data)
 		print("CRITICAL ERROR: No such hero in table:", data.sHeroName)
 	end
 
-	local all_picked = true
-
-	local maxPlayers = 5
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, maxPlayers do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local hPlayer = PlayerResource:GetPlayer(playerID)
-				if hPlayer ~= nil then
-					if HeroSelection.player_picked_hero[playerID] == nil then
-						all_picked = false
-					end
-				end
-			end
-		end
-	end
-
-	if all_picked and GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
+	if HeroSelection.n_players == tablelength(HeroSelection.player_picked_hero) and GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		GameRules:ForceGameStart()
 	end
 end

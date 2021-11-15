@@ -1,6 +1,7 @@
 require("internal/globals")
 require("internal/util")
 require("game_states/game_reader")
+require("libraries/adv_log")
 
 
 if ScenarioSelection == nil then
@@ -8,6 +9,7 @@ if ScenarioSelection == nil then
 	ScenarioSelection.player_picked_scenarios = {}
 	ScenarioSelection.scenarios_picked = {}
 	ScenarioSelection.finished = false
+	ScenarioSelection.n_players = nil
 	ScenarioSelection.scenarios = {
 		spirit_lgd_g1 = {
 			name = "game 1",
@@ -42,7 +44,10 @@ if ScenarioSelection == nil then
 	}
 end
 
-function ScenarioSelection:StartScenarioSelection(fun)
+function ScenarioSelection:StartScenarioSelection(fun, n_players)
+	print("StartScenarioSelection")
+	print(n_players)
+	ScenarioSelection.n_players = n_players
 	CustomGameEventManager:Send_ServerToAllClients("generate_scenario_ui", ScenarioSelection.scenarios)
 	GameRules:GetGameModeEntity():SetThink("FinishScenarioSelection", self, "FinishScenarioSelection", SCENARIO_SELECTION_LENGTH)
 	ScenarioSelection.onFinish = fun
@@ -93,27 +98,12 @@ function ScenarioSelection:RequestScenarioPick(data)
 	end
 
 	ScenarioSelection:ConfirmScenarioSelection(data)
-
-	local all_picked = true
-
-	local maxPlayers = 5
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, maxPlayers do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local hPlayer = PlayerResource:GetPlayer(playerID)
-				if hPlayer ~= nil then
-					if ScenarioSelection.player_picked_scenarios[playerID] == nil then
-						all_picked = false
-					end
-				end
-			end
-		end
-	end
-	local time = GameRules:GetDOTATime(false, true)
-	print(time)
+	
+	print("RequestScenarioPick here")
 	print(ScenarioSelection.scenarios_picked)
-	if all_picked and not ScenarioSelection.finished then
+	print(ScenarioSelection.n_players, n_picked)
+	
+	if ScenarioSelection.n_players == tablelength(ScenarioSelection.player_picked_scenarios) and not ScenarioSelection.finished then
 		print("all voted on a scenario")
 		-- TODO Finish this stuff (triges)
 		ScenarioSelection:FinishScenarioSelection()
