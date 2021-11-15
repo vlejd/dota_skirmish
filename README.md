@@ -29,8 +29,8 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - spirit vs LGD game 1 28:29 6227105229 https://steamcommunity.com/sharedfiles/filedetails/?id=2631571743
 - spirit vs LGD game 2 19:29 6227203516 https://steamcommunity.com/sharedfiles/filedetails/?id=2632273378
 - spirit vs LGD game 3 25:29 6227305557 https://steamcommunity.com/sharedfiles/filedetails/?id=2631314858
-- spirit vs LGD game 4 20:29 6227419633 https://steamcommunity.com/sharedfiles/filedetails/?id=2632686984
-- spirit vs LGD game 5 20:59 6227492909 https://steamcommunity.com/sharedfiles/filedetails/?id=2630861259
+- spirit vs LGD game 4 20:59 6227419633 https://steamcommunity.com/sharedfiles/filedetails/?id=2632686984
+- spirit vs LGD game 5 20:29 6227492909 https://steamcommunity.com/sharedfiles/filedetails/?id=2630861259
 
 - final dev: https://steamcommunity.com/sharedfiles/filedetails/?id=2651790718
 
