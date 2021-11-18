@@ -34,19 +34,19 @@ function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
-	GameRules:SetHeroSelectionTime(0.0)
-	GameRules:SetStrategyTime(0.0)
+	GameRules:SetHeroSelectionTime(30.0)
+	GameRules:SetStrategyTime(30.0)
 	GameRules:SetShowcaseTime(0.0)
-	GameRules:SetPreGameTime(HERO_SELECTION_LENGTH + SCENARIO_SELECTION_LENGTH)
+	GameRules:SetPreGameTime(10)
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
+	--GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
-	HeroSelection:ListenToHeroPick()
-	ScenarioSelection:ListenToScenarioPick()
+	--HeroSelection:ListenToHeroPick()
+	--ScenarioSelection:ListenToScenarioPick()
 
 	for team = 0, (DOTA_TEAM_COUNT - 1) do
 		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
@@ -662,23 +662,18 @@ end
 function SkirmishGameMode:OnStateChange()
 	print("state change", GameRules:State_Get())
 
-	SkirmishGameMode:SetHumanPlayersCount()
 	if false then
 		print("nope")
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_INIT then
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_HERO_SELECTION then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
-		print("strategy")
-
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
-
-		GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
-			print("Create Scenario UI!")
-			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
-		end, 3.0)
-
-
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		SkirmishGameMode:FinishHeroSelection()
 	end
 end
 
