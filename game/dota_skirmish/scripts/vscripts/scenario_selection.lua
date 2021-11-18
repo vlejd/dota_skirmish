@@ -48,7 +48,9 @@ function ScenarioSelection:StartScenarioSelection(fun, n_players)
 	print("StartScenarioSelection")
 	print(n_players)
 	ScenarioSelection.n_players = n_players
-	CustomGameEventManager:Send_ServerToAllClients("generate_scenario_ui", ScenarioSelection.scenarios)
+	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("generate_scenario_ui"), function()
+		CustomGameEventManager:Send_ServerToAllClients("generate_scenario_ui", ScenarioSelection.scenarios)
+	end, 1.0)
 	GameRules:GetGameModeEntity():SetThink("FinishScenarioSelection", self, "FinishScenarioSelection", SCENARIO_SELECTION_LENGTH)
 	ScenarioSelection.onFinish = fun
 end
@@ -58,8 +60,13 @@ function ScenarioSelection:ListenToScenarioPick()
 end
 
 function ScenarioSelection:FinishScenarioSelection()
+	if ScenarioSelection.finished then
+		return
+	else 
+		ScenarioSelection.finished = true
+	end
 	print("finish")
-	ScenarioSelection.finished = true
+
 
 	local max_num = 0
 	local scenraio_with_max = {}

@@ -34,8 +34,8 @@ function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	GameRules:EnableCustomGameSetupAutoLaunch(true)
 	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
-	GameRules:SetHeroSelectionTime(30.0)
-	GameRules:SetStrategyTime(30.0)
+	GameRules:SetHeroSelectionTime(SCENARIO_SELECTION_LENGTH + HERO_SELECTION_LENGTH)
+	GameRules:SetStrategyTime(0.0)
 	GameRules:SetShowcaseTime(0.0)
 	GameRules:SetPreGameTime(10)
 	GameRules:SetPostGameTime(30.0)
@@ -44,9 +44,9 @@ function SkirmishGameMode:InitGameMode()
 	--GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-
-	--HeroSelection:ListenToHeroPick()
-	--ScenarioSelection:ListenToScenarioPick()
+	
+	HeroSelection:ListenToHeroPick()
+	ScenarioSelection:ListenToScenarioPick()
 
 	for team = 0, (DOTA_TEAM_COUNT - 1) do
 		GameRules:SetCustomGameTeamMaxPlayers(team, 10)
@@ -201,8 +201,6 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:AddThinkers()
 		GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		GameRules:SetTimeOfDay(140)
-		HeroSelection:FinishHeroSelection()
-
 		--PauseGame(true)
 		return 4
 	elseif setup_stage == 5 then
@@ -668,26 +666,41 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_HERO_SELECTION then
+		print("DOTA_GAMERULES_STATE_HERO_SELECTION")
+		SkirmishGameMode:SetHumanPlayersCount()
+		ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
+		-- SkirmishGameMode:AddBots()
+		-- SkirmishGameMode:RandomForNoHeroSelected()
+
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+		--GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 	end
 end
 
 function TriggerStartHeroSelection()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
-		HeroSelection:StartHeroSelection(SkirmishGameMode.num_human_players)
+		HeroSelection:StartHeroSelection(OnHeroSelectionEnd, SkirmishGameMode.num_human_players)
 	end, 0.01)
 end
 
-function SkirmishGameMode:FinishHeroSelection()
-	HeroSelection:RandomForNoHeroSelected()
-	print("finishing hero selection")
-	GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
+function OnHeroSelectionEnd()
+	print("OnHeroSelectionEnd")
+	HeroSelection:TotalyRandomForNoHeroSelected()
+	-- make hero to player id mapping
+	-- reassign teams based on current hero => player id => desired hero => desired team
+	-- SkirmishGameMode:AddBots()
+	-- HeroSelection:TotalyRandomForNoHeroSelected()
+	-- start game
+	-- replace heroes with the actual ones... 
+	-- do the remaining setup
+	SkirmishGameMode:AddBots()
+	HeroSelection:TotalyRandomForNoHeroSelected()
 end
 
 function SkirmishGameMode:AddThinkers()

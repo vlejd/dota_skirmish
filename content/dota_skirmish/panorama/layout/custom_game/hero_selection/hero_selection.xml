@@ -1,3 +1,63 @@
 <root>
-	
+	<!-- Include stylesheets -->
+	<styles>
+		<include src="file://{resources}/layout/custom_game/hero_selection/hero_selection.css" />
+	</styles>
+
+	<!-- Include script files -->
+	<scripts>
+		<include src="file://{resources}/layout/custom_game/hero_selection/hero_selection.js" />
+	</scripts>
+
+	<snippets>
+		<snippet name="SelectHeroButton">
+			<Panel class="HeroSelectionColumn">
+				<Label class="HeroSelectionLabel" text="" />
+				<DOTAHeroImage id="0" heroname="" class="HeroSelectionPip" heroimagestyle="landscape" />
+			</Panel>
+		</snippet>
+		<snippet name="SelectScenarioButton">
+			<Panel class="ScenarioSelectionColumn">
+				<Button class="ScenarioSelectionButton">
+					<Label class="ScenarioSelectionLabelName" text="" />
+				</Button>
+				<Label class="ScenarioSelectionLabelPlayer" text="" />
+			</Panel>
+		</snippet>
+	</snippets>
+
+	<Panel hittest="false" style="width: 100%; height: 100%;">
+		<!--Hack to make the timer visible-->
+		<Panel hittest="false" id="topbarfix" style="width: 100%; height: 6%;vertical-align: top;flow-children: right;">
+			<Panel hittest="true" style="width: 5%; height: 100%;horizontal-align: left ;background-color: #FF000000;"></Panel>
+			<Panel hittest="true" style="width: 40%; height: 100%;horizontal-align: left ;background-color: #000000FF;"></Panel>
+			<Panel hittest="true" style="width: 45%; height: 100%;horizontal-align: right ;background-color: #000000FF;"></Panel>
+		</Panel>
+		<Panel hittest="true" id="HeroSelectionContainerWrapper" style="width: 100%; height: 94%;vertical-align: bottom;">
+			<Panel hittest="true" id="HeroSelectionContainer">
+				<Label id="HeroSelectionTitle" text="#skirmish_hero_selection" />
+				<Panel id="ScenarioDescription" style="width: 100%; height: 20%;horizontal-align: center ;background-color: #000000FF;">
+					<Label id="ScenarioDescriptionName" text="" />
+				</Panel>
+				<Panel id="HeroSelectionPanel">
+					<Panel id="HeroSelectionRow1" class="HeroSelectionRow">
+						<!--Panels are filled dynamically through js-->
+					</Panel>
+
+					<Panel id="HeroSelectionRow2" class="HeroSelectionRow">
+						<!--Panels are filled dynamically through js-->
+					</Panel>
+				</Panel>
+			</Panel>
+			<Panel hittest="true" id="LoadingPanel">
+				<Label id="HeroSelectionTitleLoading" text="#loading" />
+			</Panel>
+		</Panel>
+		<Panel hittest="false" id="ScenarioSelectionContainerWrapper" style="width: 100%; height: 80%; vertical-align: bottom ; background-color: #000000FF;">
+			<Image id="ScenarioImg" src="file://{resources}/imgs/placeholder.png" style="height:630px; width:1040px; horizontal-align: center;"/>
+			<Panel hittest="true" id="ScenarioSelectionContainer">
+			<!--ScenarioSelectionContainerWrapper ScenarioSelectionContainer-->
+			</Panel>
+		</Panel>
+	</Panel>
 </root>

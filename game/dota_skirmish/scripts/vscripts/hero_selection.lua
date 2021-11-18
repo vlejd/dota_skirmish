@@ -4,15 +4,17 @@ require("libraries/adv_log")
 if HeroSelection == nil then
 	HeroSelection = class({})
 	HeroSelection.player_picked_hero = {}
+	HeroSelection.player_to_hero = {}
 	HeroSelection.heroes_picked = {}
 	HeroSelection.heroes_replaced = {}
 	HeroSelection.n_players = nil
 	HeroSelection.finished = false
+	HeroSelection.onfinish = nil
 end
 
-function HeroSelection:StartHeroSelection(n_players)
+function HeroSelection:StartHeroSelection(fun, n_players)
 	print(n_players)
-
+	HeroSelection.onfinish = fun
 	HeroSelection.n_players = n_players
 	for k, v in pairs(GameReader:GetHeroesInfo()) do
 		HeroSelection.heroes_picked[k] = false
@@ -32,8 +34,17 @@ function HeroSelection:ListenToHeroPick()
 end
 
 function HeroSelection:FinishHeroSelection()
+	if HeroSelection.finished then
+		print("already finished")
+		return nil
+	else
+		HeroSelection.finished = true
+		print("FinishHeroSelection")	
+	end
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
+
+	HeroSelection.onfinish()
 end
 
 function HeroSelection:RequestHeroPick(data)
@@ -58,17 +69,20 @@ function HeroSelection:RequestHeroPick(data)
 		print("CRITICAL ERROR: No such hero in table:", data.sHeroName)
 	end
 
-	if HeroSelection.n_players == tablelength(HeroSelection.player_picked_hero) and GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
-		GameRules:ForceGameStart()
+	if HeroSelection.n_players == tablelength(HeroSelection.player_picked_hero) and not HeroSelection.finished then
+		HeroSelection:FinishHeroSelection()
 	end
 end
 
 function HeroSelection:ConfirmHeroSelection(data)
 	HeroSelection.player_picked_hero[data.PlayerID] = true
 	HeroSelection.heroes_picked[data.sHeroName] = true
-
+	HeroSelection.player_to_hero[data.PlayerID] = data.sHeroName 
 	CustomGameEventManager:Send_ServerToAllClients("hero_assigned", data)
 
+end
+
+function NOTHING()
 	local hero_name = "npc_dota_hero_" .. data.sHeroName
 	PrecacheUnitByNameAsync(hero_name, function()
 		local old_hero = PlayerResource:GetSelectedHeroEntity(data.PlayerID)
@@ -133,6 +147,23 @@ function HeroSelection:RandomForNoHeroSelected()
 							PlayerID = playerID,
 							sHeroName = hname
 						})
+					end
+				end
+			end
+		end
+	end
+end
+
+function HeroSelection:TotalyRandomForNoHeroSelected()
+	local maxPlayers = 5
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i=1, maxPlayers do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil then
+				if not PlayerResource:HasSelectedHero(playerID) then
+					local hPlayer = PlayerResource:GetPlayer(playerID)
+					if hPlayer ~= nil then
+						hPlayer:MakeRandomHeroSelection()
 					end
 				end
 			end
