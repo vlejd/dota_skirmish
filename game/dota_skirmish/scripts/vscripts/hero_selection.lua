@@ -43,7 +43,9 @@ function HeroSelection:FinishHeroSelection()
 	end
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
-
+	print(HeroSelection.heroes_picked)
+	print(HeroSelection.player_picked_hero)
+	print(HeroSelection.player_to_hero)
 	HeroSelection.onfinish()
 end
 
@@ -155,11 +157,14 @@ function HeroSelection:RandomForNoHeroSelected()
 end
 
 function HeroSelection:TotalyRandomForNoHeroSelected()
+	print("TotalyRandomForNoHeroSelected")
 	local maxPlayers = 5
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i=1, maxPlayers do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil then
+			print(teamNum, i, playerID)
+			if playerID ~= nil and playerID ~= -1 then
+				print(PlayerResource:HasSelectedHero(playerID), PlayerResource:GetSelectedHeroName(playerID))
 				if not PlayerResource:HasSelectedHero(playerID) then
 					local hPlayer = PlayerResource:GetPlayer(playerID)
 					if hPlayer ~= nil then

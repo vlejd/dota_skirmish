@@ -195,7 +195,7 @@ function NeutralItems:OnEntityKilled(event)
 		end
 		for tier = 1, 5 do
 			local time_is_right = (DROP_TIMES[tier] * 60 < GameRules:GetDOTATime(false, false))
-			local potential_drop = NeutralItems:GetPotentialNeutralItemDrop(tier, DOTA_TEAM_GOODGUYS)
+			local potential_drop = NeutralItems:GetPotentialNeutralItemDrop(tier, attacker_team)
 			if potential_drop ~= nil and friendly_in_range and (not enemy_in_range) and time_is_right then
 				local rng = RandomInt(1, 1000)
 				local item_tier = GetNeutralItemTier(potential_drop)
