@@ -24,5 +24,6 @@
 
 	<Panel>
 		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/hero_selection/hero_selection.xml" />
+		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/game_setup/game_setup.xml" />
 	</Panel>
 </root>

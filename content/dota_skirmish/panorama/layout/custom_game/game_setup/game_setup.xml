@@ -1,0 +1,16 @@
+<root>
+	<!-- Include stylesheets -->
+	<styles>
+		<include src="file://{resources}/layout/custom_game/game_setup/game_setup.css" />
+	</styles>
+
+	<!-- Include script files -->
+	<scripts>
+		<include src="file://{resources}/layout/custom_game/game_setup/game_setup.js" />
+	</scripts>
+
+	<Panel hittest="false" style="width: 100%; height: 100%;">
+		<!--Hack to make the timer visible-->
+		<Panel hittest="true" id="game_serup" style="width: 100%; height: 100%; background-color: #000000FF;"></Panel>
+	</Panel>
+</root>

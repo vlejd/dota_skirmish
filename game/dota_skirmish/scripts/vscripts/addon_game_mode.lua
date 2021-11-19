@@ -196,6 +196,9 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:AddThinkers()
 		--GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		--GameRules:SetTimeOfDay(140)
+		print("make_screen_not_dark")
+		local data = {}
+		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
 		PauseGame(true)
 		return 2
 	elseif setup_stage == 5 then
@@ -648,6 +651,8 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
+		local data = {}
+		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", data)
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
