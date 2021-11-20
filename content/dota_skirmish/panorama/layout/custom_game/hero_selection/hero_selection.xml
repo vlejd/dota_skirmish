@@ -55,6 +55,7 @@
 		</Panel>
 		<Panel hittest="false" id="ScenarioSelectionContainerWrapper" style="width: 100%; height: 80%; vertical-align: bottom ; background-color: #000000FF;">
 			<Image id="ScenarioImg" src="file://{resources}/imgs/placeholder.png" style="height:630px; width:1040px; horizontal-align: center;"/>
+			<Label id="ScenarioDescriptionTxt" text=""/>
 			<Panel hittest="true" id="ScenarioSelectionContainer">
 			<!--ScenarioSelectionContainerWrapper ScenarioSelectionContainer-->
 			</Panel>

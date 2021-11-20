@@ -123,9 +123,8 @@ end
 
 function HeroSelection:RandomForNoHeroSelected()
 	print(HeroSelection.player_picked_hero)
-	local maxPlayers = 5
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, maxPlayers do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if HeroSelection.player_picked_hero[playerID] == nil then
@@ -158,9 +157,8 @@ end
 
 function HeroSelection:TotalyRandomForNoHeroSelected()
 	print("TotalyRandomForNoHeroSelected")
-	local maxPlayers = 5
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i=1, maxPlayers do
+		for i=1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			print(teamNum, i, playerID)
 			if playerID ~= nil and playerID ~= -1 then

@@ -13,31 +13,31 @@ if ScenarioSelection == nil then
 	ScenarioSelection.scenarios = {
 		spirit_lgd_g1 = {
 			name = "game 1",
-			description = "",
+			description = "Balanced game.",
 			fname = "game_states/spirit_lgd_g1",
 			img = "game_1.png",
 		},
 		spirit_lgd_g2 = {
 			name = "game 2",
-			description = "b",
+			description = "Balanced game.",
 			fname = "game_states/spirit_lgd_g2",
 			img = "game_2.png",
 		},
 		spirit_lgd_g3 = {
 			name = "game 3",
-			description = "b",
+			description = "Balanced game.",
 			fname = "game_states/spirit_lgd_g3",
 			img = "game_3.png",
 		},
 		spirit_lgd_g4 = {
 			name = "game 4",
-			description = "b",
+			description = "Radiant is winning heavily. But they only have 6 minutes to finish the game. Otherwise Dire wins.",
 			fname = "game_states/spirit_lgd_g4",
 			img = "game_4.png",
 		},
 		spirit_lgd_g5 = {
 			name = "game 5",
-			description = "b",
+			description = "Balanced game.",
 			fname = "game_states/spirit_lgd_g5",
 			img = "game_5.png",
 		},

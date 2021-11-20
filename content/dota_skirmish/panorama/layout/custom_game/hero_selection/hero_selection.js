@@ -205,9 +205,10 @@ function GenerateScenarioUI(data) {
 			scenario_button.SetPanelEvent("onmouseover", function () {
 				$.Msg("hover");
 				$.Msg(scenario);
+				$.Msg(data);
 				$.Msg(data[scenario].img);
 				$('#ScenarioImg').SetImage("file://{resources}/imgs/"+data[scenario].img);
-
+				$('#ScenarioDescriptionTxt').text = data[scenario].description;
 			})
 		})(scenario);
 
