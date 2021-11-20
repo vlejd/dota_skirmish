@@ -806,7 +806,7 @@ end
 function SkirmishGameMode:SetHumanPlayersCount()
 	local num_human_players = 0
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, MAX_PLAYERS*2 do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				local hPlayer = PlayerResource:GetPlayer(playerID)

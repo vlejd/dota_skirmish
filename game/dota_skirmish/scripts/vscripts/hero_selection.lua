@@ -1,4 +1,5 @@
 require("game_states/game_reader")
+require("internal/globals")
 require("libraries/adv_log")
 
 if HeroSelection == nil then
@@ -25,6 +26,7 @@ function HeroSelection:StartHeroSelection(fun, n_players)
 	for hero, _ in pairs(GameReader:GetHeroesInfo()) do
 		heroes[hero] = GameReader:GetHeroTeam(hero)
 	end
+	GameRules:GetGameModeEntity():SetThink("FinishHeroSelection", self, "FinishHeroSelection", HERO_SELECTION_LENGTH)
 
 	CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
 end
@@ -41,6 +43,9 @@ function HeroSelection:FinishHeroSelection()
 		HeroSelection.finished = true
 		print("FinishHeroSelection")	
 	end
+
+	HeroSelection:RandomForNoHeroSelected()
+
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
 	print(HeroSelection.heroes_picked)
@@ -144,6 +149,7 @@ function HeroSelection:RandomForNoHeroSelected()
 						if hname == nil then
 							print("CRITICAL ERROR: invalid random hero:")
 						end
+						print(hname)
 						HeroSelection:RequestHeroPick({
 							PlayerID = playerID,
 							sHeroName = hname
