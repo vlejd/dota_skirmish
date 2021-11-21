@@ -45,10 +45,10 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	--GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
+	-- GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-	
+
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
 
@@ -207,8 +207,8 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = 5
 		SkirmishGameMode:FixNeutralItems()
 		SkirmishGameMode:AddThinkers()
-		--GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
-		--GameRules:SetTimeOfDay(140)
+		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
+		-- GameRules:SetTimeOfDay(140)
 		print("make_screen_not_dark")
 		local data = {}
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
@@ -263,12 +263,11 @@ function SkirmishGameMode:PutRoshanBack()
 	return nil
 end
 
-
 function SkirmishGameMode:FixUpgrades()
 	print("fixing upgrades")
-	
+
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i=1, MAX_PLAYERS do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
@@ -416,7 +415,7 @@ function SkirmishGameMode:FixPlayers()
 	print("fixing players")
 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i=1, MAX_PLAYERS do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
@@ -436,7 +435,7 @@ function SkirmishGameMode:FixPlayers()
 						SkirmishGameMode:FixHero(heroData, hHero)
 					end
 				else
-					print("CRITICAL ERROR")	
+					print("CRITICAL ERROR")
 				end
 			else
 				print("CRITICAL ERROR")
@@ -649,7 +648,7 @@ end
 
 function SkirmishGameMode:MakeEveryoneRadiant()
 	for teamNum = DOTA_TEAM_FIRST, DOTA_TEAM_COUNT do
-		for i=1, MAX_PLAYERS do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				print("making player radiant", playerID)
@@ -667,7 +666,7 @@ function SkirmishGameMode:HandleGameStart()
 	print(HeroSelection.player_to_hero)
 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i=1, MAX_PLAYERS do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
@@ -675,7 +674,7 @@ function SkirmishGameMode:HandleGameStart()
 					local original_playerID = SkirmishGameMode.random_hero_to_playerID[current_hero_name]
 					print(current_hero_name, playerID)
 					local desired_hero_name = "wisp"
-					
+
 					if original_playerID == nil then
 						print("this is a bot")
 						print(HeroSelection.heroes_picked)
@@ -695,7 +694,7 @@ function SkirmishGameMode:HandleGameStart()
 						desired_hero_name = HeroSelection.player_to_hero[original_playerID]
 					end
 					local hero_name = "npc_dota_hero_" .. desired_hero_name
-						
+
 					PrecacheUnitByNameAsync(hero_name, function()
 						local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
 						if old_hero ~= nil then
@@ -711,7 +710,7 @@ function SkirmishGameMode:HandleGameStart()
 							print("CRITICAL ERROR")
 						end
 					end)
-				
+
 				else
 					print("CRITICAL ERROR")
 				end
@@ -736,15 +735,15 @@ function OnHeroSelectionEnd()
 	print("OnHeroSelectionEnd")
 	HeroSelection:TotalyRandomForNoHeroSelected()
 	-- make hero to player id mapping
-	
+
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i=1, DOUBLE_MAX_PLAYERS do
+		for i = 1, DOUBLE_MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
 					local hPlayer = PlayerResource:GetPlayer(playerID)
 					if hPlayer ~= nil then
-						SkirmishGameMode.random_hero_to_playerID[PlayerResource:GetSelectedHeroName(playerID)] = playerID 
+						SkirmishGameMode.random_hero_to_playerID[PlayerResource:GetSelectedHeroName(playerID)] = playerID
 					end
 				else
 					print("CRITICAL ERROR")
@@ -762,7 +761,7 @@ function OnHeroSelectionEnd()
 		print("need_fix")
 		need_fix = false
 		for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-			for i=1, DOUBLE_MAX_PLAYERS do
+			for i = 1, DOUBLE_MAX_PLAYERS do
 				local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 				if playerID ~= nil and playerID ~= -1 then
 					if PlayerResource:HasSelectedHero(playerID) then
@@ -772,10 +771,10 @@ function OnHeroSelectionEnd()
 						print(playerID, original_playerID, desired_hero)
 						local desired_team = GameReader:GetHeroTeam(desired_hero)
 						local current_team = PlayerResource:GetTeam(playerID)
-						if(desired_team ~= current_team) then
+						if (desired_team ~= current_team) then
 							print("player needs team fix", playerID)
 							need_fix = true
-							PlayerResource:SetCustomTeamAssignment(playerID, desired_team) 
+							PlayerResource:SetCustomTeamAssignment(playerID, desired_team)
 						end
 					else
 						print("CRITICAL ERROR")
@@ -827,7 +826,7 @@ function SkirmishGameMode:SetHumanPlayersCount()
 				local hPlayer = PlayerResource:GetPlayer(playerID)
 				print("playerID", playerID, hPlayer)
 				if hPlayer ~= nil then
-					num_human_players = num_human_players+1
+					num_human_players = num_human_players + 1
 				end
 			end
 		end
@@ -835,7 +834,6 @@ function SkirmishGameMode:SetHumanPlayersCount()
 	SkirmishGameMode.num_human_players = num_human_players
 	print("SetHumanPlayersCount", SkirmishGameMode.num_human_players)
 end
-
 
 function SkirmishGameMode:AddBots()
 	print("AddBots")
@@ -872,7 +870,6 @@ function SkirmishGameMode:AddBots()
 		print("good bot")
 		Tutorial:AddBot("", "", "", false)
 	end
-
 
 	Tutorial:StartTutorialMode();
 	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)

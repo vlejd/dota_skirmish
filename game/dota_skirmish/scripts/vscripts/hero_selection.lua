@@ -41,7 +41,7 @@ function HeroSelection:FinishHeroSelection()
 		return nil
 	else
 		HeroSelection.finished = true
-		print("FinishHeroSelection")	
+		print("FinishHeroSelection")
 	end
 
 	HeroSelection:RandomForNoHeroSelected()
@@ -84,7 +84,7 @@ end
 function HeroSelection:ConfirmHeroSelection(data)
 	HeroSelection.player_picked_hero[data.PlayerID] = true
 	HeroSelection.heroes_picked[data.sHeroName] = true
-	HeroSelection.player_to_hero[data.PlayerID] = data.sHeroName 
+	HeroSelection.player_to_hero[data.PlayerID] = data.sHeroName
 	CustomGameEventManager:Send_ServerToAllClients("hero_assigned", data)
 
 end
@@ -127,7 +127,7 @@ end
 function HeroSelection:TotalyRandomForNoHeroSelected()
 	print("TotalyRandomForNoHeroSelected")
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i=1, DOUBLE_MAX_PLAYERS do
+		for i = 1, DOUBLE_MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			print(teamNum, i, playerID)
 			if playerID ~= nil and playerID ~= -1 then

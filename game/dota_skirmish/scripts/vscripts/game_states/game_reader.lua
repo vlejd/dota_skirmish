@@ -4,7 +4,6 @@ if GameReader == nil then
 	GameReader = class({})
 end
 
-
 function GameReader:Init(fname)
 	GameState = require(fname)
 end
