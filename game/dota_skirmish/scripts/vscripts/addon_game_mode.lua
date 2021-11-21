@@ -318,30 +318,6 @@ function SkirmishGameMode:FixUpgrades()
 	end
 end
 
-function getClosestWaypoint(cPoz, team)
-	local teamName = ""
-	if team == 2 then
-		teamName = "goodguys"
-	else
-		teamName = "badguys"
-	end
-
-	local bestDist = 9999999;
-	local bestWaypoint = "lane_mid_pathcorner_" .. teamName .. "_3";
-
-	for _, path in pairs(waypoints[teamName]) do
-		for _, waypoint in pairs(path) do
-			local waypointPoz = waypointPossitions[waypoint];
-			local dist = dist2(waypointPoz, cPoz);
-			if dist <= bestDist then
-				bestWaypoint = waypoint;
-				bestDist = dist;
-			end
-		end
-	end
-	return bestWaypoint;
-end
-
 function getClosestWaypointNext(cPoz, team)
 	local teamName = ""
 	if team == 2 then
@@ -903,43 +879,6 @@ function SkirmishGameMode:AddBots()
 	GameRules:GetGameModeEntity():SetBotsInLateGame(true)
 	GameRules:GetGameModeEntity():SetBotsMaxPushTier(4)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-end
-
-function SkirmishGameMode:FixBotHeroes()
-	local maxPlayers = 5
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, maxPlayers do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				if HeroSelection.player_picked_hero[playerID] == nil then
-					local hPlayer = PlayerResource:GetPlayer(playerID)
-					if hPlayer ~= nil then
-						print("bots", teamNum, playerID, hPlayer)
-						local unpicked_heros = {}
-						for hero, herodata in pairs(GameReader:GetHeroesInfo()) do
-							if teamNum == GameReader:GetHeroTeam(hero) and not HeroSelection.heroes_picked[hero] then
-								table.insert(unpicked_heros, hero)
-							end
-
-						end
-						-- TODO getRandomValueFromArray
-						print(unpicked_heros)
-						local hname = unpicked_heros[RandomInt(1, #unpicked_heros)]
-						-- assign to this player
-						if hname == nil then
-							print("CRITICAL ERROR: invalid random hero:")
-						end
-						HeroSelection:RequestHeroPick({
-							PlayerID = playerID,
-							sHeroName = hname
-						})
-					else
-						print("error")
-					end
-				end
-			end
-		end
-	end
 end
 
 function SkirmishGameMode:initWaypoints()
