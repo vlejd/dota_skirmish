@@ -179,7 +179,7 @@ function GenerateScenarioUI(data) {
 	$.Msg("GenerateScenarioUI");
 	//$('#HeroSelectionContainerWrapper').style.visibility = 'collapse';
 	// LoadingPanel
-	$('#HeroSelectionTitleLoading').text = "Select Scenario";
+	$('#HeroSelectionTitleLoading').text = "Select scenario";
 
 	// Generate hero buttons
 	var sorted = [];
