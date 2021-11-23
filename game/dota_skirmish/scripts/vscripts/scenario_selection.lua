@@ -12,19 +12,19 @@ if ScenarioSelection == nil then
 	ScenarioSelection.scenarios = {
 		spirit_lgd_g1 = {
 			name = "game 1",
-			description = "Balanced game.",
+			description = "29th minute of a balanced game 1 from finals. Try to win.",
 			fname = "game_states/spirit_lgd_g1",
 			img = "game_1.png"
 		},
 		spirit_lgd_g2 = {
 			name = "game 2",
-			description = "Balanced game.",
+			description = "20th minute of a balanced game 2 from finals. Can shard win you the game?",
 			fname = "game_states/spirit_lgd_g2",
 			img = "game_2.png"
 		},
 		spirit_lgd_g3 = {
 			name = "game 3",
-			description = "Balanced game.",
+			description = "26th minute of a balanced game 3 from finals. Could it have been 3:0?",
 			fname = "game_states/spirit_lgd_g3",
 			img = "game_3.png"
 		},
@@ -36,7 +36,7 @@ if ScenarioSelection == nil then
 		},
 		spirit_lgd_g5 = {
 			name = "game 5",
-			description = "Balanced game.",
+			description = "20th minute of a balanced game 5 from finals. Decide the international.",
 			fname = "game_states/spirit_lgd_g5",
 			img = "game_5.png"
 		}
