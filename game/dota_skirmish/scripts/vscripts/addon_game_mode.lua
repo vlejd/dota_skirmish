@@ -45,6 +45,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
+	GameRules:SetFirstBloodActive(false)  -- TODO add to game state
 	-- GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
@@ -449,7 +450,7 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		hHero:SetGold(heroData["gold_reliable"], true)
 	end
 	if heroData["gold_unreliable"] ~= nil then
-		hHero:SetGold(heroData["gold_unreliable"], true)
+		hHero:SetGold(heroData["gold_unreliable"], true)  -- should be false
 	end
 
 	FindClearSpaceForUnit(hHero, heroData["position"], true)
