@@ -28,7 +28,11 @@ function SecToText( seconds ) {
 function UpdateTime(data) {
 	var seconds = data.time;
 	var text = SecToText(seconds);
-	$("#GameTimer").text = text;
+	$("#GameTimerId").text = text;
+}
+
+function SetTimerMsg(data){
+	$("#GameTimerMsg").text = data.text + " " + SecToText(data.time);
 }
 
 (function () {
@@ -36,4 +40,5 @@ function UpdateTime(data) {
 	GameEvents.Subscribe( "make_screen_dark", MakeScreenDark );
 	GameEvents.Subscribe( "make_screen_not_dark", MakeScreenNotDark );
 	GameEvents.Subscribe( "update_game_time", UpdateTime );	
+	GameEvents.Subscribe( "set_timer_msg", SetTimerMsg );	
 })();

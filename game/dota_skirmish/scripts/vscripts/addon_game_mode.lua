@@ -208,6 +208,8 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = 5
 		SkirmishGameMode:FixNeutralItems()
 		SkirmishGameMode:AddThinkers()
+
+		SkirmishGameMode:SetWinconText()
 		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		-- GameRules:SetTimeOfDay(140)
 		print("make_screen_not_dark")
@@ -221,6 +223,15 @@ function SkirmishGameMode:WaitForSetup()
 	else
 		print("Unexpected state: setup_stage", setup_stage)
 		return nil
+	end
+end
+
+
+function SkirmishGameMode:SetWinconText()
+	if GameReader:GetWinCondition() ~= nil then
+		local game_start_time = GameReader:GetGameTime()
+		local data = {text = "Ends at", time = game_start_time+ GameReader:GetWinCondition().time}
+		CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
 	end
 end
 

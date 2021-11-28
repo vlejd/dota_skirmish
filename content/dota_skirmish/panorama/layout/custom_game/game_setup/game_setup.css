@@ -14,7 +14,7 @@
 	border-radius: 8px;
 }
 
-#GameTime
+.GameTimeWrapp
 {
 	margin-left: 47.4%;
 	flow-children: down;
@@ -23,19 +23,19 @@
 	z-index: 2;
 }
 
-.AspectRatio16x10 #GameTime
+.AspectRatio16x10 .GameTimeWrapp
 {
 	margin-left: 47.1%;
 }
 
-.AspectRatio4x3 #GameTime
+.AspectRatio4x3 .GameTimeWrapp
 {
 	margin-left: 46.5%;
 }
 
-#GameTimer
+.GameTimer
 {
-	margin-top: 50%;
+	margin-top: 10%;
 	font-size: 14px;
 	font-weight: bold;
 	color: #ffffff;
@@ -45,14 +45,14 @@
 	text-overflow: clip;
 }
 
-.AspectRatio16x10 #GameTimer
+.AspectRatio16x10 .GameTimer
 {
-	margin-top: 52%;
+	margin-top: 10%;
 	font-size: 13px;
 }
 
-.AspectRatio4x3 #GameTimer
+.AspectRatio4x3 .GameTimer
 {
-	margin-top: 53%;
+	margin-top: 10%;
 	font-size: 13px;
 }
