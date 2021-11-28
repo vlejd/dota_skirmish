@@ -450,7 +450,7 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		hHero:SetGold(heroData["gold_reliable"], true)
 	end
 	if heroData["gold_unreliable"] ~= nil then
-		hHero:SetGold(heroData["gold_unreliable"], true)  -- should be false
+		hHero:SetGold(heroData["gold_unreliable"], false)  -- should be false
 	end
 
 	FindClearSpaceForUnit(hHero, heroData["position"], true)

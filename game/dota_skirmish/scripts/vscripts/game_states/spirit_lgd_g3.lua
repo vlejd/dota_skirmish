@@ -1,6 +1,6 @@
 
 local GameState = {
-  game = {time = 1529},
+  game = {time = 1559},  -- should be 1529
   buildings = {
 
             {
@@ -216,7 +216,7 @@ local GameState = {
               name = "invoker",
               team = 2,
               gold_reliable = 1235,
-              gold_unreliable = 0,
+              gold_unreliable = 911,  --manual fix
               level = 14,
               position = Vector(-6737.860107421875,-6274.05242729187,0),
               abilities = {},
@@ -246,7 +246,7 @@ local GameState = {
               name = "undying",
               team = 3,
               gold_reliable = 631,
-              gold_unreliable = 0,
+              gold_unreliable = 127,  -- manual fix
               level = 12,
               position = Vector(-1008.1767311096191,4670.698053359985,0),
               abilities = {},
@@ -321,7 +321,7 @@ local GameState = {
               name = "magnataur",
               team = 2,
               gold_reliable = 893,
-              gold_unreliable = 0,
+              gold_unreliable = 408,  -- manual fix
               level = 15,
               position = Vector(-3240.337017059326,5529.378513336182,0),
               abilities = {},

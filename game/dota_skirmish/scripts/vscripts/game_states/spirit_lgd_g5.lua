@@ -1,6 +1,6 @@
 
 local GameState = {
-    game = {time = 1229},
+    game = {time = 1259},  -- should have been 1229
     buildings = {
   
               {
