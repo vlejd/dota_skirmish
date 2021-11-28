@@ -639,6 +639,7 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		local data = {}
+		print("make_screen_dark")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", data)
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
@@ -800,8 +801,17 @@ function SkirmishGameMode:AddThinkers()
 	-- Add thinkers
 	GameMode:SetThink("CheckWinCondition", self, "CheckWinConditionGlobalThink", 1)
 	GameMode:SetThink("AgroFixer", self, "AgroFixerGlobalThink", 1)
+	GameMode:SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
+end
+
+function SkirmishGameMode:UpdateTime()
+	local game_start_time = GameReader:GetGameTime()
+	local game_elapsed_time = GameRules:GetDOTATime(false, false)
+	local data = {time = game_start_time + game_elapsed_time}
+	CustomGameEventManager:Send_ServerToAllClients("update_game_time", data)
+	return 0.1
 end
 
 function SkirmishGameMode:CheckWinCondition()

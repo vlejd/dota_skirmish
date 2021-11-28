@@ -3,19 +3,37 @@
 
 function MakeScreenDark(data) {
 	$.Msg("MakeScreenDark");
-	$('#game_serup').style.visibility = 'visible';
-	$('#game_serup').style.opacity = 1;	
+	$('#game_setup').style.visibility = 'visible';
+	$('#game_setup').style.opacity = 1;	
 }
 
 function MakeScreenNotDark(data) {
 	$.Msg("MakeScreenNotDark");
-	$('#game_serup').style.visibility = 'collapse';
-	$('#game_serup').style.opacity = 0;	
+	$('#game_setup').style.visibility = 'collapse';
+	$('#game_setup').style.opacity = 0;	
+}
+
+function SecToText( seconds ) {
+	var minutes = Math.floor(seconds / 60);
+	var seconds = Math.floor(seconds % 60);
+	var s = "";
+	var m = "";
+	if (seconds < 10)
+		s = "0";
+	if (minutes < 10)
+		m = "0";
+	return m + minutes + ":" + s + seconds;
+}
+
+function UpdateTime(data) {
+	var seconds = data.time;
+	var text = SecToText(seconds);
+	$("#GameTimer").text = text;
 }
 
 (function () {
 	//Subscribe to events
 	GameEvents.Subscribe( "make_screen_dark", MakeScreenDark );
 	GameEvents.Subscribe( "make_screen_not_dark", MakeScreenNotDark );
-	
+	GameEvents.Subscribe( "update_game_time", UpdateTime );	
 })();

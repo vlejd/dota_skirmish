@@ -10,7 +10,11 @@
 	</scripts>
 
 	<Panel hittest="false" style="width: 100%; height: 100%;">
-		<!--Hack to make the timer visible-->
-		<Panel hittest="true" id="game_serup" style="width: 100%; height: 100%; background-color: #000000FF;"></Panel>
+		<Panel class="Timers">
+			<Panel id="GameTime">
+				<Label id="GameTimer" text="--:--" />
+			</Panel>
+		</Panel>
+		<Panel hittest="true" id="game_setup" style="vertical-align: top; width: 100%; height: 100%; background-color: #000000FF;"></Panel>	
 	</Panel>
 </root>
