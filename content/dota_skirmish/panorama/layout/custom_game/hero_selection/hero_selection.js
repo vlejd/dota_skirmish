@@ -136,7 +136,7 @@ function SetSliderPosition( sliderName, value) {
 
 function GenerateHeroUI(data) {
 	$('#LoadingPanel').style.visibility = 'collapse';
-	$('#LoadingPanel').style.opacity = 0;
+	$('#LoadingPanel').style.opacity = 0;	
 	$.Msg("draw")
 
 	var index = 0;
