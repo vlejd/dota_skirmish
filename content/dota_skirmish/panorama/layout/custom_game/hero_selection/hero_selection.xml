@@ -40,10 +40,12 @@
 					<Label id="ScenarioDescriptionName" text="" />
 				</Panel>
 				<Panel id="HeroSelectionPanel">
+					<Label class="teamName" text="Radiant" />
 					<Panel id="HeroSelectionRow1" class="HeroSelectionRow">
 						<!--Panels are filled dynamically through js-->
 					</Panel>
 
+					<Label class="teamName" text="Dire" />
 					<Panel id="HeroSelectionRow2" class="HeroSelectionRow">
 						<!--Panels are filled dynamically through js-->
 					</Panel>

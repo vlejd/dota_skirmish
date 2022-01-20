@@ -51,6 +51,14 @@
 	color: #FFFFFF;
 }
 
+.teamName
+{
+	horizontal-align: left;
+	margin-top: 5%;
+	font-size: 44px;
+	color: #FFFFFF;
+}
+
 #HeroSelectionGameTime
 {
 	horizontal-align: center;
