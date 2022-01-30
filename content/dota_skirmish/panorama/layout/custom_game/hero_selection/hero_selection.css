@@ -139,7 +139,7 @@
 
 	box-shadow: fill #00000090 0px 0px 2px 2px;
 	background-color: gradient( linear, 0% 0%, 0% 100%, from( #066319 ), to( #103F19 ) );
-	background-size: 280px 120px;
+	background-size: 300px 50px;
 }
 
 #ConfirmHeroSelectionButton.disabled, #ConfirmHeroSelectionButton.disabled:hover, #ConfirmHeroSelectionButton.disabled:active {
@@ -183,7 +183,7 @@
 
 
 .ScenarioSelectionButton {
-	width: 300px;
+	width: 200px;
 	height: 50px;
 
 	box-shadow: fill #00000090 0px 0px 2px 2px;

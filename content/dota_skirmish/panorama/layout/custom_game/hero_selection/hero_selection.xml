@@ -60,6 +60,7 @@
 			<Label id="ScenarioDescriptionTxt" text="Hower over buttons for scenario preview"/>
 			<Panel hittest="true" id="ScenarioSelectionContainer">
 			</Panel>
+			<TextEntry id="CustomScenario" multiline="true" placeholder="  " maxchars="1000000" ontextentrychange="UpdateState()" style="width: 300px;horizontal-align: center; height: 50px; vertical-align: bottom ; background-color: #111111FF;"/>
 		</Panel>
 	</Panel>
 </root>

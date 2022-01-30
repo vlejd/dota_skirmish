@@ -8,6 +8,11 @@ function GameReader:Init(fname)
 	GameState = require(fname)
 end
 
+function GameReader:InitObject(obj)
+	GameState = obj
+end
+
+
 function GameReader:GetGameInfo()
 	if GameState.game then
 		return GameState.game
@@ -29,10 +34,11 @@ function GameReader:GetGameTime()
 end
 
 function GameReader:GetWinCondition()
-	if GameState.wincon then
+	if GameState.wincon ~= nil and tablelength(GameState.wincon) > 0 then
 		return GameState.wincon
 	else
 		print("ERROR: Missing win condition.")
+		return nil
 	end
 end
 

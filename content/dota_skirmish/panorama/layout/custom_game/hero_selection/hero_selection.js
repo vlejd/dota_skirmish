@@ -137,7 +137,8 @@ function SetSliderPosition( sliderName, value) {
 function GenerateHeroUI(data) {
 	$('#LoadingPanel').style.visibility = 'collapse';
 	$('#LoadingPanel').style.opacity = 0;	
-	$.Msg("draw")
+	$.Msg("GenerateHeroUI")
+
 
 	var index = 0;
 
@@ -169,10 +170,22 @@ function GenerateHeroUI(data) {
 }
 
 // Scenario selection
-function RequestScenarioPick(scenario) {
+function RequestScenarioPick(scenario, data) {
 	$.Msg("RequestScenarioPick");
 	$.Msg(scenario);
-	GameEvents.SendCustomGameEventToServer("request_scenario_pick", {scenario: scenario});
+	GameEvents.SendCustomGameEventToServer("request_scenario_pick", {scenario: scenario, data:data});
+}
+
+function UpdateState(){
+	const TEXT_FIELD = $("#CustomScenario");
+	$.Msg("UpdateState");
+	$.Msg(TEXT_FIELD.text.length);
+	const text_raw = TEXT_FIELD.text;
+	const text_rep = text_raw.replace("=",":")
+	const obj = JSON.parse(text_rep);
+	$.Msg(text_raw);
+	$.Msg(text_rep);
+	$.Msg(obj);
 }
 
 function GenerateScenarioUI(data) {
@@ -214,11 +227,78 @@ function GenerateScenarioUI(data) {
 
 		(function (scenario) {
 			scenario_button.SetPanelEvent("onactivate", function () {
-				RequestScenarioPick(scenario);
+				RequestScenarioPick(scenario, {});
 			})
 		})(scenario);
 
 	}
+
+	var parent = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
+	
+	var scenario = "pass"
+	var scenario_button = $.CreatePanel("Panel", parent, scenario);
+	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
+
+	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+	
+	label.text = $.Localize(scenario);
+
+	(function (scenario) {
+		scenario_button.SetPanelEvent("onmouseover", function () {
+			$.Msg("hover");
+			$.Msg(scenario);
+			$.Msg(data);
+			var img = "placeholder"
+			$.Msg(img);
+			$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
+			$('#ScenarioDescriptionTxt').text = "pass on scenario voting";
+		})
+	})(scenario);
+
+	(function (scenario) {
+		scenario_button.SetPanelEvent("onactivate", function () {
+			RequestScenarioPick(scenario, {});
+		})
+	})(scenario);
+
+	var scenario = "custom"
+	var scenario_button = $.CreatePanel("Panel", parent, scenario);
+	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
+
+	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+	
+	label.text = $.Localize(scenario);
+
+	(function (scenario) {
+		scenario_button.SetPanelEvent("onmouseover", function () {
+			$.Msg("hover");
+			$.Msg(scenario);
+			$.Msg(data);
+			var img = "placeholder"
+			$.Msg(img);
+			$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
+			$('#ScenarioDescriptionTxt').text = "custom scenario";
+		})
+	})(scenario);
+
+	(function (scenario) {
+		scenario_button.SetPanelEvent("onactivate", function () {
+			const TEXT_FIELD = $("#CustomScenario");
+			$.Msg("UpdateState");
+			$.Msg(TEXT_FIELD.text.length);
+			if(TEXT_FIELD.text.length == 0){
+			} else {
+				const text_raw = TEXT_FIELD.text;
+				const obj = JSON.parse(text_raw);
+				$.Msg(text_raw);
+				$.Msg(obj);
+				RequestScenarioPick(scenario, obj);
+			}
+		})
+	})(scenario);
+
+	
+
 }
 
 function ScenarioAssigned(data) {
@@ -256,6 +336,8 @@ function FinishScenratioSelection(data) {
 
 (function () {
 	//Subscribe to events
+	$.Msg("hero_selection subscribe");
+
 	GameEvents.Subscribe( "generate_hero_ui", GenerateHeroUI );
 	GameEvents.Subscribe( "activation_done", DrawHeroSelectionUI );
 	GameEvents.Subscribe( "hero_assigned", HeroAssigned );

@@ -9,6 +9,7 @@ if ScenarioSelection == nil then
 	ScenarioSelection.scenarios_picked = {}
 	ScenarioSelection.finished = false
 	ScenarioSelection.n_players = nil
+	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
 		spirit_lgd_g1 = {
 			name = "game 1",
@@ -74,30 +75,52 @@ function ScenarioSelection:FinishScenarioSelection()
 	end
 
 	for scenario, players in pairs(ScenarioSelection.scenarios_picked) do
-		local num_players = tablelength(players)
-		if max_num == num_players then
-			table.insert(scenraio_with_max, scenario)
-		elseif max_num < num_players then
-			max_num = num_players
-			scenraio_with_max = {scenario}
+		if scenario ~= "pass" then
+			local num_players = tablelength(players)
+			if max_num == num_players then
+				table.insert(scenraio_with_max, scenario)
+			elseif max_num < num_players then
+				max_num = num_players
+				scenraio_with_max = {scenario}
+			end
 		end
 	end
 
 	print("viable scenarios", scenraio_with_max)
 	local selected_scenario = getRandomValueFromArray(scenraio_with_max)
 	print(selected_scenario)
+	ScenarioSelection:LockScenario(selected_scenario)
+end
 
-	local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
-	GameReader:Init(scenario_fname)
-	ScenarioSelection.onFinish()
-	CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection",
-		ScenarioSelection.scenarios[selected_scenario])
+function ScenarioSelection:LockScenario(selected_scenario)
+	if selected_scenario ~= "custom" then
+		local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
+		ScenarioSelection.finished = true
+		GameReader:Init(scenario_fname)
+		ScenarioSelection.onFinish()
+		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection",
+			ScenarioSelection.scenarios[selected_scenario])
+	else
+		-- TODO use ScenarioSelection.custom_scenario
+		-- selected_scenario = "spirit_lgd_g4"
+		-- local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
+		ScenarioSelection.finished = true
+		GameReader:InitObject(ScenarioSelection.custom_scenario)
+		ScenarioSelection.onFinish()
+
+		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", {name = "Custom"})
+	end
+
 end
 
 function ScenarioSelection:RequestScenarioPick(data)
+	print("RequestScenarioPick")
 	print(ScenarioSelection.player_picked_scenarios)
 	print(ScenarioSelection.scenarios_picked)
 	print(data)
+	if data["data"]~= nil and tablelength(data)>0 then
+		ScenarioSelection.custom_scenario = data["data"]
+	end
 	if ScenarioSelection.player_picked_scenarios[data.PlayerID] == true then
 		DisplayError(data.PlayerID, "#dota_hud_error_player_picked_scenarios_already")
 		print("Player picked scenario already!")

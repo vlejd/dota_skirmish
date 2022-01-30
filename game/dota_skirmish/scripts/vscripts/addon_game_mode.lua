@@ -5,6 +5,8 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode.hero_selection_ended = false
 end
 
+DEBUG_LOCK_SCENARIO_HERO = false  -- sadness. does not work
+
 isRoshanDead = true
 local waypointPossitions = {}
 
@@ -30,6 +32,27 @@ function Activate()
 	print("Activate")
 	GameRules.AddonTemplate = SkirmishGameMode()
 	GameRules.AddonTemplate:InitGameMode()
+end
+
+function fixPosition(poz)
+	print("fixPosition")
+	print(type(poz))
+	print(poz)
+	if type(poz) == "userdata" then  -- hope this is Vector
+		print("udata")
+		return poz
+	end
+	if type(poz) == "table" then
+		print("table")
+		if tablelength(poz) == 2 then
+			return Vector(poz["0"], poz["1"])
+		elseif tablelength(poz) == 3 then
+			return Vector(poz["0"], poz["1"], poz["2"])
+		else
+			print("ERROR invalid vector")
+			return Vector(100,100)
+		end
+	end
 end
 
 function SkirmishGameMode:InitGameMode()
@@ -356,7 +379,7 @@ end
 function SkirmishGameMode:MakeCreeps()
 	print("making creepes")
 	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
-		local cPoz = creepData["position"]
+		local cPoz = fixPosition(creepData["position"])
 		local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
 		local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
 		local waypoint = Entities:FindByName(nil, waypointName)
@@ -371,7 +394,7 @@ function SkirmishGameMode:FixWards()
 	for _, ward in pairs(GameReader:GetWardsInfo() or {}) do
 		-- npc_dota_observer_wards
 		-- npc_dota_sentry_wards
-		local hWard = CreateUnitByName(ward["type"], ward["position"], true, nil, nil, ward["team"])
+		local hWard = CreateUnitByName(ward["type"], fixPosition(ward["position"]), true, nil, nil, ward["team"])
 		if ward["type"] == "npc_dota_observer_wards" then
 			local kill_buff = hWard:AddNewModifier(hWard, nil, "modifier_kill", {
 				duration = 360
@@ -464,7 +487,7 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		hHero:SetGold(heroData["gold_unreliable"], false)  -- should be false
 	end
 
-	FindClearSpaceForUnit(hHero, heroData["position"], true)
+	FindClearSpaceForUnit(hHero, fixPosition(heroData["position"]), true)
 
 	for i = 2, heroData["level"] do
 		hHero:HeroLevelUp(false)
@@ -644,7 +667,11 @@ function SkirmishGameMode:OnStateChange()
 		print("DOTA_GAMERULES_STATE_HERO_SELECTION")
 		SkirmishGameMode:MakeEveryoneRadiant()
 		SkirmishGameMode:SetHumanPlayersCount()
-		ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
+		if DEBUG_LOCK_SCENARIO_HERO then
+			ScenarioSelection.LockScenario("spirit_lgd_g4")
+		else
+			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
+		end
 
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then
