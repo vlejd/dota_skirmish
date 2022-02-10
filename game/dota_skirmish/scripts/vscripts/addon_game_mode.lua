@@ -110,7 +110,7 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 3 then
 		SkirmishGameMode:MakeCreeps()
 		SkirmishGameMode:FixPlayers()
-		GameRules:SpawnNeutralCreeps()
+		SkirmishGameMode:FixNeutrals()
 		SkirmishGameMode:InitialRoshanSetup()
 		setup_stage = 4
 		return 0.1
@@ -502,13 +502,6 @@ function SkirmishGameMode:FixPlayers()
 end
 
 function SkirmishGameMode:FixHero(heroData, hHero)
-	if heroData["gold_reliable"] ~= nil then
-		hHero:SetGold(heroData["gold_reliable"], true)
-	end
-	if heroData["gold_unreliable"] ~= nil then
-		hHero:SetGold(heroData["gold_unreliable"], false)  -- should be false
-	end
-
 	FindClearSpaceForUnit(hHero, fixPosition(heroData["position"]), true)
 
 	for i = 2, heroData["level"] do
@@ -554,6 +547,19 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 			hAbility:StartCooldown(heroData["cooldowns"][i])
 		end
 	end
+
+	if heroData["is_dead"] then
+		hHero:ForceKill(true)
+		hHero:SetTimeUntilRespawn(heroData["respawn_time"])
+	end
+
+	if heroData["gold_reliable"] ~= nil then
+		hHero:SetGold(heroData["gold_reliable"], true)
+	end
+	if heroData["gold_unreliable"] ~= nil then
+		hHero:SetGold(heroData["gold_unreliable"], false)
+	end
+
 end
 
 last_secs = 0
@@ -975,5 +981,11 @@ function SkirmishGameMode:FixFirstBlood()
 		print("first blood active")
 		GameRules:SetFirstBloodActive(true)
 	end
+
+end
+
+
+function SkirmishGameMode:FixNeutrals()
+	-- GameRules:SpawnNeutralCreeps()
 
 end
