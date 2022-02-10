@@ -130,6 +130,7 @@ function SkirmishGameMode:WaitForSetup()
 		return 2
 	elseif setup_stage == 5 then
 		SkirmishGameMode:SetGliphCooldowns()
+		SkirmishGameMode:FixFirstBlood()
 		return nil
 	else
 		print("Unexpected state: setup_stage", setup_stage)
@@ -957,4 +958,22 @@ function SkirmishGameMode:initWaypoints()
 			end
 		end
 	end
+end
+
+function SkirmishGameMode:FixFirstBlood()
+	local kills = 0
+	for hero_name, herodata in pairs(GameReader:GetHeroesInfo()) do
+		if herodata.kills then
+			kills = kills + herodata.kills
+		end
+	end
+	print("found kills", kills)
+	if kills > 0 then
+		print("first blood disabled")
+		GameRules:SetFirstBloodActive(false)
+	else
+		print("first blood active")
+		GameRules:SetFirstBloodActive(true)
+	end
+
 end
