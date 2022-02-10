@@ -986,6 +986,17 @@ end
 
 
 function SkirmishGameMode:FixNeutrals()
-	-- GameRules:SpawnNeutralCreeps()
+	GameRules:SpawnNeutralCreeps()
+	-- neutralcamp_good_8
+	
+	for i = 1, 10, 1 do
+		-- camps are evil vs good vs bad. omggg
+		local spawner_name = "neutralcamp_evil_"..i
+		local spawner = Entities:FindByName(nil, spawner_name)
+		print("spawner", spawner_name, spawner)
+		if spawner ~= nil then
+			--spawner.SpawnNextBatch(false)
+		end
+	end
 
 end
