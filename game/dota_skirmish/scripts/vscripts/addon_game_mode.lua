@@ -34,27 +34,6 @@ function Activate()
 	GameRules.AddonTemplate:InitGameMode()
 end
 
-function fixPosition(poz)
-	print("fixPosition")
-	print(type(poz))
-	print(poz)
-	if type(poz) == "userdata" then  -- hope this is Vector
-		print("udata")
-		return poz
-	end
-	if type(poz) == "table" then
-		print("table")
-		if tablelength(poz) == 2 then
-			return Vector(poz["0"], poz["1"])
-		elseif tablelength(poz) == 3 then
-			return Vector(poz["0"], poz["1"], poz["2"])
-		else
-			print("ERROR invalid vector")
-			return Vector(100,100)
-		end
-	end
-end
-
 function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	-- LockCustomGameSetupTeamAssignment
@@ -68,7 +47,6 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-	GameRules:SetFirstBloodActive(false)  -- TODO add to game state
 	-- GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 	GameRules:SetCreepSpawningEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
@@ -80,6 +58,132 @@ function SkirmishGameMode:InitGameMode()
 		GameRules:SetCustomGameTeamMaxPlayers(team, DOUBLE_MAX_PLAYERS)
 	end
 
+end
+
+setup_stage = -1
+
+function SkirmishGameMode:WaitForSetup()
+	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
+	if setup_stage == -1 then
+		if SkirmishGameMode.hero_selection_ended then
+			print("Hero selection not ended yet")
+			setup_stage = 0
+			return 0.01
+		else
+			print("Hero selection ended")
+			return 0.1
+		end
+
+	elseif setup_stage == 0 then
+		local num_players = SkirmishGameMode:LoadedHeroes()
+		if num_players < 10 then
+			print("Waiting for unloaded players", num_players, 10)
+			-- return nil
+			return 0.1
+		else
+			print("players loaded")
+			SkirmishGameMode:HandleGameStart()
+			setup_stage = 1
+			return 0.01
+		end
+	elseif setup_stage == 1 then
+		local replaced = tablelength(HeroSelection.heroes_replaced)
+		print(replaced)
+		if replaced < 10 then
+			print("waiting for hero replacements")
+			return 0.1
+		else
+			print("all heroes replaced")
+			setup_stage = 2
+			return 0.1
+		end
+	elseif setup_stage == 2 then
+		SkirmishGameMode:FixUpgrades();
+		SkirmishGameMode:initWaypoints()
+		SkirmishGameMode:FixBuildings()
+		SkirmishGameMode:FixOutposts()
+		SkirmishGameMode:FixWards()
+		NeutralItems:Setup(GameReader:GetGameTime())
+		setup_stage = 3
+		return 0.1
+
+	elseif setup_stage == 3 then
+		SkirmishGameMode:MakeCreeps()
+		SkirmishGameMode:FixPlayers()
+		GameRules:SpawnNeutralCreeps()
+		SkirmishGameMode:InitialRoshanSetup()
+		setup_stage = 4
+		return 0.1
+
+	elseif setup_stage == 4 then
+		setup_stage = 5
+		SkirmishGameMode:FixNeutralItems()
+		SkirmishGameMode:AddThinkers()
+
+		SkirmishGameMode:SetWinconText()
+		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
+		-- GameRules:SetTimeOfDay(140)
+		print("make_screen_not_dark")
+		local data = {}
+		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
+		PauseGame(true)
+		return 2
+	elseif setup_stage == 5 then
+		SkirmishGameMode:SetGliphCooldowns()
+		return nil
+	else
+		print("Unexpected state: setup_stage", setup_stage)
+		return nil
+	end
+end
+
+function SkirmishGameMode:LoadedHeroes()
+	local num_players = 0
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
+				if old_hero ~= nil then
+					num_players = num_players + 1
+				end
+			end
+		end
+	end
+	return num_players
+end
+
+function fixPosition(poz)
+	print("fixPosition")
+	print(type(poz))
+	print(poz)
+	if type(poz) == "userdata" then  -- hope this is Vector
+		print("udata")
+		return poz
+	end
+	if type(poz) == "table" then
+		print("table")
+		if poz["0"] then
+			if tablelength(poz) == 2 then
+				return Vector(poz["0"], poz["1"])
+			elseif tablelength(poz) == 3 then
+				return Vector(poz["0"], poz["1"], poz["2"])
+			else
+				print("ERROR invalid vector")
+				return Vector(100,100)
+			end
+		else
+			if tablelength(poz) == 2 then
+				return Vector(poz[1], poz[2])
+			elseif tablelength(poz) == 3 then
+				return Vector(poz[1], poz[2], poz[3])
+			else
+				print("ERROR invalid vector")
+				return Vector(100,100)
+			end
+		end
+		
+	end
 end
 
 creeps_to_kill = nil
@@ -154,98 +258,6 @@ function SkirmishGameMode:SetGliphOneTimeThinker()
 		return nil
 	else
 		return 0.5
-	end
-end
-
-function SkirmishGameMode:LoadedHeroes()
-	local num_players = 0
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
-				if old_hero ~= nil then
-					num_players = num_players + 1
-				end
-			end
-		end
-	end
-	return num_players
-end
-
-setup_stage = -1
-
-function SkirmishGameMode:WaitForSetup()
-	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
-	if setup_stage == -1 then
-		if SkirmishGameMode.hero_selection_ended then
-			print("Hero selection not ended yet")
-			setup_stage = 0
-			return 0.01
-		else
-			print("Hero selection ended")
-			return 0.1
-		end
-
-	elseif setup_stage == 0 then
-		local num_players = SkirmishGameMode:LoadedHeroes()
-		if num_players < 10 then
-			print("Waiting for unloaded players", num_players, 10)
-			-- return nil
-			return 0.1
-		else
-			print("players loaded")
-			SkirmishGameMode:HandleGameStart()
-			setup_stage = 1
-			return 0.01
-		end
-	elseif setup_stage == 1 then
-		local replaced = tablelength(HeroSelection.heroes_replaced)
-		print(replaced)
-		if replaced < 10 then
-			print("waiting for hero replacements")
-			return 0.1
-		else
-			print("all heroes replaced")
-			setup_stage = 2
-			return 0.1
-		end
-	elseif setup_stage == 2 then
-		SkirmishGameMode:FixUpgrades();
-		SkirmishGameMode:initWaypoints()
-		SkirmishGameMode:FixBuildings()
-		SkirmishGameMode:FixWards()
-		NeutralItems:Setup(GameReader:GetGameTime())
-		setup_stage = 3
-		return 0.1
-
-	elseif setup_stage == 3 then
-		SkirmishGameMode:MakeCreeps()
-		SkirmishGameMode:FixPlayers()
-		GameRules:SpawnNeutralCreeps()
-		SkirmishGameMode:InitialRoshanSetup()
-		setup_stage = 4
-		return 0.1
-
-	elseif setup_stage == 4 then
-		setup_stage = 5
-		SkirmishGameMode:FixNeutralItems()
-		SkirmishGameMode:AddThinkers()
-
-		SkirmishGameMode:SetWinconText()
-		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
-		-- GameRules:SetTimeOfDay(140)
-		print("make_screen_not_dark")
-		local data = {}
-		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
-		PauseGame(true)
-		return 2
-	elseif setup_stage == 5 then
-		SkirmishGameMode:SetGliphCooldowns()
-		return nil
-	else
-		print("Unexpected state: setup_stage", setup_stage)
-		return nil
 	end
 end
 
@@ -430,6 +442,15 @@ function SkirmishGameMode:FixBuildings()
 				hBuilding:SetHealth(building["health"])
 			end
 		end
+	end
+end
+
+function SkirmishGameMode:FixOutposts()
+	print("fixing outposts")
+
+	for _, building in pairs(GameReader:GetOutpostsInfo() or {}) do
+		local hBuilding = Entities:FindByName(nil, building["name"])
+		hBuilding:SetTeam(building["team"])
 	end
 end
 
@@ -700,7 +721,7 @@ end
 
 function SkirmishGameMode:HandleGameStart()
 	print("HandleGameStart")
-	-- Make screen dark to hide the magic! TODO
+	-- Make screen dark to hide the magic!
 	-- replace heroes with the desired ones ...
 	print(SkirmishGameMode.random_hero_to_playerID)
 	print(HeroSelection.player_to_hero)
@@ -718,7 +739,7 @@ function SkirmishGameMode:HandleGameStart()
 					if original_playerID == nil then
 						print("this is a bot")
 						print(HeroSelection.heroes_picked)
-						-- it is a bot TODO
+						-- it is a bot
 						local available_heroes = {}
 						for hname, _ in pairs(HeroSelection.heroes_picked) do
 							local picked = HeroSelection.heroes_picked[hname]
@@ -740,7 +761,6 @@ function SkirmishGameMode:HandleGameStart()
 						if old_hero ~= nil then
 							local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
 							HeroSelection.heroes_replaced[hero_name] = true
-							-- TODO -> check if all heroeas are loaded properly
 							GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 								if old_hero then
 									UTIL_Remove(old_hero)

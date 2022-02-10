@@ -114,6 +114,14 @@ function GameReader:GetBuildingsInfo()
 	end
 end
 
+function GameReader:GetOutpostsInfo()
+	if GameState.outposts then
+		return GameState.outposts
+	else
+		print("ERROR: Missing outposts info.")
+	end
+end
+
 function GameReader:GetCreepsInfo()
 	if GameState.creeps then
 		return GameState.creeps
