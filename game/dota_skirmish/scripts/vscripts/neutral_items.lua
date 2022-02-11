@@ -4,12 +4,14 @@
 -- if time for neutral item, and conditions are met, 
 -- GetPotentialNeutralItemDrop and drop it. 
 require("internal/util")
+require("time_utils")
+
 
 if NeutralItems == nil then
 	NeutralItems = class({})
 end
 
-DROP_TIMES = {}
+DROP_TIMES = {7, 17, 27, 37, 60}
 
 NEUTRAL_ITEMS = {{"item_arcane_ring", "item_broom_handle", "item_chipped_vest", "item_mysterious_hat",
                   "item_keen_optic", "item_ocean_heart", "item_unstable_wand", "item_possessed_mask",
@@ -123,23 +125,11 @@ function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
 	return possible_drops[random_index]
 end
 
-function NeutralItems:Setup(time)
-	NeutralItems:SetTime(time)
+function NeutralItems:Setup(master_time)
+	NeutralItems.master_time = master_time
 	ListenToGameEvent("entity_killed", Dynamic_Wrap(self, "OnEntityKilled"), self)
 end
 
-function NeutralItems:SetTime(time)
-	local time_minutes = math.floor(time / 60)
-	for _, time in pairs({7, 17, 27, 37, 60}) do
-		local real_time = nil
-		if time < time_minutes then
-			real_time = 0
-		else
-			real_time = time - time_minutes
-		end
-		table.insert(DROP_TIMES, real_time)
-	end
-end
 
 function NeutralItems:OnEntityKilled(event)
 	local hVictim = nil
@@ -194,7 +184,8 @@ function NeutralItems:OnEntityKilled(event)
 			return
 		end
 		for tier = 1, 5 do
-			local time_is_right = (DROP_TIMES[tier] * 60 < GameRules:GetDOTATime(false, false))
+			local time = TimeUtils:GetMasterTime(NeutralItems.master_time)
+			local time_is_right = (DROP_TIMES[tier] * 60 < time.skirmishTime)
 			local potential_drop = NeutralItems:GetPotentialNeutralItemDrop(tier, attacker_team)
 			if potential_drop ~= nil and friendly_in_range and (not enemy_in_range) and time_is_right then
 				local rng = RandomInt(1, 1000)

@@ -20,6 +20,7 @@ require("neutral_items")
 require("hero_selection")
 require("scenario_selection")
 require("internal/globals")
+require("time_utils")
 
 function Precache(context)
 	PrecacheResource("model", "*.vmdl", context)
@@ -43,7 +44,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetHeroSelectionTime(SCENARIO_SELECTION_LENGTH + HERO_SELECTION_LENGTH)
 	GameRules:SetStrategyTime(0.0)
 	GameRules:SetShowcaseTime(0.0)
-	GameRules:SetPreGameTime(3)
+	-- GameRules:SetPreGameTime(60)
 	GameRules:SetPostGameTime(30.0)
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
@@ -103,7 +104,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:FixBuildings()
 		SkirmishGameMode:FixOutposts()
 		SkirmishGameMode:FixWards()
-		NeutralItems:Setup(GameReader:GetGameTime())
+		NeutralItems:Setup(SkirmishGameMode.masterTime)
 		setup_stage = 3
 		return 0.1
 
@@ -119,18 +120,20 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = 5
 		SkirmishGameMode:FixNeutralItems()
 		SkirmishGameMode:AddThinkers()
-
+		SkirmishGameMode:FixFirstBlood()
 		SkirmishGameMode:SetWinconText()
 		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		-- GameRules:SetTimeOfDay(140)
 		print("make_screen_not_dark")
 		local data = {}
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
+		print("master time")
+		print(TimeUtils:GetMasterTime(SkirmishGameMode.masterTime))
+		-- TODO wait with pause until buffer time is over
 		PauseGame(true)
 		return 2
 	elseif setup_stage == 5 then
 		SkirmishGameMode:SetGliphCooldowns()
-		SkirmishGameMode:FixFirstBlood()
 		return nil
 	else
 		print("Unexpected state: setup_stage", setup_stage)
@@ -188,15 +191,20 @@ function fixPosition(poz)
 end
 
 creeps_to_kill = nil
-local last_min = 1
+local next_wave_time = nil
 
 function SkirmishGameMode:AgroFixer()
 	-- Spawn enemy creeps for a moment on every wave spawn to fix their agro behavior
 	print("AgroFixer")
+	if next_wave_time == nil then
+		next_wave_time = SkirmishGameMode.masterTime.skirmishNextWave
+	end
+
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
 	if creeps_to_kill == nil then
-		local time = GameRules:GetDOTATime(false, false)
-		if time < last_min * 30 then
-			print("No time yet", time)
+		-- MYTIME skirmishtime, only after next 30sec
+		if time.skirmishTime < next_wave_time then
+			print("No time yet", time.skirmishTime, next_wave_time)
 			return 1
 		end
 		print("Time to spawn creeps")
@@ -229,52 +237,27 @@ function SkirmishGameMode:AgroFixer()
 		for _, hCreep in pairs(creeps_to_kill) do
 			hCreep:ForceKill(false)
 		end
-		last_min = last_min + 1
+		next_wave_time = next_wave_time + 30
 		creeps_to_kill = nil
 		return 1
-	end
-end
-
-function getNextWaveTimeDiff()
-	local time = GameRules:GetDOTATime(false, false)
-	local ret = 0
-	if time < 0 then
-		ret = 0 - time
-	else
-		local offset = time % 30
-		ret = 1 + 30 - offset
-	end
-	print(ret)
-	return ret
-end
-
-function SkirmishGameMode:SetGliphOneTimeThinker()
-	--	print("SetGliphOneTimeThinker", time)
-	local time = GameRules:GetDOTATime(false, false)
-
-	if time > 5 then
-		print("SetGliphOneTimeThinker")
-		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
-		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
-		return nil
-	else
-		return 0.5
 	end
 end
 
 
 function SkirmishGameMode:SetWinconText()
 	if GameReader:GetWinCondition() ~= nil then
-		local game_start_time = GameReader:GetGameTime()
-		local data = {text = "Ends at", time = game_start_time+ GameReader:GetWinCondition().time}
+		local end_time = (
+			SkirmishGameMode.masterTime.skirmishStartTime + 
+			GameReader:GetWinCondition().time)
+		local data = {text = "Ends at", time = end_time }
 		CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
 	end
 end
 
 function SkirmishGameMode:SetGliphCooldowns()
-	local time = GameRules:GetDOTATime(false, false)
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
 
-	if time > 5 then
+	if time.realGameTime > 5 then
 		-- TODO get real glyph cooldowns
 		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
 		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
@@ -602,9 +585,8 @@ end
 
 function SkirmishGameMode:FixRoshanStatsDrops()
 	print("fixing roshan")
-	local gameTime = GameRules:GetDOTATime(false, false)
-	local realTime = gameTime + GameReader:GetGameTime()
-	local mins = math.floor(realTime / 60)
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local mins = math.floor(time.skirmishTime / 60)
 
 	local hRosh = Entities:FindByName(nil, "npc_dota_roshan") --
 	if hRosh ~= nil then
@@ -655,10 +637,9 @@ end
 
 function SkirmishGameMode:FixRoshanHealth()
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		local gameTime = GameRules:GetDOTATime(false, false)
-		local realTime = gameTime + GameReader:GetGameTime()
-		local mins = math.floor(realTime / 60)
-		local secs = math.floor(realTime)
+		local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+		local mins = math.floor(time.skirmishTime / 60)
+		local secs = math.floor(time.skirmishTime)
 
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
 
@@ -697,6 +678,7 @@ function SkirmishGameMode:OnStateChange()
 		SkirmishGameMode:SetHumanPlayersCount()
 		if DEBUG_LOCK_SCENARIO_HERO then
 			ScenarioSelection.LockScenario("spirit_lgd_g4")
+			SkirmishGameMode:InitializeTime()
 		else
 			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
 		end
@@ -707,8 +689,10 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		local data = {}
 		print("make_screen_dark")
+		GameRules:GetGameModeEntity():SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", data)
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
+
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 	end
@@ -792,6 +776,7 @@ function SkirmishGameMode:HandleGameStart()
 end
 
 function TriggerStartHeroSelection()
+	SkirmishGameMode:InitializeTime()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
 		HeroSelection:StartHeroSelection(OnHeroSelectionEnd, SkirmishGameMode.num_human_players)
@@ -867,23 +852,21 @@ function SkirmishGameMode:AddThinkers()
 	-- Add thinkers
 	GameMode:SetThink("CheckWinCondition", self, "CheckWinConditionGlobalThink", 1)
 	GameMode:SetThink("AgroFixer", self, "AgroFixerGlobalThink", 1)
-	GameMode:SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
 end
 
 function SkirmishGameMode:UpdateTime()
-	local game_start_time = GameReader:GetGameTime()
-	local game_elapsed_time = GameRules:GetDOTATime(false, false)
-	local data = {time = game_start_time + game_elapsed_time}
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local data = {time = time.skirmishTime}
 	CustomGameEventManager:Send_ServerToAllClients("update_game_time", data)
-	return 0.1
+	return 0.001 
 end
 
 function SkirmishGameMode:CheckWinCondition()
-	local gameTime = GameRules:GetDOTATime(false, false)
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
 	if GameReader:GetWinCondition() ~= nil then
-		if gameTime >= GameReader:GetWinTimeCondition() then
+		if time.realGameTime >= GameReader:GetWinTimeCondition() then
 			GameRules:SetGameWinner(GameReader:GetDefaultWinner())
 			return nil
 		end
@@ -999,4 +982,12 @@ function SkirmishGameMode:FixNeutrals()
 		end
 	end
 
+end
+
+
+function SkirmishGameMode:InitializeTime()
+	print("InitializeTime")
+	SkirmishGameMode.masterTime = TimeUtils:InitialTimeComputations()
+	print(SkirmishGameMode.masterTime)
+	GameRules:SetPreGameTime(SkirmishGameMode.masterTime.realPregameLength)
 end
