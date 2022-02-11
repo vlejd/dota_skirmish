@@ -5,11 +5,11 @@ end
 function TimeUtils:InitialTimeComputations()
 	local buffer = 5
 	local skirmishStartTime = GameReader:GetGameTime()
-	local skirmishLastMin = math.floor(skirmishStartTime/60)*60
-	local skirmishNextMin = skirmishLastMin+60
-	
-	local skirmishLastWave = math.floor(skirmishStartTime/30)*30
-	local skirmishNextWave = skirmishLastWave+30
+	local skirmishLastMin = math.floor(skirmishStartTime / 60) * 60
+	local skirmishNextMin = skirmishLastMin + 60
+
+	local skirmishLastWave = math.floor(skirmishStartTime / 30) * 30
+	local skirmishNextWave = skirmishLastWave + 30
 
 	local pregameLength = skirmishNextMin - skirmishStartTime
 	local realPregameLength = pregameLength + buffer
@@ -20,14 +20,13 @@ function TimeUtils:InitialTimeComputations()
 		pregameLength = pregameLength,
 		realPregameLength = realPregameLength,
 		skirmishStartTime = skirmishStartTime,
-		skirmishNextWave = skirmishNextWave,
+		skirmishNextWave = skirmishNextWave
 	}
 	return data
 end
 
-
 function TimeUtils:GetMasterTime(masterTime)
-	
+
 	local gameTime = GameRules:GetDOTATime(false, false)
 	local gameTimeWithPregame = GameRules:GetDOTATime(true, false)
 	local gameTimeNegative = GameRules:GetDOTATime(false, true)
@@ -47,17 +46,17 @@ function TimeUtils:GetMasterTime(masterTime)
 		gameTimeAllTrue = gameTimeAllTrue,
 		gameTime = gameTime,
 		reallyRealGameTime = reallyRealGameTime,
-		skirmishTime = skirmishTime, 
-		skirmishTime2 = skirmishTime2, 
-		skirmishTime3 = skirmishTime3, 
-		skirmishTime4 = skirmishTime4,
-	} 
+		skirmishTime = skirmishTime,
+		skirmishTime2 = skirmishTime2,
+		skirmishTime3 = skirmishTime3,
+		skirmishTime4 = skirmishTime4
+	}
 
 	-- print(debug)
 	local data = {
 		gameTimeWithPregame = gameTimeWithPregame,
 		skirmishTime = skirmishTime,
-		realGameTime = realGameTime,
+		realGameTime = realGameTime
 	}
 
 	return data
