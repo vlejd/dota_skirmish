@@ -261,41 +261,43 @@ function GenerateScenarioUI(data) {
 		})
 	})(scenario);
 
-	var scenario = "custom"
-	var scenario_button = $.CreatePanel("Panel", parent, scenario);
-	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
-
-	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+	if(false){
+		var scenario = "custom"
+		var scenario_button = $.CreatePanel("Panel", parent, scenario);
+		scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
 	
-	label.text = $.Localize(scenario);
-
-	(function (scenario) {
-		scenario_button.SetPanelEvent("onmouseover", function () {
-			$.Msg("hover");
-			$.Msg(scenario);
-			$.Msg(data);
-			var img = "placeholder"
-			$.Msg(img);
-			$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
-			$('#ScenarioDescriptionTxt').text = "custom scenario";
-		})
-	})(scenario);
-
-	(function (scenario) {
-		scenario_button.SetPanelEvent("onactivate", function () {
-			const TEXT_FIELD = $("#CustomScenario");
-			$.Msg("UpdateState");
-			$.Msg(TEXT_FIELD.text.length);
-			if(TEXT_FIELD.text.length == 0){
-			} else {
-				const text_raw = TEXT_FIELD.text;
-				const obj = JSON.parse(text_raw);
-				$.Msg(text_raw);
-				$.Msg(obj);
-				RequestScenarioPick(scenario, obj);
-			}
-		})
-	})(scenario);
+		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+		
+		label.text = $.Localize(scenario);
+	
+		(function (scenario) {
+			scenario_button.SetPanelEvent("onmouseover", function () {
+				$.Msg("hover");
+				$.Msg(scenario);
+				$.Msg(data);
+				var img = "placeholder"
+				$.Msg(img);
+				$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
+				$('#ScenarioDescriptionTxt').text = "custom scenario";
+			})
+		})(scenario);
+	
+		(function (scenario) {
+			scenario_button.SetPanelEvent("onactivate", function () {
+				const TEXT_FIELD = $("#CustomScenario");
+				$.Msg("UpdateState");
+				$.Msg(TEXT_FIELD.text.length);
+				if(TEXT_FIELD.text.length == 0){
+				} else {
+					const text_raw = TEXT_FIELD.text;
+					const obj = JSON.parse(text_raw);
+					$.Msg(text_raw);
+					$.Msg(obj);
+					RequestScenarioPick(scenario, obj);
+				}
+			})
+		})(scenario);
+	}
 
 	
 

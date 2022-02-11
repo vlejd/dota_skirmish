@@ -11,18 +11,18 @@ if ScenarioSelection == nil then
 	ScenarioSelection.n_players = nil
 	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
+		--spirit_lgd_g1 = {
+		--	name = "game 0",
+		--	description = "json.",
+		--	fname = "game_states/from_json",
+		--	img = "game_1.png"
+		--},
 		spirit_lgd_g1 = {
-			name = "game 0",
-			description = "json.",
-			fname = "game_states/from_json",
-			img = "game_1.png"
+			name = "game 1",
+		 	description = "29th minute of a balanced game 1 from finals. Try to win.",
+		 	fname = "game_states/spirit_lgd_g1",
+		 	img = "game_1.png"
 		},
-		-- spirit_lgd_g1 = {
-		-- 	name = "game 1",
-		-- 	description = "29th minute of a balanced game 1 from finals. Try to win.",
-		-- 	fname = "game_states/spirit_lgd_g1",
-		-- 	img = "game_1.png"
-		-- },
 		spirit_lgd_g2 = {
 			name = "game 2",
 			description = "20th minute of a balanced game 2 from finals. Can shard win you the game?",
