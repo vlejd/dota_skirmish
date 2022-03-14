@@ -35,6 +35,19 @@ function Activate()
 	GameRules.AddonTemplate:InitGameMode()
 end
 
+function CastToBool(something)
+	if type(something) == "boolean" then
+		return something
+	end
+	if type(something) == "number" then
+		return something == 1
+	end
+	if type(something) == "string" then
+		return something ~=""
+	end
+	
+end
+
 function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	-- LockCustomGameSetupTeamAssignment
@@ -308,13 +321,13 @@ function SkirmishGameMode:FixUpgrades()
 					print(heroName, hHero, niceHeroName)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
 						local heroData = GameReader:GetHeroInfo(niceHeroName)
-						if heroData["has_shard"] then
+						if CastToBool(heroData["has_shard"]) then
 							hHero:AddItemByName("item_aghanims_shard")
 						end
-						if heroData["has_ags"] then
+						if CastToBool(heroData["has_ags"]) then
 							hHero:AddItemByName("item_ultimate_scepter_2")
 						end
-						if heroData["has_moon_shard"] then
+						if CastToBool(heroData["has_moon_shard"]) then
 							hHero:AddItemByName("item_moon_shard")
 							local hMoonShard = hHero:FindItemInInventory("item_moon_shard")
 							ExecuteOrderFromTable({
@@ -531,7 +544,8 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		end
 	end
 
-	if heroData["is_dead"] then
+	print("is_dead", heroData["is_dead"], type(heroData["is_dead"]))
+	if CastToBool(heroData["is_dead"]) then
 		hHero:ForceKill(true)
 		hHero:SetTimeUntilRespawn(heroData["respawn_time"])
 	end

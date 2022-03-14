@@ -261,7 +261,7 @@ function GenerateScenarioUI(data) {
 		})
 	})(scenario);
 
-	if(false){
+	if(true){
 		var scenario = "custom"
 		var scenario_button = $.CreatePanel("Panel", parent, scenario);
 		scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
