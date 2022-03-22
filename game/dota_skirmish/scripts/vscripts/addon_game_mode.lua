@@ -5,8 +5,6 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode.hero_selection_ended = false
 end
 
-DEBUG_LOCK_SCENARIO_HERO = false  -- sadness. does not work
-
 isRoshanDead = true
 local waypointPossitions = {}
 
@@ -690,12 +688,7 @@ function SkirmishGameMode:OnStateChange()
 		print("DOTA_GAMERULES_STATE_HERO_SELECTION")
 		SkirmishGameMode:MakeEveryoneRadiant()
 		SkirmishGameMode:SetHumanPlayersCount()
-		if DEBUG_LOCK_SCENARIO_HERO then
-			ScenarioSelection.LockScenario("spirit_lgd_g4")
-			SkirmishGameMode:InitializeTime()
-		else
-			ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
-		end
+		ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
 
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then

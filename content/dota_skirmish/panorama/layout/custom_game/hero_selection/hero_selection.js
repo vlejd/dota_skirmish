@@ -16,16 +16,6 @@ function CheckForHostPrivileges() {
 	}
 }
 
-// Load the game state from a file
-function DeveloperActivate() {
-	// If this button has already been pressed, do nothing
-	if ($('#TakeoverActivateButton').BHasClass( 'inactive' ) == false) {
-		$('#TakeoverActivateButton').SetHasClass("inactive", true);
-		GameEvents.SendCustomGameEventToServer("game_time_selected", { message: $("#GameTime").GetChild(0).FindChild("Value").text });
-		GameEvents.SendCustomGameEventToServer("takeover_activate", {});
-	}
-}
-
 // Draw the hero selection UI
 function DrawHeroSelectionUI() {
 

@@ -103,18 +103,19 @@ function ScenarioSelection:LockScenario(selected_scenario)
 		local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
 		ScenarioSelection.finished = true
 		GameReader:Init(scenario_fname)
+		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", ScenarioSelection.scenarios[selected_scenario])
 		ScenarioSelection.onFinish()
-		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection",
-			ScenarioSelection.scenarios[selected_scenario])
 	else
 		-- TODO use ScenarioSelection.custom_scenario
 		-- selected_scenario = "spirit_lgd_g4"
 		-- local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
+		print("CUSTOM INIT")
+		print(ScenarioSelection.custom_scenario)
 		ScenarioSelection.finished = true
 		GameReader:InitObject(ScenarioSelection.custom_scenario)
-		ScenarioSelection.onFinish()
-
+		
 		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", {name = "Custom"})
+		ScenarioSelection.onFinish()
 	end
 
 end
@@ -123,9 +124,22 @@ function ScenarioSelection:RequestScenarioPick(data)
 	print("RequestScenarioPick")
 	print(ScenarioSelection.player_picked_scenarios)
 	print(ScenarioSelection.scenarios_picked)
+	print("ScenarioSelection.custom_scenario")
+	print(ScenarioSelection.custom_scenario)
 	print(data)
-	if data["data"]~= nil and tablelength(data)>0 then
-		ScenarioSelection.custom_scenario = data["data"]
+	print(data["data"])
+	if data.scenario == "custom" then
+		print("RequestScenarioPick custom")
+		if data["data"]~= nil and tablelength(data)>0 and data["data"]["game"] ~= nil then
+			print("RequestScenarioPick data not nill")
+			ScenarioSelection.custom_scenario = data["data"]
+			print("ScenarioSelection.custom_scenario")
+			print(ScenarioSelection.custom_scenario)
+		else
+			DisplayError(data.PlayerID, "#dota_hud_error_invalid_custom_data")
+			print("Player picked scenario already!")
+			return
+		end
 	end
 	if ScenarioSelection.player_picked_scenarios[data.PlayerID] == true then
 		DisplayError(data.PlayerID, "#dota_hud_error_player_picked_scenarios_already")

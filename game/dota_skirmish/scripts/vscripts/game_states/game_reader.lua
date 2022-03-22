@@ -5,10 +5,13 @@ if GameReader == nil then
 end
 
 function GameReader:Init(fname)
+	print("GameReader Init from fname", fname)
 	GameState = require(fname)
 end
 
 function GameReader:InitObject(obj)
+	print("GameReader Init from obj", obj.game)
+	print(obj)
 	GameState = obj
 end
 
