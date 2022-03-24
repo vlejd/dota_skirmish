@@ -125,8 +125,8 @@ function SetSliderPosition( sliderName, value) {
 }
 
 function GenerateHeroUI(data) {
-	$('#LoadingPanel').style.visibility = 'collapse';
-	$('#LoadingPanel').style.opacity = 0;	
+	//$('#LoadingPanel').style.visibility = 'collapse';
+	//$('#LoadingPanel').style.opacity = 0;	
 	$.Msg("GenerateHeroUI")
 
 
@@ -146,7 +146,7 @@ function GenerateHeroUI(data) {
 		var label = hero_button.FindChildrenWithClassTraverse("HeroSelectionLabel")[0];
 		var image = hero_button.FindChildrenWithClassTraverse("HeroSelectionPip")[0];
 
-		label.text = $.Localize(hero_name);
+		label.text =  hero; //$.Localize(hero_name);
 		image.heroname = hero_name;
 
 		(function (hero) {
@@ -167,7 +167,7 @@ function RequestScenarioPick(scenario, data) {
 }
 
 function UpdateState(){
-	const TEXT_FIELD = $("#CustomScenario");
+	const TEXT_FIELD = $("#CustomScenarioInput");
 	$.Msg("UpdateState");
 	$.Msg(TEXT_FIELD.text.length);
 	const text_raw = TEXT_FIELD.text;
@@ -182,7 +182,7 @@ function GenerateScenarioUI(data) {
 	$.Msg("GenerateScenarioUI");
 	//$('#HeroSelectionContainerWrapper').style.visibility = 'collapse';
 	// LoadingPanel
-	$('#HeroSelectionTitleLoading').text = "Select scenario";
+	//$('#HeroSelectionTitleLoading').text = "Select scenario";
 
 	// Generate hero buttons
 	var sorted = [];
@@ -274,7 +274,7 @@ function GenerateScenarioUI(data) {
 	
 		(function (scenario) {
 			scenario_button.SetPanelEvent("onactivate", function () {
-				const TEXT_FIELD = $("#CustomScenario");
+				const TEXT_FIELD = $("#CustomScenarioInput");
 				$.Msg("UpdateState");
 				$.Msg(TEXT_FIELD.text.length);
 				if(TEXT_FIELD.text.length == 0){
@@ -322,7 +322,9 @@ function FinishScenratioSelection(data) {
 	$.Msg(data);
 	$('#ScenarioSelectionContainerWrapper').style.visibility = 'collapse';
 	$('#ScenarioSelectionContainerWrapper').style.opacity = 0;	
-	$('#ScenarioDescriptionName').text = data.name;	
+	var HeroSelectionTitle = $('#HeroSelectionTitle');
+	HeroSelectionTitle.text = HeroSelectionTitle.text + " " + data.name;
+
 }
 // Scenario selection end
 

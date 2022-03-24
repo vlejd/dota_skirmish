@@ -20,15 +20,39 @@
 	background-color: grey;
 }
 
+/*  Top level stuff
+============================*/
+#SelectorsContainer {
+	width:100%; 
+	height:94%; 
+	background-color: #2C2F37FF; 
+	flow-children: down;
+}
+
+
 /* Hero selection panel
 =================================================================*/
-#HeroSelectionContainer,
-#LoadingPanel,
+#HeroSelectionContainer{
+	width: 100%;
+	height: 100%;
+	align: center center;
+	border-radius: 5px;
+	visibility: visible;
+	flow-children: down;
+}
+
+#LoadingPanel {
+	width: 100%;
+	height: 100%;
+	align: center center;
+	border-radius: 5px;
+	visibility: visible;
+	flow-children: down;
+}
 #GameSetupContainer {
 	width: 100%;
 	height: 100%;
 	align: center center;
-	background-color: #2C2F37FF;
 	border-radius: 5px;
 	visibility: visible;
 	flow-children: down;
@@ -43,7 +67,7 @@
 #TimeSelectionTitle,
 #HeroSelectionTitle,
 #HeroSelectionTitleLoading,
-#ScenarioDescriptionName
+#ScenarioName
 {
 	horizontal-align: center;
 	margin-top: 5%;
@@ -130,6 +154,12 @@
 	pre-transform-scale2d: 1.0;
 }
 
+#HeroSelectionContainerWrapper {
+	width: 100%; 
+	height: 100%;
+	vertical-align: top;
+}
+
 /* 'Confirm hero selection' button
 =================================================================*/
 #ConfirmHeroSelectionButton {
@@ -170,6 +200,9 @@
 #ScenarioSelectionContainerWrapper {
 	horizontal-align: center;
 	flow-children: down;
+	width: 100%; 
+	height: 100%; 
+	vertical-align: bottom ; 
 }
 
 #ScenarioSelectionContainer {
@@ -178,7 +211,11 @@
 }
 
 #ScenarioImg {
-	margin-bottom: 50px;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	height:630px; 
+	width:1040px; 
+	horizontal-align: center;
 }
 
 
@@ -234,7 +271,18 @@
 #ScenarioDescriptionTxt
 {
 	horizontal-align: center;
-	margin-top: 5%;
+	margin-top: 20;
 	font-size: 20px;
 	color: #FFFFFF;
+	width: 50%; 
+	height: 5%;	
+}
+
+#CustomScenarioInput {
+	margin-top:10px;
+	margin-bottom:10px;
+	width: 50px;
+	horizontal-align: center; 
+	height: 30px; 
+	background-color: #111111FF;
 }
