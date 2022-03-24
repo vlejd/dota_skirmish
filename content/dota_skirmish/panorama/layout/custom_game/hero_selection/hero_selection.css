@@ -24,12 +24,16 @@
 ============================*/
 #SelectorsContainer {
 	width:100%; 
-	height:94%; 
-	background-color: #2C2F37FF; 
+	height:100%; 
 	flow-children: down;
 }
 
-
+#VersionContainer {
+	width:100%; 
+	height:94%; 
+	background-color: #2C2F37FF; 
+	flow-children: none;
+}
 /* Hero selection panel
 =================================================================*/
 #HeroSelectionContainer{
@@ -64,13 +68,11 @@
 	padding: 15% 5% 15% 5%;
 }
 
-#TimeSelectionTitle,
 #HeroSelectionTitle,
-#HeroSelectionTitleLoading,
 #ScenarioName
 {
 	horizontal-align: center;
-	margin-top: 5%;
+	margin-top: 2%;
 	font-size: 44px;
 	color: #FFFFFF;
 }
@@ -271,11 +273,19 @@
 #ScenarioDescriptionTxt
 {
 	horizontal-align: center;
-	margin-top: 20;
+	margin-top: 20px;
 	font-size: 20px;
 	color: #FFFFFF;
 	width: 50%; 
 	height: 5%;	
+}
+
+#Version {
+	margin-top: 0px;
+	font-size: 20px;
+	color: #FFFFFF;
+	vertical-align: bottom;
+	horizontal-align: left;
 }
 
 #CustomScenarioInput {
