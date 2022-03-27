@@ -20,7 +20,7 @@
 			<Panel class="ScenarioSelectionColumn">
 				<Panel class="ScenarioSelectionColumnInside">
 					<Panel class="WillBeButton"> 
-						<Image class="ScenarioImg" src="file://{resources}/imgs/game_1.png"/>
+						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 						<Panel class="ScenarioSelectionTextContainer">
 							<Label class="ScenarioSelectionLabelName" text="Scenario 1" />
 							<Label class="ScenarioSelectionDescription" text="Radiant is winning heavily. But unles they win under 6 minutes, Dire will win!" />
@@ -37,7 +37,7 @@
 			<Panel class="ScenarioSelectionColumn">
 				<Panel class="ScenarioSelectionColumnInside">
 					<Panel class="WillBeButton"> 
-						<Image class="ScenarioImg" src="file://{resources}/imgs/game_1.png"/>
+						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 						<Panel class="ScenarioSelectionTextContainer">
 							<Label class="ScenarioSelectionLabelName" text="Scenario 1" />
 							<Label class="ScenarioSelectionDescription" text="Description 1" />

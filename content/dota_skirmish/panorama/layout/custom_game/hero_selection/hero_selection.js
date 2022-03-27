@@ -178,11 +178,93 @@ function UpdateState(){
 	$.Msg(obj);
 }
 
+
+function AddScenarioElement(scenario_name, scenario_data) {
+	var parent = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
+	var scenario_button = $.CreatePanel("Panel", parent, scenario_name);
+	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
+
+	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+	label.text = $.Localize(scenario_data["name"]);
+	var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
+	description.text = scenario_data.description;
+
+	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
+	imgContainer.SetImage("file://{resources}/imgs/"+scenario_data.img);
+
+	(function () {
+		scenario_button.SetPanelEvent("onmouseover", function () {
+			$.Msg("hover");
+			$.Msg(scenario_name);
+			$.Msg(scenario_data);
+		})
+	})();
+
+	scenario_button.SetPanelEvent("onactivate", function () {
+		RequestScenarioPick(scenario_name, {});
+	})
+}
+
+function AddPassElement(parent){
+
+	var scenario = "pass"
+	var scenario_button = $.CreatePanel("Panel", parent, scenario);
+	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
+
+	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+	label.text = $.Localize(scenario);
+
+	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
+	imgContainer.SetImage("file://{resources}/imgs/pass_icon.png");
+	
+
+	scenario_button.SetPanelEvent("onmouseover", function () {
+		$.Msg("hover");
+		$.Msg(scenario);
+		//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
+		//$('#ScenarioDescriptionTxt').text = "pass on scenario voting";
+	})
+
+	scenario_button.SetPanelEvent("onactivate", function () {
+		RequestScenarioPick(scenario, {});
+	})
+}
+
+function AddCustomScenarioElement(parent){
+
+	var scenario = "custom"
+	var scenario_button = $.CreatePanel("Panel", parent, scenario);
+	scenario_button.BLoadLayoutSnippet("CustomScenarioButton");
+
+	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
+	label.text = $.Localize(scenario);
+	
+	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
+	imgContainer.SetImage("file://{resources}/imgs/image_15.png");
+	
+	scenario_button.SetPanelEvent("onmouseover", function () {
+		$.Msg("hover");
+		$.Msg(scenario);
+	});
+
+	scenario_button.SetPanelEvent("onactivate", function () {
+		const TEXT_FIELD = $("#CustomScenarioInput");
+		$.Msg("UpdateState");
+		$.Msg(TEXT_FIELD.text.length);
+		if(TEXT_FIELD.text.length == 0){
+		} else {
+			const text_raw = TEXT_FIELD.text;
+			const obj = JSON.parse(text_raw);
+			$.Msg(text_raw);
+			$.Msg(obj);
+			RequestScenarioPick(scenario, obj);
+		}
+	});
+
+}
+
 function GenerateScenarioUI(data) {
 	$.Msg("GenerateScenarioUI");
-	//$('#HeroSelectionContainerWrapper').style.visibility = 'collapse';
-	// LoadingPanel
-	//$('#HeroSelectionTitleLoading').text = "Select scenario";
 
 	// Generate hero buttons
 	var sorted = [];
@@ -194,104 +276,13 @@ function GenerateScenarioUI(data) {
 		var scenario = sorted[i];
 		$.Msg(scenario);
 		$.Msg(data[scenario]);
-
-		var parent = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
-	
-		var scenario_button = $.CreatePanel("Panel", parent, scenario);
-		scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
-
-		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
-		label.text = $.Localize(data[scenario]["name"]);
-		var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
-		description.text = data[scenario].description;
-
-		(function (scenario) {
-			scenario_button.SetPanelEvent("onmouseover", function () {
-				$.Msg("hover");
-				$.Msg(scenario);
-				$.Msg(data);
-				$.Msg(data[scenario].img);
-			})
-		})(scenario);
-
-		(function (scenario) {
-			scenario_button.SetPanelEvent("onactivate", function () {
-				RequestScenarioPick(scenario, {});
-			})
-		})(scenario);
-
+		AddScenarioElement(scenario, data[scenario])
 	}
-
 	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
-	
 	var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
 
-	var scenario = "pass"
-	var scenario_button = $.CreatePanel("Panel", parent, scenario);
-	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
-
-	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
-	
-	label.text = $.Localize(scenario);
-
-	(function (scenario) {
-		scenario_button.SetPanelEvent("onmouseover", function () {
-			$.Msg("hover");
-			$.Msg(scenario);
-			$.Msg(data);
-			var img = "placeholder"
-			$.Msg(img);
-			//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
-			//$('#ScenarioDescriptionTxt').text = "pass on scenario voting";
-		})
-	})(scenario);
-
-	(function (scenario) {
-		scenario_button.SetPanelEvent("onactivate", function () {
-			RequestScenarioPick(scenario, {});
-		})
-	})(scenario);
-
-	if(true){
-		var scenario = "custom"
-		var scenario_button = $.CreatePanel("Panel", parent, scenario);
-		scenario_button.BLoadLayoutSnippet("CustomScenarioButton");
-	
-		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
-		
-		label.text = $.Localize(scenario);
-	
-		(function (scenario) {
-			scenario_button.SetPanelEvent("onmouseover", function () {
-				$.Msg("hover");
-				$.Msg(scenario);
-				$.Msg(data);
-				var img = "placeholder"
-				$.Msg(img);
-				//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
-				//$('#ScenarioDescriptionTxt').text = "custom scenario";
-			})
-		})(scenario);
-	
-		(function (scenario) {
-			scenario_button.SetPanelEvent("onactivate", function () {
-				const TEXT_FIELD = $("#CustomScenarioInput");
-				$.Msg("UpdateState");
-				$.Msg(TEXT_FIELD.text.length);
-				if(TEXT_FIELD.text.length == 0){
-				} else {
-					const text_raw = TEXT_FIELD.text;
-					const obj = JSON.parse(text_raw);
-					$.Msg(text_raw);
-					$.Msg(obj);
-					RequestScenarioPick(scenario, obj);
-				}
-			})
-		})(scenario);
-	}
-
-	
-
+	AddPassElement(parent);	
+	AddCustomScenarioElement(parent);
 }
 
 function ScenarioAssigned(data) {

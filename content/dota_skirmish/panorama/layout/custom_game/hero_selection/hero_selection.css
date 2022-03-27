@@ -25,7 +25,9 @@
 #VersionContainer {
 	width:100%; 
 	height:94%; 
-	background-color: #2C2F37FF; 
+	background-image: url("file://{resources}/imgs/background.png");
+	background-repeat: repeat;
+	background-size: 213px 213px; 
 	flow-children: none;
 }
 
@@ -35,6 +37,26 @@
 	flow-children: down;
 }
 
+#LogoWrapper {
+	width:100%; 
+	height:100%; 
+	background-image: url("file://{resources}/imgs/background.png");
+	background-repeat: repeat;
+	background-position: left 29% top 100%;
+	background-size: 213px; 
+	flow-children:right;
+}
+
+#RightFromTime {
+	width:43%; 
+	height: 100%; 
+	horizontal-align:right; 
+	background-image: url("file://{resources}/imgs/background.png");
+	background-repeat: repeat;
+	background-position: left 17.5% top 100%;
+	background-size: 213px 213px; 
+
+}
 /* Hero selection panel
 =================================================================*/
 #HeroSelectionContainer{
@@ -212,7 +234,7 @@
 #ScenarioSelectionContainer {
 	horizontal-align: center;
 	flow-children: right-wrap;
-	background-color: #066319;
+	background-color: #06631900;
 	width: 1600px;
 	//height: 700px; 
 }
@@ -220,7 +242,7 @@
 #RightAlignedScenarios {
 	horizontal-align: right;
 	flow-children: right;
-	background-color: #066319;
+	background-color: #06631900;
 	width: 800px;
 }
 
@@ -238,7 +260,7 @@
 	margin-bottom: 15px;
 	margin-left: 15px;
 	font-size: 20px;
-	color: #FFFFFF;
+	color: #7F91A3;
 	vertical-align: bottom;
 	horizontal-align: left;
 }
@@ -281,7 +303,7 @@
 	margin-right: 0px;
 	padding-left: 15px;
 	padding-right: 15px;
-	background-color: #AA0000aa;
+	background-color: #AA000000;
 }
 
 .ScenarioSelectionColumnInside {
