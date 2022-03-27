@@ -22,9 +22,9 @@
 					<Panel class="WillBeButton"> 
 						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 						<Panel class="ScenarioSelectionTextContainer">
-							<Label class="ScenarioSelectionLabelName" text="Scenario 1" />
-							<Label class="ScenarioSelectionDescription" text="Radiant is winning heavily. But unles they win under 6 minutes, Dire will win!" />
-							<Label class="ScenarioSelectionLabelPlayer" text="play1 | play2" />
+							<Label class="ScenarioSelectionLabelName" text="Scenario Label" />
+							<Label class="ScenarioSelectionDescription" text="Scenario description" />
+							<Label class="ScenarioSelectionLabelPlayer" text="" />
 							<Panel class="ScenarioSelectionFooter" >
 								<Label class="SelectText" text="Select" />
 							</Panel>
