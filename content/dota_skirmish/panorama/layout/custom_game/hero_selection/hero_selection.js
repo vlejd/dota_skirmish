@@ -201,8 +201,9 @@ function GenerateScenarioUI(data) {
 		scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
 
 		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
-		
 		label.text = $.Localize(data[scenario]["name"]);
+		var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
+		description.text = data[scenario].description;
 
 		(function (scenario) {
 			scenario_button.SetPanelEvent("onmouseover", function () {
@@ -210,8 +211,6 @@ function GenerateScenarioUI(data) {
 				$.Msg(scenario);
 				$.Msg(data);
 				$.Msg(data[scenario].img);
-				//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+data[scenario].img);
-				//$('#ScenarioDescriptionTxt').text = data[scenario].description;
 			})
 		})(scenario);
 

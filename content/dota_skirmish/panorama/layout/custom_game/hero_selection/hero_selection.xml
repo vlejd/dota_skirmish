@@ -57,17 +57,16 @@
 	
 	<Panel hittest="false" style="width: 100%; height: 100%; flow-children: down; background-color: #00000000;">
 		<!--Hack to make the timer visible-->
-		<Panel hittest="false" id="topbarfix" style="width: 100%; height:100px; vertical-align: top;flow-children: none;">
-			<Panel hittest="false" style="width: 4%; height: 100px; horizontal-align:left; background-color: #00000000;"></Panel>
-			<Panel style="width:50%; height: 100%; horizontal-align:left; padding-left:10%; padding-right:12%; background-color: #00000000;">
-				<Panel hittest="true" style="width:100%; height:100%; background-color: #2C2F37FF; flow-children:right;">
+		<Panel hittest="false" id="topbarfix" style="width: 100%; height:100px; vertical-align: top;flow-children: right;">
+			<Panel hittest="false" style="width: 5%; height: 100px; horizontal-align:left; background-color: #00000000;"></Panel>
+			<Panel style="width:38%; height: 100%; horizontal-align:left; background-color: #00000000;">
+				<Panel id="LogoWrapper" hittest="true">
 					<Image class="Logo" src="file://{resources}/imgs/logo.png" style="width:75px; height:75px; vertical-align:center;margin-left:30px;"/>
 					<Label id="SkirmishName" text="Dota 2 Skirmish" style="vertical-align:center; font-size:22px; margin-left:7px; color:#FFFFFF;" />
 				</Panel>
 			</Panel>
-			<Panel style="width:50%; height: 100%; horizontal-align:right; padding-left:12%; background-color: #00000000;">
-				<Panel hittest="true" style="width:100%; height:100%; background-color: #2C2F37FF;"></Panel>
-			</Panel>
+			<Panel hittest="false" style="width: 14%; height: 100px; horizontal-align:left; background-color: #00000000;"></Panel>
+			<Panel id="RightFromTime"/>
 			<!--
 
 			-->
