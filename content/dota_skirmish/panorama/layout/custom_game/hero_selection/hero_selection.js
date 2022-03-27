@@ -244,6 +244,8 @@ function AddCustomScenarioElement(parent){
 
 	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
 	label.text = $.Localize(Scenario);
+	var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
+	description.text = "Go to https://dota2skirmish.com and request a match.";
 	
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
 	imgContainer.SetImage("file://{resources}/imgs/image_15.png");

@@ -24,7 +24,7 @@
 						<Panel class="ScenarioSelectionTextContainer">
 							<Label class="ScenarioSelectionLabelName" text="Scenario Label" />
 							<Label class="ScenarioSelectionDescription" text="Scenario description" />
-							<Label class="ScenarioSelectionLabelPlayer" text="" />
+							<Label class="ScenarioSelectionLabelPlayer" text="player" />
 							<Panel class="ScenarioSelectionFooter" >
 								<Label class="SelectText" text="Select" />
 							</Panel>
@@ -99,7 +99,7 @@
 					</Panel>
 				</Panel>
 			</Panel>
-			<Label id="Version" text="Version: 2022_03_27_2216" />
+			<Label id="Version" text="Version: 2022_03_27_2236" />
 		</Panel>
 	</Panel>
 </root>

@@ -40,11 +40,7 @@
 #LogoWrapper {
 	width:100%; 
 	height:100%; 
-	background-image: url("file://{resources}/imgs/background.png");
-	background-repeat: repeat;
-	background-position: left 29% top 100%;
-	background-size: 213px; 
-	
+	background-color: #2D3038;	
 	flow-children:right;
 }
 
@@ -58,10 +54,7 @@
 	width:43%; 
 	height: 100%; 
 	horizontal-align:right; 
-	background-image: url("file://{resources}/imgs/background.png");
-	background-repeat: repeat;
-	background-position: left 17.5% top 100%;
-	background-size: 213px 213px; 
+	background-color: #2D3038;
 }
 /* Hero selection panel
 =================================================================*/
@@ -363,7 +356,7 @@
 
 .ScenarioSelectionDescription {
 	horizontal-align: left;
-	margin-bottom: 15px;
+	margin-bottom: 5px;
 	font-size: 15px;
 	height: 46px;
 	color: #FFFFFF;
@@ -376,7 +369,7 @@
 	text-align: left;
 	height: 15px;
 	margin-top: 6px;
-	margin-bottom: 6px;
+	margin-bottom: 16px;
 	font-size: 15px;
 	color: #FFFFFF;
 	opacity: 1;
