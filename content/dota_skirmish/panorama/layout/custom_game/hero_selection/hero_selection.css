@@ -22,18 +22,19 @@
 
 /*  Top level stuff
 ============================*/
-#SelectorsContainer {
-	width:100%; 
-	height:100%; 
-	flow-children: down;
-}
-
 #VersionContainer {
 	width:100%; 
 	height:94%; 
 	background-color: #2C2F37FF; 
 	flow-children: none;
 }
+
+#SelectorsContainer {
+	width:100%; 
+	height:100%; 
+	flow-children: down;
+}
+
 /* Hero selection panel
 =================================================================*/
 #HeroSelectionContainer{
@@ -69,11 +70,12 @@
 }
 
 #HeroSelectionTitle,
-#ScenarioName
+#ScenarioTitle
 {
 	horizontal-align: center;
-	margin-top: 2%;
-	font-size: 44px;
+	margin-top: 4%;
+	margin-bottom: 2%;
+	font-size: 54px;
 	color: #FFFFFF;
 }
 
@@ -209,17 +211,37 @@
 
 #ScenarioSelectionContainer {
 	horizontal-align: center;
+	flow-children: right-wrap;
+	background-color: #066319;
+	width: 1600px;
+	//height: 700px; 
+}
+
+#RightAlignedScenarios {
+	horizontal-align: right;
 	flow-children: right;
+	background-color: #066319;
+	width: 800px;
 }
 
-#ScenarioImg {
-	margin-bottom: 20px;
-	margin-top: 20px;
-	height:630px; 
-	width:1040px; 
+#ScenarioDescriptionTxt
+{
 	horizontal-align: center;
+	margin-top: 20px;
+	font-size: 20px;
+	color: #FFFFFF;
+	width: 50%; 
+	height: 5%;	
 }
 
+#Version {
+	margin-bottom: 15px;
+	margin-left: 15px;
+	font-size: 20px;
+	color: #FFFFFF;
+	vertical-align: bottom;
+	horizontal-align: left;
+}
 
 .ScenarioSelectionButton {
 	width: 200px;
@@ -249,50 +271,101 @@
 	font-size: 36px;
 }
 
+.ScenarioSelectionColumn {
+	flow-children: down;
+	horizontal-align: left;
+	width:400px;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-left: 15px;
+	padding-right: 15px;
+	background-color: #AA0000aa;
+}
+
+.ScenarioSelectionColumnInside {
+	horizontal-align: center;
+	flow-children: down;
+	background-color: #3A4551;
+}
+
+.WillBeButton {
+	vertical-align: top;
+	horizontal-align: left; 
+	flow-children: down;
+}
+
+.ScenarioImg {
+	width:370px; 
+	height:208px; 
+	horizontal-align:center; 
+	vertical-align: top;
+}
+
+.ScenarioSelectionTextContainer {
+	flow-children: down;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 15px;
+	height: 150px;
+	width: 100%;
+}
+
+.ScenarioSelectionLabelName {
+	horizontal-align: left;
+	margin-bottom: 7px;
+	font-weight: bolder;
+	font-size: 15px;
+	color: #FFFFFF;
+}
+
+.ScenarioSelectionDescription {
+	horizontal-align: left;
+	margin-bottom: 15px;
+	font-size: 15px;
+	color: #FFFFFF;
+}
+
 .ScenarioSelectionLabelPlayer {
 	width: 100%;
-	align: center center;
-	text-align: center;
-	height: 24px;
+	horizontal-align: left;
+	vertical-align: bottom;
+	text-align: left;
+	height: 15px;
 	margin-top: 6px;
 	margin-bottom: 6px;
-	font-size: 18px;
+	font-size: 15px;
 	color: #FFFFFF;
 	opacity: 1;
 }
 
-.ScenarioSelectionColumn {
-	flow-children: down;
-
-	margin-top: 8px;
-	margin-bottom: 8px;
-	margin-left: 10px;
-	margin-right: 10px;
-}
-
-#ScenarioDescriptionTxt
-{
-	horizontal-align: center;
-	margin-top: 20px;
-	font-size: 20px;
-	color: #FFFFFF;
-	width: 50%; 
-	height: 5%;	
-}
-
-#Version {
-	margin-top: 0px;
-	font-size: 20px;
-	color: #FFFFFF;
+.ScenarioSelectionFooter {
+	flow-children: right;
 	vertical-align: bottom;
+	height: 15px;
+	margin-bottom: 15px;
+}
+
+.PreSelectText {
 	horizontal-align: left;
+	font-size: 15px;
+	color: #FFFFFF;
 }
 
 #CustomScenarioInput {
-	margin-top:10px;
-	margin-bottom:10px;
-	width: 50px;
-	horizontal-align: center; 
-	height: 30px; 
-	background-color: #111111FF;
+	width: 45px;
+	height: 13px;
+	margin-left: 7px;
+	margin-right: 15px;
+	vertical-align: center; 
+	border-bottom: 2px solid #FFF;
+	background-color: #11111100;
+}
+
+.SelectText {
+	horizontal-align: left;
+	vertical-align: bottom;
+	font-size: 15px;
+	color: #1fa03b;
 }

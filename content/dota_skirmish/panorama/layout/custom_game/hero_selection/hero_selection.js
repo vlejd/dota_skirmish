@@ -210,8 +210,8 @@ function GenerateScenarioUI(data) {
 				$.Msg(scenario);
 				$.Msg(data);
 				$.Msg(data[scenario].img);
-				$('#ScenarioImg').SetImage("file://{resources}/imgs/"+data[scenario].img);
-				$('#ScenarioDescriptionTxt').text = data[scenario].description;
+				//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+data[scenario].img);
+				//$('#ScenarioDescriptionTxt').text = data[scenario].description;
 			})
 		})(scenario);
 
@@ -223,8 +223,10 @@ function GenerateScenarioUI(data) {
 
 	}
 
-	var parent = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
+	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
 	
+	var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
+
 	var scenario = "pass"
 	var scenario_button = $.CreatePanel("Panel", parent, scenario);
 	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
@@ -240,8 +242,8 @@ function GenerateScenarioUI(data) {
 			$.Msg(data);
 			var img = "placeholder"
 			$.Msg(img);
-			$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
-			$('#ScenarioDescriptionTxt').text = "pass on scenario voting";
+			//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
+			//$('#ScenarioDescriptionTxt').text = "pass on scenario voting";
 		})
 	})(scenario);
 
@@ -254,7 +256,7 @@ function GenerateScenarioUI(data) {
 	if(true){
 		var scenario = "custom"
 		var scenario_button = $.CreatePanel("Panel", parent, scenario);
-		scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
+		scenario_button.BLoadLayoutSnippet("CustomScenarioButton");
 	
 		var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
 		
@@ -267,8 +269,8 @@ function GenerateScenarioUI(data) {
 				$.Msg(data);
 				var img = "placeholder"
 				$.Msg(img);
-				$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
-				$('#ScenarioDescriptionTxt').text = "custom scenario";
+				//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
+				//$('#ScenarioDescriptionTxt').text = "custom scenario";
 			})
 		})(scenario);
 	
