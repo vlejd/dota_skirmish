@@ -44,7 +44,14 @@
 	background-repeat: repeat;
 	background-position: left 29% top 100%;
 	background-size: 213px; 
+	
 	flow-children:right;
+}
+
+.StrongShadow {
+	box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.14), 
+				0px 3px 14px rgba(0, 0, 0, 0.12), 
+				0px 4px 5px rgba(0, 0, 0, 0.2);
 }
 
 #RightFromTime {
@@ -55,7 +62,6 @@
 	background-repeat: repeat;
 	background-position: left 17.5% top 100%;
 	background-size: 213px 213px; 
-
 }
 /* Hero selection panel
 =================================================================*/
@@ -160,7 +166,7 @@
 }
 
 .HeroSelectionPip:hover {
-	box-shadow: fill #60FF60 0px 0px 2px 2px;
+	box-shadow: fill #1fa03b 0px 0px 2px 2px;
 	saturation: 1.0;
 }
 
@@ -169,7 +175,7 @@
 }
 
 .HeroSelectionPip.selected {
-	box-shadow: fill #60FF60 0px 0px 2px 2px;
+	box-shadow: fill #1fa03b 0px 0px 2px 2px;
 	saturation: 1.0;
 }
 
@@ -296,14 +302,13 @@
 .ScenarioSelectionColumn {
 	flow-children: down;
 	horizontal-align: left;
-	width:400px;
+	width: 400px;
 	margin-top: 15px;
 	margin-bottom: 15px;
 	margin-left: 0px;
 	margin-right: 0px;
 	padding-left: 15px;
 	padding-right: 15px;
-	background-color: #AA000000;
 }
 
 .ScenarioSelectionColumnInside {
@@ -311,6 +316,21 @@
 	flow-children: down;
 	background-color: #3A4551;
 }
+.ScenarioSelectionColumnInside:hover{
+	box-shadow: fill #1fa03b 0px 0px 2px 2px;
+}
+
+.BROKENScenarioSelectionColumnInside:hover {
+	box-shadow: 0px 24px 38px rgba(0, 0, 0, 0.14), 
+				0px 9px 46px rgba(0, 0, 0, 0.12), 
+				0px 11px 15px rgba(0, 0, 0, 0.2);
+	box-shadow: fill 0px 2px 4px rgba(0, 0, 0, 0.14), 
+				fill 0px 3px 4px rgba(0, 0, 0, 0.12), 
+				fill 0px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+
 
 .WillBeButton {
 	vertical-align: top;
