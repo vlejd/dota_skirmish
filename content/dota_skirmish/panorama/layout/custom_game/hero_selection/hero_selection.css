@@ -330,7 +330,6 @@
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-top: 15px;
-	height: 150px;
 	width: 100%;
 }
 
@@ -346,6 +345,7 @@
 	horizontal-align: left;
 	margin-bottom: 15px;
 	font-size: 15px;
+	height: 46px;
 	color: #FFFFFF;
 }
 

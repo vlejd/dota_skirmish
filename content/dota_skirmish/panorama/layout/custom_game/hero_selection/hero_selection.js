@@ -208,11 +208,15 @@ function AddScenarioElement(scenario_name, scenario_data) {
 function AddPassElement(parent){
 
 	var scenario = "pass"
+	var Scenario = "Pass"
+	
 	var scenario_button = $.CreatePanel("Panel", parent, scenario);
 	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
 
 	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
-	label.text = $.Localize(scenario);
+	label.text = $.Localize(Scenario);
+	var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
+	description.text = "Let others choose or get random scenario.";
 
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
 	imgContainer.SetImage("file://{resources}/imgs/pass_icon.png");
@@ -233,11 +237,13 @@ function AddPassElement(parent){
 function AddCustomScenarioElement(parent){
 
 	var scenario = "custom"
+	var Scenario = "Custom"
+	
 	var scenario_button = $.CreatePanel("Panel", parent, scenario);
 	scenario_button.BLoadLayoutSnippet("CustomScenarioButton");
 
 	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
-	label.text = $.Localize(scenario);
+	label.text = $.Localize(Scenario);
 	
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
 	imgContainer.SetImage("file://{resources}/imgs/image_15.png");
