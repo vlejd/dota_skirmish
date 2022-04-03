@@ -11,6 +11,7 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - Join the discord: [https://discord.com/invite/pNTKs38mDp](https://discord.com/invite/pNTKs38mDp)
 - Workshop mod submission: [https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333](https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333)
 - This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
+- Issues: https://github.com/vlejd/dota_skirmish_issues
 
 # Games
 - Liquid vs CH Fighters group stage 74th min, 6080190774: https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333
