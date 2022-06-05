@@ -18,32 +18,32 @@ if ScenarioSelection == nil then
 		--	img = "game_1.png"
 		--},
 		spirit_lgd_g1 = {
-			name = "game 1",
-		 	description = "29th minute of a balanced game 1 from finals. Try to win.",
+			name = "TI 2021 finals game 1",
+		 	description = "29th minute. Balanced game. Can you stop farmed Naga?",
 		 	fname = "game_states/spirit_lgd_g1",
 		 	img = "game_1.png"
 		},
 		spirit_lgd_g2 = {
-			name = "game 2",
-			description = "20th minute of a balanced game 2 from finals. Can shard win you the game?",
+			name = "TI 2021 finals game 2",
+			description = "20th minute of a balanced game. Can Leshrac and Nature's Prophet out-rat luna?",
 			fname = "game_states/spirit_lgd_g2",
 			img = "game_2.png"
 		},
 		spirit_lgd_g3 = {
-			name = "game 3",
-			description = "26th minute of a balanced game 3 from finals. Could it have been 3:0?",
+			name = "TI 2021 finals game 3",
+			description = "26th minute of a balanced game. Get ready for global presence and ultimate Rosh fights?",
 			fname = "game_states/spirit_lgd_g3",
 			img = "game_3.png"
 		},
 		spirit_lgd_g4 = {
-			name = "game 4",
-			description = "Radiant is winning heavily. But they only have 6 minutes to finish the game. Otherwise Dire wins.",
+			name = "TI 2021 finals game 4",
+			description = "Radiant won in next 6 minutes. Can you win fast? If not, Dire wins!",
 			fname = "game_states/spirit_lgd_g4",
 			img = "game_4.png"
 		},
 		spirit_lgd_g5 = {
-			name = "game 5",
-			description = "20th minute of a balanced game 5 from finals. Decide the international.",
+			name = "TI 2021 finals game 5",
+			description = "20th minute of a balanced game. This game decided the TI winner.",
 			fname = "game_states/spirit_lgd_g5",
 			img = "game_5.png"
 		}

@@ -146,7 +146,7 @@ function GenerateHeroUI(data) {
 		var label = hero_button.FindChildrenWithClassTraverse("HeroSelectionLabel")[0];
 		var image = hero_button.FindChildrenWithClassTraverse("HeroSelectionPip")[0];
 
-		label.text =  hero; //$.Localize(hero_name);
+		label.text =  $.Localize("#" + hero_name);
 		image.heroname = hero_name;
 
 		(function (hero) {
@@ -208,7 +208,7 @@ function AddScenarioElement(scenario_name, scenario_data) {
 function AddPassElement(parent){
 
 	var scenario = "pass"
-	var Scenario = "Pass"
+	var Scenario = "PASS"
 	
 	var scenario_button = $.CreatePanel("Panel", parent, scenario);
 	scenario_button.BLoadLayoutSnippet("SelectScenarioButton");
@@ -245,7 +245,7 @@ function AddCustomScenarioElement(parent){
 	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
 	label.text = $.Localize(Scenario);
 	var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
-	description.text = "Go to https://dota2skirmish.com and request a match.";
+	description.text = "Go to https://dota2skirmish.com get your own. Only one person needes to paste it here, others should press PASS.";
 	
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
 	imgContainer.SetImage("file://{resources}/imgs/image_15.png");
