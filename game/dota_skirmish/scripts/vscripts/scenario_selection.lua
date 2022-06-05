@@ -153,8 +153,8 @@ function ScenarioSelection:RequestScenarioPick(data)
 	print(ScenarioSelection.scenarios_picked)
 	print(ScenarioSelection.n_players, n_picked)
 
-	if ScenarioSelection.n_players == tablelength(ScenarioSelection.player_picked_scenarios) and
-		not ScenarioSelection.finished then
+	-- if you want voting, do this: ScenarioSelection.n_players == tablelength(ScenarioSelection.player_picked_scenarios)
+	if not ScenarioSelection.finished then
 		print("all voted on a scenario")
 		-- TODO Finish this stuff (triges)
 		ScenarioSelection:FinishScenarioSelection()

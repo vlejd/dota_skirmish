@@ -245,7 +245,7 @@ function AddCustomScenarioElement(parent){
 	var label = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionLabelName")[0];
 	label.text = $.Localize(Scenario);
 	var description = scenario_button.FindChildrenWithClassTraverse("ScenarioSelectionDescription")[0];
-	description.text = "Go to https://dota2skirmish.com get your own. Only one person needes to paste it here, others should press PASS.";
+	description.text = "Go to https://dota2skirmish.com get your own and paste it here.";
 	
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
 	imgContainer.SetImage("file://{resources}/imgs/image_15.png");
@@ -271,10 +271,7 @@ function AddCustomScenarioElement(parent){
 
 }
 
-function GenerateScenarioUI(data) {
-	$.Msg("GenerateScenarioUI");
-
-	// Generate hero buttons
+function AddPredefinedScenarios(data) {
 	var sorted = [];
 	for(var key in data) {
 		sorted[sorted.length] = key;
@@ -286,10 +283,16 @@ function GenerateScenarioUI(data) {
 		$.Msg(data[scenario]);
 		AddScenarioElement(scenario, data[scenario])
 	}
+}
+
+function GenerateScenarioUI(data) {
+	$.Msg("GenerateScenarioUI");
+
+	AddPredefinedScenarios(data);
 	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
 	var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
 
-	AddPassElement(parent);	
+	//AddPassElement(parent);	
 	AddCustomScenarioElement(parent);
 }
 
