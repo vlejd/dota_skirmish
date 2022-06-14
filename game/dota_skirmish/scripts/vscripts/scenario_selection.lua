@@ -17,36 +17,12 @@ if ScenarioSelection == nil then
 		--	fname = "game_states/from_json",
 		--	img = "game_1.png"
 		--},
-		spirit_lgd_g1 = {
-			name = "TI 2021 finals game 1",
-		 	description = "29th minute. Balanced game. Can you stop farmed Naga?",
-		 	fname = "game_states/spirit_lgd_g1",
+		the_play = {
+			name = "THE PLAY",
+		 	description = "International 2012, Game 2, NAVI vs IG.",
+		 	fname = "game_states/the_play",
 		 	img = "game_1.png"
 		},
-		spirit_lgd_g2 = {
-			name = "TI 2021 finals game 2",
-			description = "20th minute of a balanced game. Can Leshrac and Nature's Prophet out-rat luna?",
-			fname = "game_states/spirit_lgd_g2",
-			img = "game_2.png"
-		},
-		spirit_lgd_g3 = {
-			name = "TI 2021 finals game 3",
-			description = "26th minute of a balanced game. Get ready for global presence and ultimate Rosh fights?",
-			fname = "game_states/spirit_lgd_g3",
-			img = "game_3.png"
-		},
-		spirit_lgd_g4 = {
-			name = "TI 2021 finals game 4",
-			description = "Radiant won in next 6 minutes. Can you win fast? If not, Dire wins!",
-			fname = "game_states/spirit_lgd_g4",
-			img = "game_4.png"
-		},
-		spirit_lgd_g5 = {
-			name = "TI 2021 finals game 5",
-			description = "20th minute of a balanced game. This game decided the TI winner.",
-			fname = "game_states/spirit_lgd_g5",
-			img = "game_5.png"
-		}
 	}
 end
 
