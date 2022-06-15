@@ -11,42 +11,25 @@ if ScenarioSelection == nil then
 	ScenarioSelection.n_players = nil
 	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
-		--spirit_lgd_g1 = {
-		--	name = "game 0",
-		--	description = "json.",
-		--	fname = "game_states/from_json",
-		--	img = "game_1.png"
-		--},
-		spirit_lgd_g1 = {
-			name = "TI 2021 finals game 1",
-		 	description = "29th minute. Balanced game. Can you stop farmed Naga?",
-		 	fname = "game_states/spirit_lgd_g1",
+		g1 = {
+			name = "TI 2018 OG  vs LGD Game 5",
+		 	description = "LGD going top high ground. 41st minute.",
+		 	fname = "game_states/chinese_promo/TI_2018_OG_PSGLGD_Game_5",
 		 	img = "game_1.png"
 		},
-		spirit_lgd_g2 = {
-			name = "TI 2021 finals game 2",
-			description = "20th minute of a balanced game. Can Leshrac and Nature's Prophet out-rat luna?",
-			fname = "game_states/spirit_lgd_g2",
-			img = "game_2.png"
+		g2 = {
+			name = "TI 2019 Liquid vs LGD Game 2",
+		 	description = "LGD going bottom high ground. 40th minute.",
+		 	fname = "game_states/chinese_promo/TI_2019_Liquid_PSGLGD_Game_2",
+		 	img = "game_1.png"
 		},
-		spirit_lgd_g3 = {
-			name = "TI 2021 finals game 3",
-			description = "26th minute of a balanced game. Get ready for global presence and ultimate Rosh fights?",
-			fname = "game_states/spirit_lgd_g3",
-			img = "game_3.png"
+		g3 = {
+			name = "TI 2021 TSpirit vs LGD Game 5",
+		 	description = "LGD diving bottom tier 2 tower. 19th minute.",
+		 	fname = "game_states/chinese_promo/TI_2021_Team_Spirit_PSGLGD_Game_5",
+		 	img = "game_1.png"
 		},
-		spirit_lgd_g4 = {
-			name = "TI 2021 finals game 4",
-			description = "Radiant won in next 6 minutes. Can you win fast? If not, Dire wins!",
-			fname = "game_states/spirit_lgd_g4",
-			img = "game_4.png"
-		},
-		spirit_lgd_g5 = {
-			name = "TI 2021 finals game 5",
-			description = "20th minute of a balanced game. This game decided the TI winner.",
-			fname = "game_states/spirit_lgd_g5",
-			img = "game_5.png"
-		}
+
 	}
 end
 
