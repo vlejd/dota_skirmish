@@ -82,6 +82,7 @@
 					<Panel hittest="true" id="ScenarioSelectionContainer">
 					</Panel>
 				</Panel>
+
 				<Panel hittest="true" id="HeroSelectionContainerWrapper">
 					<Panel hittest="true" id="HeroSelectionContainer">
 						<Label id="HeroSelectionTitle" text="#skirmish_hero_selection" />
@@ -100,6 +101,10 @@
 				</Panel>
 			</Panel>
 			<Label id="Version" text="Version: 2022_06_15_2350" />
+			<Image class="Logo" src="file://{resources}/imgs/ti2018_og_lgd_g5.png" style="width:0px; height:0px;"/>
+			<Image class="Logo" src="file://{resources}/imgs/ti2019_liquid_lgd_g2.png" style="width:0px; height:0px;"/>
+			<Image class="Logo" src="file://{resources}/imgs/ti2021_tspirit_lgd_g5.png" style="width:0px; height:0px;"/>
+
 		</Panel>
 	</Panel>
 </root>
