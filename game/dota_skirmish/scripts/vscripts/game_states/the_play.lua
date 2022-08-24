@@ -3,120 +3,120 @@ local GameState = {
 	  time = 1030
 	},
 	buildings = { {
-	  name = "dota_goodguys_tower3_bot",
-	  health = 2500
-	}, {
-	  name = "dota_goodguys_tower3_mid",
-	  health = 2500
-	}, {
-	  name = "dota_goodguys_tower3_top",
-	  health = 2500
-	}, {
-	  name = "dota_goodguys_tower2_bot",
-	  health = 2500
-	}, {
-	  name = "dota_goodguys_tower2_mid",
-	  health = 2500
-	}, {
-	  name = "dota_goodguys_tower2_top",
-	  health = 2500
-	}, {
-	  name = "dota_goodguys_tower1_top",
-	  health = 1800
-	}, {
-	  name = "dota_goodguys_tower4_top",
-	  health = 2600
-	}, {
-	  name = "good_rax_melee_mid",
-	  health = 2200
-	}, {
-	  name = "good_rax_range_mid",
-	  health = 1300
-	}, {
-	  name = "good_rax_melee_bot",
-	  health = 2200
-	}, {
-	  name = "good_rax_range_bot",
-	  health = 1300
-	}, {
-	  name = "good_rax_melee_top",
-	  health = 2200
-	}, {
-	  name = "good_rax_range_top",
-	  health = 1300
-	}, {
-	  name = "bad_rax_melee_bot",
-	  health = 2200
-	}, {
-	  name = "bad_rax_range_bot",
-	  health = 1300
-	}, {
-	  name = "bad_rax_range_mid",
-	  health = 1300
-	}, {
-	  name = "bad_rax_melee_mid",
-	  health = 2200
-	}, {
-	  name = "bad_rax_melee_top",
-	  health = 2200
-	}, {
-	  name = "bad_rax_range_top",
-	  health = 1300
-	}, {
-	  name = "dota_badguys_fort",
-	  health = 4500
-	}, {
-	  name = "dota_goodguys_fort",
-	  health = 4500
-	}, {
-	  name = "dota_badguys_tower4_top",
-	  health = 2600
-	}, {
-	  name = "dota_badguys_tower2_top",
-	  health = 1255
-	}, {
-	  name = "dota_badguys_tower2_mid",
-	  health = 2500
-	}, {
-	  name = "dota_badguys_tower2_bot",
-	  health = 2383
-	}, {
-	  name = "dota_badguys_tower3_bot",
-	  health = 2500
-	}, {
-	  name = "dota_badguys_tower3_top",
-	  health = 2500
-	}, {
-	  name = "dota_badguys_tower3_mid",
-	  health = 2500
-	}, {
-	  name = "dota_badguys_tower4_bot",
-	  health = 2600
-	}, {
-	  name = "dota_goodguys_tower4_bot",
-	  health = 2600
-	}, {
-	  name = "npc_dota_watch_tower_bottom",
-	  health = 450
-	}, {
-	  name = "npc_dota_watch_tower_top",
-	  health = 450
-	}, {
-	  name = "dota_badguys_tower1_top",
-	  health = 0
-	}, {
-	  name = "dota_badguys_tower1_mid",
-	  health = 0
-	}, {
-	  name = "dota_badguys_tower1_bot",
-	  health = 0
-	}, {
-	  name = "dota_goodguys_tower1_mid",
-	  health = 0
-	}, {
-	  name = "dota_goodguys_tower1_bot",
-	  health = 0
-	} },
+		name = "dota_goodguys_tower3_bot",
+		health = 2500
+	  }, {
+		name = "dota_goodguys_tower3_mid",
+		health = 2500
+	  }, {
+		name = "dota_goodguys_tower3_top",
+		health = 2500
+	  }, {
+		name = "dota_goodguys_tower2_bot",
+		health = 2500
+	  }, {
+		name = "dota_goodguys_tower1_bot",
+		health = 0
+	  }, {
+		name = "dota_goodguys_tower2_mid",
+		health = 2500
+	  }, {
+		name = "dota_goodguys_tower2_top",
+		health = 2500
+	  }, {
+		name = "dota_goodguys_tower1_top",
+		health = 0
+	  }, {
+		name = "dota_goodguys_tower4_top",
+		health = 2600
+	  }, {
+		name = "good_rax_melee_mid",
+		health = 2200
+	  }, {
+		name = "good_rax_range_mid",
+		health = 1300
+	  }, {
+		name = "good_rax_melee_bot",
+		health = 2200
+	  }, {
+		name = "good_rax_range_bot",
+		health = 1300
+	  }, {
+		name = "good_rax_melee_top",
+		health = 2200
+	  }, {
+		name = "good_rax_range_top",
+		health = 1300
+	  }, {
+		name = "bad_rax_melee_bot",
+		health = 2200
+	  }, {
+		name = "bad_rax_range_bot",
+		health = 1300
+	  }, {
+		name = "bad_rax_range_mid",
+		health = 1300
+	  }, {
+		name = "bad_rax_melee_mid",
+		health = 2200
+	  }, {
+		name = "bad_rax_melee_top",
+		health = 2200
+	  }, {
+		name = "bad_rax_range_top",
+		health = 1300
+	  }, {
+		name = "dota_badguys_fort",
+		health = 4500
+	  }, {
+		name = "dota_goodguys_fort",
+		health = 4500
+	  }, {
+		name = "dota_badguys_tower4_top",
+		health = 2600
+	  }, {
+		name = "dota_badguys_tower2_top",
+		health = 0
+	  }, {
+		name = "dota_badguys_tower1_top",
+		health = 0
+	  }, {
+		name = "dota_badguys_tower2_mid",
+		health = 0
+	  }, {
+		name = "dota_badguys_tower1_mid",
+		health = 0
+	  }, {
+		name = "dota_badguys_tower2_bot",
+		health = 2000
+	  }, {
+		name = "dota_badguys_tower3_bot",
+		health = 2500
+	  }, {
+		name = "dota_badguys_tower3_top",
+		health = 2500
+	  }, {
+		name = "dota_badguys_tower3_mid",
+		health = 2500
+	  }, {
+		name = "dota_badguys_tower4_bot",
+		health = 2600
+	  }, {
+		name = "dota_goodguys_tower4_bot",
+		health = 2600
+	  }, {
+		name = "dota_goodguys_tower1_mid",
+		health = 0
+	  }, {
+		name = "dota_badguys_tower1_bot",
+		health = 0
+	  }, {
+		name = "npc_dota_watch_tower_bottom",
+		health = 450
+	  }, {
+		name = "npc_dota_watch_tower_top",
+		health = 450
+	  } },
 	heroes = {
 		enchantress = {
 		name = "enchantress",
@@ -614,69 +614,17 @@ local GameState = {
 	  position = { 3136.5, 5737.4375 }
 	} },
 	wards = { {
-	  type = "npc_dota_observer_wards",
-	  team = 2,
-	  position = { 1300.03125, -2284.9375 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 2,
-	  position = { 2013.03125, -3344.375 }
-	}, {
-	  type = "npc_dota_observer_wards",
-	  team = 2,
-	  position = { 6444.59375, -1468.09375 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 3,
-	  position = { 4285.65625, 486.84375 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 3,
-	  position = { 2819.8125, -765.25 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 3,
-	  position = { -4123.90625, 1531.25 }
+		type = "npc_dota_observer_wards",
+		team = 2,
+		position = { 513.15625, 4067.9375 }
 	}, {
 	  type = "npc_dota_observer_wards",
 	  team = 3,
-	  position = { -4107.59375, 1520.09375 }
-	}, {
-	  type = "npc_dota_observer_wards",
-	  team = 3,
-	  position = { -1809.625, -1302.15625 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 3,
-	  position = { -522.9375, -440.84375 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 2,
-	  position = { -471, 1248.03125 }
+	  position = { -700.0, 2010.0 }
 	}, {
 	  type = "npc_dota_observer_wards",
 	  team = 2,
-	  position = { 1430.65625, 1699.8125 }
-	}, {
-	  type = "npc_dota_observer_wards",
-	  team = 3,
-	  position = { 513.15625, 4067.9375 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 3,
-	  position = { 45.0625, 4329.15625 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 3,
-	  position = { -31.15625, 2443.65625 }
-	}, {
-	  type = "npc_dota_observer_wards",
-	  team = 3,
-	  position = { -2844.65625, 3594 }
-	}, {
-	  type = "npc_dota_sentry_wards",
-	  team = 2,
-	  position = { 3752.84375, 443.625 }
+	  position = { 4650, 700. }
 	} },
 	roshan = {
 	  deaths = 0,
