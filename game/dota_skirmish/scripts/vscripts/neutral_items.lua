@@ -1,4 +1,4 @@
--- stuff from here: https://dota2.fandom.com/wiki/Neutral_Items
+-- stuff from here: https://dota2.fandom.com/wiki/Neutral_Items and here: https://github.com/SteamDatabase/GameTracking-Dota2/blob/master/game/dota/pak01_dir/scripts/npc/neutral_items.txt
 -- load file with timing
 -- hook on every death of neutral creep
 -- if time for neutral item, and conditions are met, 
@@ -13,26 +13,13 @@ end
 
 DROP_TIMES = {7, 17, 27, 37, 60}
 
-NEUTRAL_ITEMS = {{"item_arcane_ring", "item_broom_handle", "item_chipped_vest", "item_mysterious_hat",
-                  "item_keen_optic", "item_ocean_heart", "item_unstable_wand", "item_possessed_mask",
-                  "item_trusty_shovel", "item_pogo_stick"},
-                 {"item_ring_of_aquila", "item_nether_shawl", "item_dragon_scale", "item_pupils_gift", "item_vambrace",
-                  "item_misericorde", "item_grove_bow", "item_philosophers_stone", "item_essence_ring",
-                  "item_paintball", "item_bullwhip", "item_quicksilver_amulet"},
-                 {"item_quickening_charm", "item_black_powder_bag", "item_spider_legs", "item_paladin_sword",
-                  "item_titan_sliver", "item_mind_breaker", "item_enchanted_quiver", "item_elven_tunic",
-                  "item_cloak_of_flames", "item_ceremonial_robe", "item_psychic_headband"},
-                 {"item_timeless_relic", "item_spell_prism", "item_ascetic_cap", "item_heavy_blade", "item_flicker",
-                  "item_ninja_gear", "item_the_leveller", "item_spy_gadget", "item_trickster_cloak",
-                  "item_stormcrafter", "item_penta_edged_sword"},
-                 {"item_force_boots", "item_desolator_2", "item_seer_stone", "item_mirror_shield", "item_apex",
-                  "item_demonicon", "item_fallen_sky", "item_force_field", "item_pirate_hat", "item_ex_machina",
-                  "item_giants_ring", "item_book_of_shadows"}}
 
 neutral_items_in_game = {
 	good = {{}, {}, {}, {}, {}},
 	bad = {{}, {}, {}, {}, {}}
 }
+NEUTRAL_ITEMS = {{},{},{},{},{}}
+
 
 function GetTeamString(team)
 	if team == DOTA_TEAM_GOODGUYS then
@@ -57,7 +44,7 @@ function NeutralItems:AddItemToStash(item, team)
 		table.insert(neutral_items_in_game[team_str][item_tier], item)
 		return true
 	else
-		print("Adding invalid neutral item to neutral stash")
+		print("ERROR Adding invalid neutral item to neutral stash")
 		return false
 	end
 end
@@ -79,13 +66,16 @@ function NeutralItems:AddNeutralItemToHero(hHero, item)
 end
 
 function GetNeutralItemTier(query_item)
+	print("GetNeutralItemTier ".. query_item)
 	for i, items in pairs(NEUTRAL_ITEMS) do
 		for j, item in pairs(items) do
 			if query_item == item then
+				print(i)
 				return i
 			end
 		end
 	end
+	print("ERROR neutral item not found")
 	return nil
 end
 
@@ -128,6 +118,24 @@ end
 function NeutralItems:Setup(master_time)
 	NeutralItems.master_time = master_time
 	ListenToGameEvent("entity_killed", Dynamic_Wrap(self, "OnEntityKilled"), self)
+	local NeutralKV = LoadKeyValues("scripts/npc/npc_neutral_items_custom.txt")
+	print("INFO NEUTRAL SETUP")
+	
+	for i, tier in pairs({"1", "2", "3", "4", "5"}) do
+		print(i, tier)
+		local tier_data = NeutralKV[tier]
+		for item, val in pairs(tier_data["items"]) do
+			if val ~= 1 then
+				print("ERROR invalid neutral item KV "..item.." has value "..val)
+			else
+				table.insert(NEUTRAL_ITEMS[i], item)
+			end
+
+		end
+	end
+	print("INFO NEUTRAL_ITEMS")
+	print(NEUTRAL_ITEMS)
+
 end
 
 
@@ -200,6 +208,9 @@ function NeutralItems:OnEntityKilled(event)
 		end
 	end
 
+	-- TODO add midas certain drop
+	-- TODO readjust drop probabilities
+	-- TODO support old items
 	-- check drop conditions
 	-- attacker is near, and it is not an illusion 750radius 
 	-- attacker not channeling TP or boots
@@ -207,6 +218,5 @@ function NeutralItems:OnEntityKilled(event)
 	-- The team of the unit is neutral
 	-- check drop probability (is ancient, triple the probability)
 	-- drop the item
-
 end
 
