@@ -283,6 +283,10 @@ function SkirmishGameMode:InitialRoshanSetup()
 	SkirmishGameMode:FixRoshanStatsDrops()
 
 	if GameReader:GetRoshanInfo()["alive"] then
+		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+		if GameReader:GetRoshanInfo()["health"] ~= nil then
+			hRosh:SetHealth(GameReader:GetRoshanInfo()["health"])
+		end
 		GameMode:SetThink("FixRoshan", self, "FixRoshanGlobalThink", 1)
 	else
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
@@ -554,6 +558,15 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	if heroData["gold_unreliable"] ~= nil then
 		hHero:SetGold(heroData["gold_unreliable"], false)
 	end
+
+	if heroData["health"] ~= nil then
+		hHero:SetHealth(heroData["health"])
+	end
+
+	if heroData["mana"] ~= nil then
+		hHero:SetMana(heroData["mana"])
+	end
+	
 
 end
 
