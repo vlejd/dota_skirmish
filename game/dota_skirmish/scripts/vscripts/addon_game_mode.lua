@@ -204,53 +204,143 @@ end
 creeps_to_kill = nil
 local next_wave_time = nil
 
-function SkirmishGameMode:AgroFixer()
+
+function SkirmishGameMode:LaneCreepSpawner()
 	-- Spawn enemy creeps for a moment on every wave spawn to fix their agro behavior
-	print("AgroFixer")
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	print("LaneCreepSpawner", time.skirmishTime, next_wave_time)
+
 	if next_wave_time == nil then
 		next_wave_time = SkirmishGameMode.masterTime.skirmishNextWave
 	end
 
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
-	if creeps_to_kill == nil then
-		-- MYTIME skirmishtime, only after next 30sec
-		if time.skirmishTime < next_wave_time then
-			print("No time yet", time.skirmishTime, next_wave_time)
-			return 1
-		end
-		print("Time to spawn creeps")
 
-		GameRules:SpawnAndReleaseCreeps()
-		creeps_to_kill = {}
-		for _, lane in pairs({"bot", "mid", "top"}) do
-			for _, team in pairs({"good", "bad"}) do
-				local spawn_name = "lane_" .. lane .. "_" .. team .. "guys_melee_spawner"
-				local spawner = Entities:FindByName(nil, spawn_name)
-				local other_team = ""
-				local other_team_int = 0
+	if time.skirmishTime < next_wave_time then
+		print("No time yet, waiting precise", time.skirmishTime, next_wave_time)
+		return next_wave_time - time.skirmishTime
+	end
 
-				if team == "good" then
-					other_team = "bad"
-					other_team_int = DOTA_TEAM_BADGUYS
-				else
-					other_team = "good"
-					other_team_int = DOTA_TEAM_GOODGUYS
+	next_wave_time = next_wave_time + 30
+
+	local raxes = {good={}, bad={}}
+
+	for _, lane in pairs({"bot", "mid", "top"}) do
+		for _, team in pairs({"good", "bad"}) do
+			for _, rax_type in pairs({"melee", "range"}) do
+				-- good_rax_melee_mid
+				local rax_name = team .. "_rax_" .. rax_type .. "_" .. lane
+				local rax = Entities:FindByName(nil, rax_name)
+				if rax ~= nil then
+					raxes[team][rax_name] = 1
 				end
-
-				local hCreep = CreateUnitByName("npc_dota_creep_" .. other_team .. "guys_ranged", spawner:GetAbsOrigin(), true, nil,
-					nil, other_team_int)
-				table.insert(creeps_to_kill, hCreep)
 			end
 		end
-		return 0.1
-	else
-		print("Killing creeps")
-		for _, hCreep in pairs(creeps_to_kill) do
-			hCreep:ForceKill(false)
+	end
+	print("raxes", raxes)
+
+	for _, lane in pairs({"bot", "mid", "top"}) do
+		for _, team in pairs({"good", "bad"}) do
+			local spawn_name = "lane_" .. lane .. "_" .. team .. "guys_melee_spawner"
+			local spawner = Entities:FindByName(nil, spawn_name)
+			local other_team = ""
+			local other_team_int = 0
+			local team_int = 0
+
+			if team == "good" then
+				other_team = "bad"
+				other_team_int = DOTA_TEAM_BADGUYS
+				team_int = DOTA_TEAM_GOODGUYS
+			else
+				other_team = "good"
+				other_team_int = DOTA_TEAM_GOODGUYS
+				team_int = DOTA_TEAM_BADGUYS
+			end
+
+			local cPoz = spawner:GetAbsOrigin()
+			-- "npc_dota_creep_" .. team .. "guys_ranged", "npc_dota_creep_" .. team .. "guys_melee"
+			
+
+			local num_melee_creeps = 3
+			local num_range_creeps = 1
+			local num_siege_creeps = 0
+			local num_flag_creeps = 0
+			
+
+			if time.skirmishTime >= 15*60 then
+				num_melee_creeps = num_melee_creeps + 1
+			end
+			if time.skirmishTime >= 30*60 then
+				num_melee_creeps = num_melee_creeps + 1
+			end
+			if time.skirmishTime >= 45*60 then
+				num_melee_creeps = num_melee_creeps + 1
+			end
+			if time.skirmishTime >= 40*60 then
+				num_range_creeps = num_range_creeps + 1
+			end
+
+			local wave_num = math.floor(time.skirmishTime/30)
+			if wave_num % 10 == 0  and wave_num > 0  then
+				num_siege_creeps = num_siege_creeps + 1
+				if time.skirmishTime >= 35*60 then
+					num_siege_creeps = num_siege_creeps + 1
+				end
+			end
+			
+			if wave_num % 2 == 0  and wave_num >= 4  then
+				num_flag_creeps = num_flag_creeps + 1
+				num_melee_creeps = num_melee_creeps - 1
+			end
+
+			local range_upgrade = ""
+			local melee_upgrade = ""
+			local siege_upgrade = ""
+			local flag_upgrade = ""
+			
+			-- if this lane has range
+			-- good_rax_melee_mid
+			if raxes[other_team][other_team .. "_rax_melee_" .. lane] == nil then
+				melee_upgrade = "_upgraded"
+				flag_upgrade = "_upgraded"
+			end
+			if raxes[other_team][other_team .. "_rax_range_" .. lane] == nil then
+				range_upgrade = "_upgraded"
+				siege_upgrade = "_upgraded"
+			end
+			if tablelength(raxes[other_team]) == 0 then
+				melee_upgrade = "_upgraded_mega"
+				flag_upgrade = "_upgraded_mega"
+				melee_upgrade = "_upgraded_mega"
+				siege_upgrade = "_upgraded_mega"
+			end
+			 
+
+			local what_to_spawn = {}
+			table_multiinsert(what_to_spawn, "npc_dota_creep_" .. team .. "guys_ranged" .. range_upgrade, num_range_creeps)
+			table_multiinsert(what_to_spawn, "npc_dota_creep_" .. team .. "guys_melee" .. melee_upgrade, num_melee_creeps)
+			table_multiinsert(what_to_spawn, "npc_dota_" .. team .. "guys_siege" .. siege_upgrade, num_siege_creeps)
+			table_multiinsert(what_to_spawn, "npc_dota_creep_" .. team .. "guys_flagbearer" .. flag_upgrade, num_flag_creeps)			
+			
+			-- TODO proper creep positions
+
+			for _, creep_type in pairs(what_to_spawn) do
+				local hCreep = CreateUnitByName(creep_type, spawner:GetAbsOrigin(), true, nil,
+					nil, team_int)
+				print(hCreep, creep_type)
+				local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), team_int)
+				local waypoint = Entities:FindByName(nil, waypointName)
+				hCreep:SetInitialGoalEntity(waypoint)
+				hCreep:SetMustReachEachGoalEntity(true)
+			end
 		end
-		next_wave_time = next_wave_time + 30
-		creeps_to_kill = nil
-		return 1
+	end
+	return 5
+
+end
+
+function table_multiinsert(table_dest, what, how_many)
+	for i = 1, how_many, 1 do
+		table.insert(table_dest, what)
 	end
 end
 
@@ -871,7 +961,7 @@ function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
 	-- Add thinkers
 	GameMode:SetThink("CheckWinCondition", self, "CheckWinConditionGlobalThink", 1)
-	GameMode:SetThink("AgroFixer", self, "AgroFixerGlobalThink", 1)
+	GameMode:SetThink("LaneCreepSpawner", self, "LaneCreepSpawnerGlobalThink", 1)
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
 end

@@ -100,8 +100,15 @@ function TableContains(table, element)
 end
 
 function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
+	print("GetPotentialNeutralItemDrop")
+	print(tier)
+	print(team)
 	local possible_drops = {}
 	local team_str = GetTeamString(team)
+	if team_str == nil then
+		return nil
+	end
+
 	if table.getn(neutral_items_in_game[team_str][tier]) >= 5 then
 		return nil
 	end
@@ -162,9 +169,12 @@ function NeutralItems:OnEntityKilled(event)
 		local other_team = nil
 		if attacker_team == DOTA_TEAM_GOODGUYS then
 			other_team = DOTA_TEAM_BADGUYS
-		end
-		if attacker_team == DOTA_TEAM_BADGUYS then
+		elseif attacker_team == DOTA_TEAM_BADGUYS then
 			other_team = DOTA_TEAM_GOODGUYS
+		else
+			print("attacker has a strange team", attacker_team)
+			print(TimeUtils:GetMasterTime(NeutralItems.master_time))
+			return
 		end
 		local victim_poz = hVictim:GetAbsOrigin()
 		local friendly_in_range = false
