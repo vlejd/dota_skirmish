@@ -374,8 +374,8 @@ function SkirmishGameMode:InitialRoshanSetup()
 
 	if GameReader:GetRoshanInfo()["alive"] then
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
-		if GameReader:GetRoshanInfo()["health"] ~= nil then
-			hRosh:SetHealth(GameReader:GetRoshanInfo()["health"])
+		if GameReader:GetRoshanInfo()["rosh_hp"] ~= nil then
+			hRosh:SetHealth(GameReader:GetRoshanInfo()["rosh_hp"])
 		end
 		GameMode:SetThink("FixRoshan", self, "FixRoshanGlobalThink", 1)
 	else
@@ -628,11 +628,18 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		end
 	end
 
-	for i = 1, #heroData["cooldowns"] do
-		local hAbility = hHero:GetAbilityByIndex(i - 1) -- starts from 0!
+	print("cooldown", heroData["name"], tablelength(heroData["cooldowns"]))
+	print(heroData["cooldowns"])
+	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
+		if type(cooldown_index) == "string" then
+			cooldown_index = tonumber(cooldown_index)
+		end
+		local hAbility = hHero:GetAbilityByIndex(cooldown_index) -- starts from 0!
+		print(i, hAbility)
 		if hAbility ~= nil then
 			hAbility:EndCooldown()
-			hAbility:StartCooldown(heroData["cooldowns"][i])
+			print(cooldown_value)
+			hAbility:StartCooldown(cooldown_value + 0.0)
 		end
 	end
 
