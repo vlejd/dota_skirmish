@@ -604,12 +604,16 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	end
 
 	for _, item in pairs(heroData["items"] or {}) do
-		if NeutralItems:IsItemNeutral(item) then
-			print("AddNeutralItemToHero", heroData["name"], item)
-			NeutralItems:AddNeutralItemToHero(hHero, item)
-			hHero:AddItemByName(item)
+		if type(item) == "table" then
+			print("Complex item")
 		else
-			hHero:AddItemByName(item)
+			if NeutralItems:IsItemNeutral(item) then
+				print("AddNeutralItemToHero", heroData["name"], item)
+				NeutralItems:AddNeutralItemToHero(hHero, item)
+				hHero:AddItemByName(item)
+			else
+				hHero:AddItemByName(item)
+			end
 		end
 
 	end
@@ -632,9 +636,9 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	print(heroData["cooldowns"])
 	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
 		if type(cooldown_index) == "string" then
-			cooldown_index = tonumber(cooldown_index)
+			cooldown_index = tonumber(cooldown_index)+1  -- TODO what the hell is happening here?!?!
 		end
-		local hAbility = hHero:GetAbilityByIndex(cooldown_index) -- starts from 0!
+		local hAbility = hHero:GetAbilityByIndex(cooldown_index-1) -- starts from 0!
 		print(i, hAbility)
 		if hAbility ~= nil then
 			hAbility:EndCooldown()
