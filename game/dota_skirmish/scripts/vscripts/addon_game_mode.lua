@@ -606,6 +606,20 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 	for _, item in pairs(heroData["items"] or {}) do
 		if type(item) == "table" then
 			print("Complex item")
+			local item_name = item["name"]
+
+			if NeutralItems:IsItemNeutral(item_name) then
+				NeutralItems:AddNeutralItemToHero(hHero, item_name)
+			end
+			local hItem = hHero:AddItemByName(item_name)
+			print(hItem)
+			if hItem then
+				hItem:SetCurrentCharges(item["charges"])
+				hItem:EndCooldown()
+				hItem:StartCooldown(item["cooldown"] + 0.0)
+				hItem:SetLevel(item["level"]+0.0)
+				hItem:SetPurchaseTime(item["acquire_time"])
+			end
 		else
 			if NeutralItems:IsItemNeutral(item) then
 				print("AddNeutralItemToHero", heroData["name"], item)
