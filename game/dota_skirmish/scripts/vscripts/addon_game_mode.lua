@@ -20,6 +20,8 @@ require("scenario_selection")
 require("internal/globals")
 require("time_utils")
 
+LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
+
 function Precache(context)
 	PrecacheResource("model", "*.vmdl", context)
 	PrecacheResource("soundfile", "*.vsndevts", context)
@@ -115,13 +117,13 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:FixBuildings()
 		SkirmishGameMode:FixOutposts()
 		SkirmishGameMode:FixWards()
+		SkirmishGameMode:FixPlayers()
 		NeutralItems:Setup(SkirmishGameMode.masterTime)
 		setup_stage = 3
 		return 0.1
 
 	elseif setup_stage == 3 then
 		SkirmishGameMode:MakeCreeps()
-		SkirmishGameMode:FixPlayers()
 		SkirmishGameMode:FixNeutrals()
 		SkirmishGameMode:InitialRoshanSetup()
 		setup_stage = 4
@@ -482,10 +484,50 @@ function SkirmishGameMode:MakeCreeps()
 	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
 		local cPoz = fixPosition(creepData["position"])
 		local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
-		local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
-		local waypoint = Entities:FindByName(nil, waypointName)
-		hCreep:SetInitialGoalEntity(waypoint)
-		hCreep:SetMustReachEachGoalEntity(true)
+
+		if creepData["health"] ~= nil then
+			hCreep:SetHealth(creepData["health"])
+		end
+		if creepData["mana"] ~= nil then
+			hCreep:SetMana(creepData["mana"])
+		end
+
+		if creepData["type"] == "lane" then
+			local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
+			local waypoint = Entities:FindByName(nil, waypointName)
+			hCreep:SetInitialGoalEntity(waypoint)
+			hCreep:SetMustReachEachGoalEntity(true)
+
+		elseif creepData["type"] == "controlled" then
+			if creepData["owner"] then
+				if creepData["owner"]["type"] == "hero" then
+					local hero_name = creepData["owner"]["refname"]
+					local hero_entity = Entities:FindByName(nil, hero_name)
+					local player_id = hero_entity:GetPlayerOwnerID()
+					hCreep:SetOwner(hero_entity)
+					hCreep:SetControllableByPlayer(player_id, false)
+
+					if creepData["name"] == "npc_dota_eidolon" then
+						-- TODO add proper duration
+						-- TODO add the split thing
+						-- check this: https://github.com/CryDeS/Angel-Arena-Reborn/search?q=modifier_eidolons_attack_counter
+						hCreep:AddNewModifier(hero_entity, nil, "modifier_demonic_conversion", {duration = 40})
+						hCreep:AddNewModifier(hero_entity, nil, "modifier_eidolons_splitting", {duration = 40})
+						
+						-- hCreep:ForceKill(false)
+					end
+					-- hCreep:AddNewModifier(hero_entity, nil, "modifier_chen_holy_persuasion", {})
+					
+					
+				else
+					print("ERROR unexpected controller type")
+				end
+
+			else
+				print("ERROR controlled unit does not have owner")
+			end
+		end
+
 	end
 end
 
@@ -570,6 +612,7 @@ function SkirmishGameMode:FixPlayers()
 					local niceHeroName = heroName:sub(15)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
 						local heroData = GameReader:GetHeroInfo(niceHeroName)
+						-- TODO add items to courier. 
 						if heroData["team"] == DOTA_TEAM_GOODGUYS then
 							hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
 						elseif heroData["team"] == DOTA_TEAM_BADGUYS then
