@@ -100,10 +100,11 @@
 					</Panel>
 				</Panel>
 			</Panel>
-			<Label id="Version" text="Version: 2022_10_08_2300" />
-			<Image class="Logo" src="file://{resources}/imgs/ti2018_og_lgd_g5.png" style="width:0px; height:0px;"/>
-			<Image class="Logo" src="file://{resources}/imgs/ti2019_liquid_lgd_g2.png" style="width:0px; height:0px;"/>
-			<Image class="Logo" src="file://{resources}/imgs/ti2021_tspirit_lgd_g5.png" style="width:0px; height:0px;"/>
+			<Label id="Version" text="Version: 2022_10_13_1400" />
+			<Image class="Logo" src="file://{resources}/imgs/states/2022_lcq/tinny_trees.png" style="width:0px; height:0px;"/>
+			<Image class="Logo" src="file://{resources}/imgs/states/2022_lcq/bot_highground_push.png" style="width:0px; height:0px;"/>
+			<Image class="Logo" src="file://{resources}/imgs/states/2022_lcq/final_push.png" style="width:0px; height:0px;"/>
+			<Image class="Logo" src="file://{resources}/imgs/states/2022_lcq/mid_pickup.png" style="width:0px; height:0px;"/>
 
 		</Panel>
 	</Panel>

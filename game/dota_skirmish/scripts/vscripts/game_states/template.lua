@@ -1,0 +1,2 @@
+local GameState = {}
+return GameState

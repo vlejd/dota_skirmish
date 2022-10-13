@@ -379,6 +379,7 @@ function SkirmishGameMode:InitialRoshanSetup()
 		if GameReader:GetRoshanInfo()["rosh_hp"] ~= nil then
 			hRosh:SetHealth(GameReader:GetRoshanInfo()["rosh_hp"])
 		end
+		SkirmishGameMode:FixRoshan()
 		GameMode:SetThink("FixRoshan", self, "FixRoshanGlobalThink", 1)
 	else
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
@@ -397,6 +398,7 @@ function SkirmishGameMode:PutRoshanBack()
 	print("hRoshanSpawner", hRoshanSpawner)
 	print(hRosh:GetAbsOrigin())
 	FindClearSpaceForUnit(hRosh, hRoshanSpawner:GetAbsOrigin(), true)
+	SkirmishGameMode:FixRoshan()
 	GameMode:SetThink("FixRoshan", self, "FixRoshanGlobalThink", 1)
 	return nil
 end

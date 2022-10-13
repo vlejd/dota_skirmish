@@ -11,23 +11,29 @@ if ScenarioSelection == nil then
 	ScenarioSelection.n_players = nil
 	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
-		ti2018_og_lgd_g5 = {
-			name = "TI 2018 OG  vs LGD Game 5", -- 4080778303
-		 	description = "LGD going top high ground. 41st minute.",
-		 	fname = "game_states/chinese_promo/TI_2018_OG_PSGLGD_Game_5",
-		 	img = "ti2018_og_lgd_g5.png"
+		lcq_2022_1 = {
+			name = "LCQ 2022 VP vs Secret, Game 1",
+		 	description = "Tiny Rosh fight.",
+		 	fname = "game_states/LCQ_2022/lcq_2022_1_tiny",
+		 	img = "states/2022_lcq/tinny_trees.png"
 		},
-		ti2019_liquid_lgd_g2 = {
-			name = "TI 2019 Liquid vs LGD Game 2", -- 4985787596
-		 	description = "LGD going bottom high ground. 40th minute.",
-		 	fname = "game_states/chinese_promo/TI_2019_Liquid_PSGLGD_Game_2",
-		 	img = "ti2019_liquid_lgd_g2.png"
+		lcq_2022_2 = {
+			name = "LCQ 2022 VP vs Secret, Game 1",
+		 	description = "How to defend high ground.",
+		 	fname = "game_states/LCQ_2022/lcq_2022_2_hg_def",
+		 	img = "states/2022_lcq/bot_highground_push.png"
 		},
-		ti2021_tspirit_lgd_g5 = {
-			name = "TI 2021 TSpirit vs LGD Game 5", -- 6227492909
-		 	description = "LGD diving bottom tier 2 tower. 19th minute.",
-		 	fname = "game_states/chinese_promo/TI_2021_Team_Spirit_PSGLGD_Game_5",
-		 	img = "ti2021_tspirit_lgd_g5.png"
+		lcq_2022_3 = {
+			name = "LCQ 2022 VP vs Secret, Game 1",
+		 	description = "How to push high ground.",
+		 	fname = "game_states/LCQ_2022/lcq_2022_3_hg_push",
+		 	img = "states/2022_lcq/final_push.png"
+		},
+		lcq_2022_4 = {
+			name = "LCQ 2022 Liquid vs VP, Game 1",
+		 	description = "How to execute a pick off.",
+		 	fname = "game_states/LCQ_2022/lcq_2022_4_pickup",
+		 	img = "states/2022_lcq/mid_pickup.png"
 		},
 
 	}
