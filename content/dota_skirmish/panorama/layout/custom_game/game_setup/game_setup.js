@@ -35,10 +35,15 @@ function SetTimerMsg(data){
 	$("#GameTimerMsg").text = data.text + " " + SecToText(data.time);
 }
 
+function SetLoadingText(data){
+	$("#LoadingText").text = data.text;
+}
+
 (function () {
 	//Subscribe to events
 	GameEvents.Subscribe( "make_screen_dark", MakeScreenDark );
 	GameEvents.Subscribe( "make_screen_not_dark", MakeScreenNotDark );
+	GameEvents.Subscribe( "set_loading_text", SetLoadingText );
 	GameEvents.Subscribe( "update_game_time", UpdateTime );	
 	GameEvents.Subscribe( "set_timer_msg", SetTimerMsg );	
 })();

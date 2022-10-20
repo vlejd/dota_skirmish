@@ -76,9 +76,18 @@ end
 
 setup_stage = -1
 
+function SkirmishGameMode:ReportLoadingProgress(loading_text)
+	print(text)
+	local data = {
+		text = loading_text
+	}
+	CustomGameEventManager:Send_ServerToAllClients("set_loading_text", data)
+end
+
 function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	if setup_stage == -1 then
+		SkirmishGameMode:ReportLoadingProgress("Waiting for hero selection")
 		if SkirmishGameMode.hero_selection_ended then
 			print("Hero selection not ended yet")
 			setup_stage = 0
@@ -89,6 +98,7 @@ function SkirmishGameMode:WaitForSetup()
 		end
 
 	elseif setup_stage == 0 then
+		SkirmishGameMode:ReportLoadingProgress("Waiting for players to load")
 		local num_players = SkirmishGameMode:LoadedHeroes()
 		if num_players < 10 then
 			print("Waiting for unloaded players", num_players, 10)
@@ -101,6 +111,7 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.01
 		end
 	elseif setup_stage == 1 then
+		SkirmishGameMode:ReportLoadingProgress("Spawning correct heroes")
 		local replaced = tablelength(HeroSelection.heroes_replaced)
 		print(replaced)
 		if replaced < 10 then
@@ -112,33 +123,47 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.1
 		end
 	elseif setup_stage == 2 then
+		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		SkirmishGameMode:FixUpgrades();
+		SkirmishGameMode:ReportLoadingProgress("Planting flowers")
 		SkirmishGameMode:initWaypoints()
+		SkirmishGameMode:ReportLoadingProgress("Smacking buildings")
 		SkirmishGameMode:FixBuildings()
+		SkirmishGameMode:ReportLoadingProgress("Reshufling outposts")
 		SkirmishGameMode:FixOutposts()
+		SkirmishGameMode:ReportLoadingProgress("Warding")
 		SkirmishGameMode:FixWards()
+		SkirmishGameMode:ReportLoadingProgress("Massaging players")
 		SkirmishGameMode:FixPlayers()
 		NeutralItems:Setup(SkirmishGameMode.masterTime)
 		setup_stage = 3
 		return 0.1
 
 	elseif setup_stage == 3 then
+		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
 		SkirmishGameMode:MakeCreeps()
+		SkirmishGameMode:ReportLoadingProgress("Stealing neutral items")
 		SkirmishGameMode:FixNeutrals()
+		SkirmishGameMode:ReportLoadingProgress("Summoning Roshan")
 		SkirmishGameMode:InitialRoshanSetup()
 		setup_stage = 4
 		return 0.1
 
 	elseif setup_stage == 4 then
 		setup_stage = 5
+		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
 		SkirmishGameMode:FixNeutralItems()
+		SkirmishGameMode:ReportLoadingProgress("Contemplating life")
 		SkirmishGameMode:AddThinkers()
+		SkirmishGameMode:ReportLoadingProgress("Venesecting")
 		SkirmishGameMode:FixFirstBlood()
+		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
 		SkirmishGameMode:SetWinconText()
 		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
 		-- GameRules:SetTimeOfDay(140)
 		print("make_screen_not_dark")
 		local data = {}
+		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
 		print("master time")
 		print(TimeUtils:GetMasterTime(SkirmishGameMode.masterTime))
@@ -503,24 +528,27 @@ function SkirmishGameMode:MakeCreeps()
 		elseif creepData["type"] == "controlled" then
 			if creepData["owner"] then
 				if creepData["owner"]["type"] == "hero" then
-					local hero_name = creepData["owner"]["refname"]
-					local hero_entity = Entities:FindByName(nil, hero_name)
-					local player_id = hero_entity:GetPlayerOwnerID()
-					hCreep:SetOwner(hero_entity)
-					hCreep:SetControllableByPlayer(player_id, false)
+					if string.find(creepData["name"], "npc_dota_visage_familiar") then
+						-- fix this later
+					else
+						local hero_name = creepData["owner"]["refname"]
+						local hero_entity = Entities:FindByName(nil, hero_name)
+						local player_id = hero_entity:GetPlayerOwnerID()
+						hCreep:SetOwner(hero_entity)
+						hCreep:SetControllableByPlayer(player_id, false)
 
-					if creepData["name"] == "npc_dota_eidolon" then
-						-- TODO add proper duration
-						-- TODO add the split thing
-						-- check this: https://github.com/CryDeS/Angel-Arena-Reborn/search?q=modifier_eidolons_attack_counter
-						hCreep:AddNewModifier(hero_entity, nil, "modifier_demonic_conversion", {duration = 40})
-						hCreep:AddNewModifier(hero_entity, nil, "modifier_eidolons_splitting", {duration = 40})
+						if string.find(creepData["name"], "npc_dota_eidolon") then
+							-- TODO add proper duration
+							-- TODO add the split thing
+							-- check this: https://github.com/CryDeS/Angel-Arena-Reborn/search?q=modifier_eidolons_attack_counter
+							hCreep:AddNewModifier(hero_entity, nil, "modifier_demonic_conversion", {duration = 40})
+							hCreep:AddNewModifier(hero_entity, nil, "modifier_eidolons_splitting", {duration = 40})
+							
+							-- hCreep:ForceKill(false)
+						end
+						-- hCreep:AddNewModifier(hero_entity, nil, "modifier_chen_holy_persuasion", {})
 						
-						-- hCreep:ForceKill(false)
 					end
-					-- hCreep:AddNewModifier(hero_entity, nil, "modifier_chen_holy_persuasion", {})
-					
-					
 				else
 					print("ERROR unexpected controller type")
 				end

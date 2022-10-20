@@ -56,3 +56,11 @@
 	margin-top: 10%;
 	font-size: 13px;
 }
+
+#LoadingText 
+{
+	font-size: 50px;
+	color: #ffffff;
+	vertical-align: center;
+	horizontal-align: center;
+}

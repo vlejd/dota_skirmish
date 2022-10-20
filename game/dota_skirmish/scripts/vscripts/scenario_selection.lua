@@ -11,31 +11,12 @@ if ScenarioSelection == nil then
 	ScenarioSelection.n_players = nil
 	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
-		lcq_2022_1 = {
-			name = "LCQ 2022 VP vs Secret, Game 1",
-		 	description = "Tiny Rosh fight.",
-		 	fname = "game_states/LCQ_2022/lcq_2022_1_tiny",
-		 	img = "states/2022_lcq/tinny_trees.png"
+		ti_100min = {
+			name = "TI LB 2022 RNG vs Entity, BO1",
+			description = "Enjoy the 100th minute of dota.",
+			fname = "game_states/2022_ti/2022_rng_entity",
+			img = "states/2022_ti/100min.png"  
 		},
-		lcq_2022_2 = {
-			name = "LCQ 2022 VP vs Secret, Game 1",
-		 	description = "How to defend high ground.",
-		 	fname = "game_states/LCQ_2022/lcq_2022_2_hg_def",
-		 	img = "states/2022_lcq/bot_highground_push.png"
-		},
-		lcq_2022_3 = {
-			name = "LCQ 2022 VP vs Secret, Game 1",
-		 	description = "How to push high ground.",
-		 	fname = "game_states/LCQ_2022/lcq_2022_3_hg_push",
-		 	img = "states/2022_lcq/final_push.png"
-		},
-		lcq_2022_4 = {
-			name = "LCQ 2022 Liquid vs VP, Game 1",
-		 	description = "How to execute a pick off.",
-		 	fname = "game_states/LCQ_2022/lcq_2022_4_pickup",
-		 	img = "states/2022_lcq/mid_pickup.png"
-		},
-
 	}
 end
 
