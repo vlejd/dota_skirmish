@@ -11,11 +11,11 @@ if ScenarioSelection == nil then
 	ScenarioSelection.n_players = nil
 	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
-		ti_100min = {
-			name = "TI LB 2022 RNG vs Entity, BO1",
-			description = "Enjoy the 100th minute of dota.",
-			fname = "game_states/2022_ti/2022_rng_entity",
-			img = "states/2022_ti/100min.png"  
+		ti_liquid_ta_1 = {
+			name = "TI 2022 Liquid vs Thunder Awaken",
+			description = "Liquid defending against 10k advantage.",
+			fname = "game_states/2022_ti/2022_liquid_ta",
+			img = "states/2022_ti/2022_liquid_ta.png"  
 		},
 	}
 end

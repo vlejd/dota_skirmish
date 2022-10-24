@@ -759,6 +759,14 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		hHero:SetBuybackCooldownTime(heroData["buyback_cooldown"])
 	end
 
+	if heroData["buffs"] ~= nil then
+		for _, buff_data in pairs(heroData["buffs"]) do
+			print(buff_data)
+			local buff = hHero:AddNewModifier(hero_entity, nil, buff_data["name"], {})
+			buff:SetStackCount(buff_data["stacks"])
+		end
+	end
+
 end
 
 last_secs = 0
