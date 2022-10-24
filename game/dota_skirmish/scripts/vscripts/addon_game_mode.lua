@@ -755,6 +755,9 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		hHero:SetMana(heroData["mana"])
 	end
 	
+	if heroData["buyback_cooldown"] ~= nil and heroData["buyback_cooldown"] ~=0 then
+		hHero:SetBuybackCooldownTime(heroData["buyback_cooldown"])
+	end
 
 end
 
@@ -1141,7 +1144,7 @@ function SkirmishGameMode:AddBots()
 	Tutorial:StartTutorialMode();
 	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)
 	GameRules:GetGameModeEntity():SetBotsInLateGame(true)
-	GameRules:GetGameModeEntity():SetBotsMaxPushTier(4)
+	GameRules:GetGameModeEntity():SetBotsMaxPushTier(-1)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 end
 

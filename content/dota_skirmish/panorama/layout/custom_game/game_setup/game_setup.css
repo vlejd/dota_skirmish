@@ -57,10 +57,27 @@
 	font-size: 13px;
 }
 
-#LoadingText 
+.Loading
 {
 	font-size: 50px;
 	color: #ffffff;
-	vertical-align: center;
 	horizontal-align: center;
+}
+
+#LoadingDisclaimerTop
+{
+	color: red;
+	vertical-align: top;
+	padding-top: 100px;
+}
+#LoadingDisclaimerBot
+{
+	color: red;
+	vertical-align: bottom;
+	padding-bottom: 100px;
+}
+
+#LoadingText
+{
+	vertical-align: center;
 }
