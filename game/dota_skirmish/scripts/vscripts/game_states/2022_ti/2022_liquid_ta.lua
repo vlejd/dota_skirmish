@@ -1668,45 +1668,6 @@ local GameState = {
 		type = "hero"
 	  },
 	  waypoint = "",
-	  position = { 2718.0625, 3212.90625 }
-	}, {
-	  name = "npc_dota_eidolon",
-	  team = 2,
-	  health = 240,
-	  mana = 0,
-	  type = "controlled",
-	  owner = {
-		name = "npc_dota_hero_enigma",
-		refname = "npc_dota_hero_enigma",
-		type = "hero"
-	  },
-	  waypoint = "",
-	  position = { 2058.96875, 2984.15625 }
-	}, {
-	  name = "npc_dota_eidolon",
-	  team = 2,
-	  health = 240,
-	  mana = 0,
-	  type = "controlled",
-	  owner = {
-		name = "npc_dota_hero_enigma",
-		refname = "npc_dota_hero_enigma",
-		type = "hero"
-	  },
-	  waypoint = "",
-	  position = { 2265.90625, 3022.75 }
-	}, {
-	  name = "npc_dota_eidolon",
-	  team = 2,
-	  health = 240,
-	  mana = 0,
-	  type = "controlled",
-	  owner = {
-		name = "npc_dota_hero_enigma",
-		refname = "npc_dota_hero_enigma",
-		type = "hero"
-	  },
-	  waypoint = "",
 	  position = { 2128.375, 3011.75 }
 	}, {
 	  name = "npc_dota_eidolon",
