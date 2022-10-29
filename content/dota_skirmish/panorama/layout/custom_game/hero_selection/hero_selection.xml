@@ -111,6 +111,7 @@
 					</Panel>
 				</Panel>
 			</Panel>
+			
 			<Label id="Version" text="Version: 2022_10_29_2235" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
