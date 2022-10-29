@@ -509,28 +509,31 @@ end
 function SkirmishGameMode:MakeCreeps()
 	print("making creepes")
 	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
-		local cPoz = fixPosition(creepData["position"])
-		local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
+		local find_res = string.find(creepData["name"], "npc_dota_visage_familiar") 
+		if find_res ~= nil then
+			-- TODO fix later
 
-		if creepData["health"] ~= nil then
-			hCreep:SetHealth(creepData["health"])
-		end
-		if creepData["mana"] ~= nil then
-			hCreep:SetMana(creepData["mana"])
-		end
+		else
+			
+			local cPoz = fixPosition(creepData["position"])
+			local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
 
-		if creepData["type"] == "lane" then
-			local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
-			local waypoint = Entities:FindByName(nil, waypointName)
-			hCreep:SetInitialGoalEntity(waypoint)
-			hCreep:SetMustReachEachGoalEntity(true)
+			if creepData["health"] ~= nil then
+				hCreep:SetHealth(creepData["health"])
+			end
+			if creepData["mana"] ~= nil then
+				hCreep:SetMana(creepData["mana"])
+			end
 
-		elseif creepData["type"] == "controlled" then
-			if creepData["owner"] then
-				if creepData["owner"]["type"] == "hero" then
-					if string.find(creepData["name"], "npc_dota_visage_familiar") then
-						-- fix this later
-					else
+			if creepData["type"] == "lane" then
+				local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
+				local waypoint = Entities:FindByName(nil, waypointName)
+				hCreep:SetInitialGoalEntity(waypoint)
+				hCreep:SetMustReachEachGoalEntity(true)
+
+			elseif creepData["type"] == "controlled" then
+				if creepData["owner"] then
+					if creepData["owner"]["type"] == "hero" then
 						local hero_name = creepData["owner"]["refname"]
 						local hero_entity = Entities:FindByName(nil, hero_name)
 						local player_id = hero_entity:GetPlayerOwnerID()
@@ -546,18 +549,16 @@ function SkirmishGameMode:MakeCreeps()
 							
 							-- hCreep:ForceKill(false)
 						end
-						-- hCreep:AddNewModifier(hero_entity, nil, "modifier_chen_holy_persuasion", {})
-						
+						-- hCreep:AddNewModifier(hero_entity, nil, "modifier_chen_holy_persuasion", {})						
+					else
+						print("ERROR unexpected controller type")
 					end
-				else
-					print("ERROR unexpected controller type")
-				end
 
-			else
-				print("ERROR controlled unit does not have owner")
+				else
+					print("ERROR controlled unit does not have owner")
+				end
 			end
 		end
-
 	end
 end
 
