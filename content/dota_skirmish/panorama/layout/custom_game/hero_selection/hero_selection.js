@@ -292,8 +292,8 @@ function GenerateScenarioUI(data) {
 	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
 	var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
 
-	//AddPassElement(parent);
-	AddCustomScenarioElement(parent);
+	//AddPassElement(parent);	
+	//AddCustomScenarioElement(parent);
 }
 
 function ScenarioAssigned(data) {

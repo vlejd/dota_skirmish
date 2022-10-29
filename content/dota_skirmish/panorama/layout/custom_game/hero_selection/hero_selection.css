@@ -238,6 +238,43 @@
 	//height: 700px; 
 }
 
+#AddSpace {
+	margin-top: 50px;
+	width: 1570px;
+	height: 200px;
+	horizontal-align: center;
+	background-color: #3A4551;
+	background-image: url("file://{resources}/imgs/web_background_original.jpg");
+	background-size: cover;
+	background-position: 0px -400px;
+
+}
+
+
+#SkirmishLinkWrapper {
+	width: 100%;
+	height: 100%;
+	vertical-align: center;
+	background-color: black;
+	opacity: 0.9;
+	horizontal-align: center;	
+}
+
+#SkirmishLinkContainer {
+	vertical-align: center;
+	horizontal-align: center;
+	flow-children: right;
+}
+
+.SkirmishLink {
+	font-size: 35px;
+	color: white;
+}
+
+.red {
+	color: red;
+}
+
 #RightAlignedScenarios {
 	horizontal-align: right;
 	flow-children: right;
@@ -358,7 +395,7 @@
 	horizontal-align: left;
 	margin-bottom: 5px;
 	font-size: 15px;
-	height: 46px;
+	height: 51px;
 	color: #FFFFFF;
 }
 
