@@ -100,7 +100,7 @@
 					</Panel>
 				</Panel>
 			</Panel>
-			<Label id="Version" text="Version: 2022_10_29_2233" />
+			<Label id="Version" text="Version: 2022_10_30_2142" />
 			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/100min.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/2022_liquid_ta.png" style="width:0px; height:0px;"/>
 			
