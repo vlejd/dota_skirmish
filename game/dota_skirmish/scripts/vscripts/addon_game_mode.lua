@@ -509,8 +509,17 @@ end
 function SkirmishGameMode:MakeCreeps()
 	print("making creepes")
 	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
-		local find_res = string.find(creepData["name"], "npc_dota_visage_familiar") 
-		if find_res ~= nil then
+		
+		local skip = false
+		local skip_list = {"npc_dota_visage_familiar", "npc_dota_broodmother_web"}
+		for _, skip_name in pairs(skip_list) do
+			local find_res = string.find(creepData["name"], skip_name) 
+			if find_res ~= nil then
+				skip = true
+			end
+		end
+
+		if skip then
 			-- TODO fix later
 
 		else
