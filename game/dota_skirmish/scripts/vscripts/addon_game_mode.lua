@@ -3,6 +3,7 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode.num_human_players = nil
 	SkirmishGameMode.random_hero_to_playerID = {}
 	SkirmishGameMode.hero_selection_ended = false
+	SkirmishGameMode.human_player_names = {}
 end
 
 isRoshanDead = true
@@ -123,6 +124,9 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.1
 		end
 	elseif setup_stage == 2 then
+		SkirmishGameMode:ReportLoadingProgress("Making bots obedient")
+		SkirmishGameMode:MakeBotsControllable()
+
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		SkirmishGameMode:FixUpgrades();
 		SkirmishGameMode:ReportLoadingProgress("Planting flowers")
@@ -1074,6 +1078,37 @@ function FinishOnHeroSelectionEnd()
 	HeroSelection:TotalyRandomForNoHeroSelected()
 	-- start game
 	SkirmishGameMode.hero_selection_ended = true
+end
+
+function SkirmishGameMode:MakeBotsControllable()
+	-- Looks like this is not needed
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		local humans = {}
+		local bots = {}
+		for i = 1, DOUBLE_MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
+				if player_steam_id == 0 then -- this is a bot
+					table.insert(bots, playerID)
+				else
+					table.insert(humans, playerID)
+				end
+			end
+		end
+		print("team", teamNum)
+		print("humans", humans)
+		print("bots", bots)
+
+		for _, botID in pairs(bots) do
+			local bot_hero = PlayerResource:GetSelectedHeroEntity(botID)
+			bot_hero:SetControllableByPlayer(-1, true)
+			
+			for _, humanID in pairs(humans) do
+				bot_hero:SetControllableByPlayer(humanID, false)
+			end 
+		end
+	end
 end
 
 function SkirmishGameMode:AddThinkers()
