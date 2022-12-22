@@ -161,6 +161,8 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:AddThinkers()
 		SkirmishGameMode:ReportLoadingProgress("Venesecting")
 		SkirmishGameMode:FixFirstBlood()
+		SkirmishGameMode:ReportLoadingProgress("Putting shinny stones in the river")
+		SkirmishGameMode:FixRunes()
 		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
 		SkirmishGameMode:SetWinconText()
 		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
@@ -182,6 +184,104 @@ function SkirmishGameMode:WaitForSetup()
 		return nil
 	end
 end
+
+function SkirmishGameMode:FixRunes()
+	print("Fixing runes")
+	local gameModeEnt = GameRules:GetGameModeEntity()
+	gameModeEnt:SetUseDefaultDOTARuneSpawnLogic(false)		-- true = river runes spawn at 2:00, all runes. false = required to disable runes, they start at 0:00
+
+	local rune_state = false
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_DOUBLEDAMAGE , rune_state) --Double Damage
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_HASTE, rune_state) --Haste
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ILLUSION, rune_state) --Illusion
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_INVISIBILITY, rune_state) --Invis
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_REGENERATION, rune_state) --Regen
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ARCANE, rune_state) --Arcane
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_BOUNTY, rune_state) --Bounty
+		-- gameModeEnt:ClearRuneSpawnFilter()
+		-- gameModeEnt:SetBountyRuneSpawnInterval()
+		-- gameModeEnt:SetPowerRuneSpawnInterval()
+		-- gameModeEnt:SetNextBountyRuneSpawnTime()
+		-- gameModeEnt:SetNextRuneSpawnTime()
+
+	gameModeEnt:SetThink("RuneSpawner", self, "RuneSpawnerGlobalThink", 0.1)
+end
+
+
+local next_minute = nil
+
+function SkirmishGameMode:RuneSpawner()
+	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	print("rune spawner")
+
+	if next_minute == nil then
+		next_minute =  math.floor(time.skirmishTime / 60) * 60 + 60
+	end
+
+	if time.skirmishTime < next_minute then
+		return next_minute - time.skirmishTime 
+	end
+	local min_num = next_minute / 60
+
+	next_minute = next_minute + 60
+	print("min_num", min_num)
+	-- bounty runes every 3 minutes
+	-- power runes every 2 minutes after min 4, dissapears
+	-- water runes - not for now
+
+
+	if min_num > 4 and min_num % 2 == 0 then
+		print("spawning rune power ")
+		-- kill old ones
+		local runes = Entities:FindAllByClassname("dota_item_rune")
+		print(#runes)
+		for i = 1, #runes do
+			local rune = runes[i]
+			if string.find(rune:GetModelName(), "rune_goldxp") == nil then
+				rune:RemoveSelf()
+			end			
+		end
+		-- CDOTA_Item_Rune
+		local rune_names = {"item_rune_arcane", "item_rune_doubledamage", "item_rune_haste"} 
+		Entities:FindAllByName("dota_item_rune_spawner_powerup")
+
+		-- spawn new runes
+		local rune_options = {
+			DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
+			DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE
+		} 
+		local power_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_powerup")
+		local spawner = getRandomValueFromArray(power_rune_spawners)
+		local rune_type = getRandomValueFromArray(rune_options)
+		CreateRune(spawner:GetAbsOrigin(), rune_type)
+	end
+
+	if min_num > 2 and min_num % 3 == 0 then
+		print("spawning rune bounty")
+		local bounty_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_bounty")
+		for i = 1, #bounty_rune_spawners do
+			local spawner = bounty_rune_spawners[i]
+			CreateRune(spawner:GetAbsOrigin(), DOTA_RUNE_BOUNTY)
+		end
+	end
+
+	return 10
+end
+
+function dump_runes()
+	print("dump_runes")
+	local runes = Entities:FindAllByClassname("dota_item_rune")
+	print(#runes)
+	for i = 1, #runes do
+		local rune = runes[i]
+		print(rune)
+		print(rune:GetModelName())
+		print(rune:GetName())
+		print(rune:GetAbsOrigin())
+		
+	end
+end
+
 
 function SkirmishGameMode:LoadedHeroes()
 	local num_players = 0
