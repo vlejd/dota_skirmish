@@ -215,11 +215,11 @@ function SkirmishGameMode:RuneSpawner()
 	print("rune spawner")
 
 	if next_minute == nil then
-		next_minute =  math.floor(time.skirmishTime / 60) * 60 + 60
+		next_minute = math.floor(time.skirmishTime / 60) * 60 + 60
 	end
 
 	if time.skirmishTime < next_minute then
-		return next_minute - time.skirmishTime 
+		return next_minute - time.skirmishTime
 	end
 	local min_num = next_minute / 60
 
@@ -228,7 +228,6 @@ function SkirmishGameMode:RuneSpawner()
 	-- bounty runes every 3 minutes
 	-- power runes every 2 minutes after min 4, dissapears
 	-- water runes - not for now
-
 
 	if min_num > 4 and min_num % 2 == 0 then
 		print("spawning rune power ")
@@ -239,17 +238,15 @@ function SkirmishGameMode:RuneSpawner()
 			local rune = runes[i]
 			if string.find(rune:GetModelName(), "rune_goldxp") == nil then
 				rune:RemoveSelf()
-			end			
+			end
 		end
 		-- CDOTA_Item_Rune
-		local rune_names = {"item_rune_arcane", "item_rune_doubledamage", "item_rune_haste"} 
+		local rune_names = {"item_rune_arcane", "item_rune_doubledamage", "item_rune_haste"}
 		Entities:FindAllByName("dota_item_rune_spawner_powerup")
 
 		-- spawn new runes
-		local rune_options = {
-			DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
-			DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE
-		} 
+		local rune_options = {DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
+                        DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE}
 		local power_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_powerup")
 		local spawner = getRandomValueFromArray(power_rune_spawners)
 		local rune_type = getRandomValueFromArray(rune_options)
