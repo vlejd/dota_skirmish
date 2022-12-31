@@ -8,6 +8,7 @@
 		"MaxPlayers"		"20"
 	}
 
+	"MaxPlayers"		"20"
 	IsPlayable = 1
 	PenaltiesEnabled = false
 	CheckAFKPlayers = 0

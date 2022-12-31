@@ -11,17 +11,23 @@ if ScenarioSelection == nil then
 	ScenarioSelection.n_players = nil
 	ScenarioSelection.custom_scenario = nil
 	ScenarioSelection.scenarios = {
-		n1_ti_100min = {
+		-- n1_ti_100min = {
+		-- 	name = "TI LB 2022 RNG vs Entity, BO1",
+		-- 	description = "Enjoy the 100th minute of Dota madness.",
+		-- 	fname = "game_states/2022_ti/2022_rng_entity",
+		-- 	img = "states/2022_ti/100min.png"  
+		-- },
+		-- n2_ti_liquid_thunder = {
+		-- 	name = "TI 2022 LB Liquid vs Thunder Awaken g1",
+		-- 	description = "Dire has more gold, but the chances are equal. Jump to 49:30.",
+		-- 	fname = "game_states/2022_ti/liquid_thunder",
+		-- 	img = "states/2022_ti/liquid_thunder.png"
+		-- },
+		n3_ti_rng_entity_87min = {
 			name = "TI LB 2022 RNG vs Entity, BO1",
-			description = "Enjoy the 100th minute of Dota madness.",
-			fname = "game_states/2022_ti/2022_rng_entity",
+			description = "Enjoy the 100th minute of Dota madness from min 87.",
+			fname = "game_states/2022_ti/2022_rng_entity_87",
 			img = "states/2022_ti/100min.png"  
-		},
-		n2_ti_liquid_thunder = {
-			name = "TI 2022 LB Liquid vs Thunder Awaken g1",
-			description = "Dire has more gold, but the chances are equal. Jump to 49:30.",
-			fname = "game_states/2022_ti/liquid_thunder",
-			img = "states/2022_ti/liquid_thunder.png"
 		},
 		-- n2_ti_liquid_ta_1 = {
 		-- 	name = "TI 2022 LB Liquid vs Thunder Awaken g1",

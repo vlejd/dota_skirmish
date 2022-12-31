@@ -185,7 +185,7 @@ function SkirmishGameMode:WaitForSetup()
 		print("master time")
 		print(TimeUtils:GetMasterTime(SkirmishGameMode.masterTime))
 		-- TODO wait with pause until buffer time is over
-		-- PauseGame(true)
+		PauseGame(true)
 		return 2
 	elseif setup_stage == 5 then
 		SkirmishGameMode:SetGliphCooldowns()
