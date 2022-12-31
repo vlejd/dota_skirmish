@@ -1,26 +1,25 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
 {
-	EnablePickRules = 1
-	
-	"maps"                            "dota"
-
-	"dota"
-	{
-		"MaxPlayers"		"20"
-	}
-
-	"MaxPlayers"		"20"
-	IsPlayable = 1
-	PenaltiesEnabled = false
-	CheckAFKPlayers = 0
 	HideInTools = false
+	IsPlayable = true
 	IsTemplate = false
+	maps = 
+	[
+		"dota",
+	]
+	CheckAFKPlayers = false
 	DefaultMap = "dota"
+	Default_Keys = null
 	DisableIK = false
+	EnablePickRules = true
 	EventGame = false
+	hero_picker = null
 	HeroGuidesSupported = true
-	ForceDefaultGuide = false
+	ForceDefaultGuide = true
 	MinimalPrecache = false
 	MinPlayers = 1
+	MaxPlayers = 20
+	map_options = [  ]
+	PenaltiesEnabled = false
 	TeamCount = -1
 }
-
