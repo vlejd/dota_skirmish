@@ -53,8 +53,8 @@ function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	-- LockCustomGameSetupTeamAssignment
 	-- SetIgnoreLobbyTeamsInCustomGame
-	GameRules:EnableCustomGameSetupAutoLaunch(true)
-	GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
+	GameRules:EnableCustomGameSetupAutoLaunch(false)
+	-- GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
 	GameRules:SetHeroSelectionTime(SCENARIO_SELECTION_LENGTH + HERO_SELECTION_LENGTH)
 	GameRules:SetStrategyTime(0.0)
 	GameRules:SetShowcaseTime(0.0)
@@ -69,9 +69,19 @@ function SkirmishGameMode:InitGameMode()
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
 
-	for team = 0, (DOTA_TEAM_COUNT - 1) do
-		GameRules:SetCustomGameTeamMaxPlayers(team, DOUBLE_MAX_PLAYERS)
-	end
+	-- GameRules:SetCustomGameTeamMaxPlayers(1, 10)
+	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, DOUBLE_MAX_PLAYERS)
+	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, DOUBLE_MAX_PLAYERS)
+
+end
+
+function Spawn()
+	local gameModeEnt = GameRules:GetGameModeEntity()	
+	print("spawn")
+	GameRules:SetCustomGameTeamMaxPlayers(1, 10)
+	GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 5)
+	GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 5)
+
 
 end
 

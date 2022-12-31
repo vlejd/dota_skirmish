@@ -20,6 +20,10 @@
 					"message": data.message
 				})
 			})
+			GameUI.CustomUIConfig().team_select = {
+				"bShowSpectatorTeam" : true
+			};
+
 			GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP_TIMEOFDAY, false );
 	</script> 
 

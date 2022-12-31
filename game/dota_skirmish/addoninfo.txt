@@ -1,31 +1,25 @@
 {
-	maps = 
-	[
-		"dota",
-	]
+	EnablePickRules = 1
+	
+	"maps"                            "dota"
+
+	"dota"
+	{
+		"MaxPlayers"		"20"
+	}
+
 	IsPlayable = 1
 	PenaltiesEnabled = false
-	EnablePickRules = 1
 	CheckAFKPlayers = 0
-	map_options = 
-	[
-		{
-			MaxPlayers = 10
-			map = "dota"
-		}
-	]
 	HideInTools = false
 	IsTemplate = false
 	DefaultMap = "dota"
 	DisableIK = false
 	EventGame = false
-	hero_picker = 
-	{
-	}
 	HeroGuidesSupported = true
 	ForceDefaultGuide = false
 	MinimalPrecache = false
 	MinPlayers = 1
-	MaxPlayers = 10
 	TeamCount = -1
 }
+
