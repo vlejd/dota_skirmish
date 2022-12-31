@@ -1,6 +1,7 @@
 if SkirmishGameMode == nil then
 	SkirmishGameMode = class({})
 	SkirmishGameMode.num_human_players = nil
+	SkirmishGameMode.num_spectators = nil
 	SkirmishGameMode.random_hero_to_playerID = {}
 	SkirmishGameMode.hero_selection_ended = false
 	SkirmishGameMode.human_player_names = {}
@@ -184,7 +185,7 @@ function SkirmishGameMode:WaitForSetup()
 		print("master time")
 		print(TimeUtils:GetMasterTime(SkirmishGameMode.masterTime))
 		-- TODO wait with pause until buffer time is over
-		PauseGame(true)
+		-- PauseGame(true)
 		return 2
 	elseif setup_stage == 5 then
 		SkirmishGameMode:SetGliphCooldowns()
@@ -1019,7 +1020,7 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_HERO_SELECTION then
 		print("DOTA_GAMERULES_STATE_HERO_SELECTION")
-		SkirmishGameMode:MakeEveryoneRadiant()
+		-- SkirmishGameMode:MakeEveryoneRadiant()
 		SkirmishGameMode:SetHumanPlayersCount()
 		ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
 
@@ -1249,6 +1250,8 @@ end
 
 function SkirmishGameMode:SetHumanPlayersCount()
 	local num_human_players = 0
+	local num_spectators = 0
+
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i = 1, DOUBLE_MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
@@ -1262,7 +1265,22 @@ function SkirmishGameMode:SetHumanPlayersCount()
 		end
 	end
 	SkirmishGameMode.num_human_players = num_human_players
-	print("SetHumanPlayersCount", SkirmishGameMode.num_human_players)
+	
+	-- spectators
+	for i = 1, DOUBLE_MAX_PLAYERS do
+		local playerID = PlayerResource:GetNthPlayerIDOnTeam(1, i)
+		if playerID ~= nil and playerID ~= -1 then
+			local hPlayer = PlayerResource:GetPlayer(playerID)
+			print("playerID", playerID, hPlayer)
+			if hPlayer ~= nil then
+				num_spectators = num_spectators + 1
+			end
+		end
+	end
+	SkirmishGameMode.num_spectators = num_spectators
+
+	print("SetHumanPlayersCount human players", SkirmishGameMode.num_human_players)
+	print("SetHumanPlayersCount spectators", SkirmishGameMode.num_spectators)
 end
 
 function SkirmishGameMode:AddBots()
