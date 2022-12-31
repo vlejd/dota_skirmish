@@ -112,11 +112,13 @@
 				</Panel>
 			</Panel>
 			
-			<Label id="Version" text="Version: 2022_12_31_0900" />
+			<Label id="Version" text="Version: 2022_12_31_1059" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
 
+
 			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/100min.png" style="width:0px; height:0px;"/>
+			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/liquid_thunder.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/2022_liquid_ta.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/done_in_8_min.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/states/2022_ti/last_chance_to_win_ti.png" style="width:0px; height:0px;"/>

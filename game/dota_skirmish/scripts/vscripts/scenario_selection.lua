@@ -17,6 +17,12 @@ if ScenarioSelection == nil then
 			fname = "game_states/2022_ti/2022_rng_entity",
 			img = "states/2022_ti/100min.png"  
 		},
+		n2_ti_liquid_thunder = {
+			name = "TI 2022 LB Liquid vs Thunder Awaken g1",
+			description = "Dire has more gold, but the chances are equal. Jump to 49:30.",
+			fname = "game_states/2022_ti/liquid_thunder",
+			img = "states/2022_ti/liquid_thunder.png"
+		},
 		-- n2_ti_liquid_ta_1 = {
 		-- 	name = "TI 2022 LB Liquid vs Thunder Awaken g1",
 		-- 	description = "Liquid defending against 10k advantage in 47th minute.",
