@@ -11,7 +11,7 @@
 	DefaultMap = "dota"
 	Default_Keys = null
 	DisableIK = false
-	EnablePickRules = true
+	EnablePickRules = false
 	EventGame = false
 	hero_picker = null
 	HeroGuidesSupported = true

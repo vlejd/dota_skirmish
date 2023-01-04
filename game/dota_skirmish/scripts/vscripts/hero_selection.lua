@@ -46,7 +46,11 @@ function HeroSelection:FinishHeroSelection()
 		print("FinishHeroSelection")
 	end
 
+	print(HeroSelection.player_picked_hero)
+	print(HeroSelection.heroes_picked)
 	HeroSelection:RandomForNoHeroSelected()
+	print(HeroSelection.player_picked_hero)
+	print(HeroSelection.heroes_picked)
 
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
@@ -72,7 +76,7 @@ function HeroSelection:RequestHeroPick(data)
 		return	
 	end
 
-	if HeroSelection:PickedWrongTeam(data) then
+	if HeroSelection:PickedWrongTeam(data) and (not CAN_PICK_FROM_OTHER_TEAM) then
 		DisplayError(data.PlayerID, "#dota_hud_error_player_picked_hero_from_wrong_team")
 		print("Player picked hero from wrong team!")
 		return
@@ -108,6 +112,7 @@ function HeroSelection:PickedWrongTeam(data)
 end
 
 function HeroSelection:ConfirmHeroSelection(data)
+	print(data)
 	HeroSelection.player_picked_hero[data.PlayerID] = true
 	HeroSelection.heroes_picked[data.sHeroName] = true
 	HeroSelection.player_to_hero[data.PlayerID] = data.sHeroName
@@ -127,9 +132,14 @@ function HeroSelection:RandomForNoHeroSelected()
 						-- get random hero
 						local available_heroes = {}
 						print(HeroSelection.heroes_picked)
+						local current_team = PlayerResource:GetTeam(playerID)
+								
 						for hname, picked in pairs(HeroSelection.heroes_picked) do
+							local hero_team = GameReader:GetHeroTeam(hname)
 							if not picked then
-								table.insert(available_heroes, hname)
+								if CAN_PICK_FROM_OTHER_TEAM or (hero_team == current_team) then
+									table.insert(available_heroes, hname)
+								end
 							end
 						end
 						print(available_heroes)
@@ -165,6 +175,7 @@ function HeroSelection:TotalyRandomForNoHeroSelected()
 						hPlayer:MakeRandomHeroSelection()
 					end
 				end
+				print(PlayerResource:HasSelectedHero(playerID), PlayerResource:GetSelectedHeroName(playerID))
 			end
 		end
 	end
