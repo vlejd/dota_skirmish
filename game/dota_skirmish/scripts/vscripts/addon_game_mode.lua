@@ -5,6 +5,7 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode.random_hero_to_playerID = {}
 	SkirmishGameMode.hero_selection_ended = false
 	SkirmishGameMode.human_player_names = {}
+	SkirmishGameMode.masterTime = nil
 end
 
 isRoshanDead = true
@@ -99,6 +100,7 @@ end
 function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	if setup_stage == -1 then
+		print("Waiting for hero selection")
 		SkirmishGameMode:ReportLoadingProgress("Waiting for hero selection")
 		if SkirmishGameMode.hero_selection_ended then
 			print("Hero selection ended")
@@ -1231,6 +1233,10 @@ function SkirmishGameMode:AddThinkers()
 end
 
 function SkirmishGameMode:UpdateTime()
+	if SkirmishGameMode.masterTime == nil then
+		print("SkirmishGameMode.masterTime not initialized yet")
+		return 1
+	end
 	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
 	local data = {time = time.skirmishTime}
 	CustomGameEventManager:Send_ServerToAllClients("update_game_time", data)
