@@ -112,8 +112,8 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 0 then
 		SkirmishGameMode:ReportLoadingProgress("Waiting for players to load")
 		local num_players = SkirmishGameMode:LoadedHeroes()
-		if num_players < SkirmishGameMode.num_human_players then
-			print("Waiting for unloaded players", num_players, SkirmishGameMode.num_human_players)
+		if num_players < 10 then
+			print("Waiting for unloaded players", num_players, 10)
 			-- return nil
 			return 0.1
 		else
@@ -189,7 +189,9 @@ function SkirmishGameMode:WaitForSetup()
 		print("master time")
 		print(TimeUtils:GetMasterTime(SkirmishGameMode.masterTime))
 		-- TODO wait with pause until buffer time is over
-		--PauseGame(true)
+		if START_WITH_PAUSE then
+			PauseGame(true)
+		end
 		return 2
 	elseif setup_stage == 5 then
 		SkirmishGameMode:SetGliphCooldowns()
@@ -1083,6 +1085,7 @@ function SkirmishGameMode:HandleGameStart()
 
 					PrecacheUnitByNameAsync(hero_name, function()
 						local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
+						print(old_hero, playerID, hero_name)
 						if old_hero ~= nil then
 							local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
 							HeroSelection.heroes_replaced[hero_name] = true
