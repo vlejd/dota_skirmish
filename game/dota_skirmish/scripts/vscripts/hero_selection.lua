@@ -13,7 +13,7 @@ if HeroSelection == nil then
 	HeroSelection.onfinish = nil
 end
 
-function HeroSelection:StartHeroSelection(fun, n_players)
+function HeroSelection:StartHeroSelection(fun, n_players, fast)
 	print(n_players)
 	HeroSelection.onfinish = fun
 	HeroSelection.n_players = n_players
@@ -32,11 +32,15 @@ function HeroSelection:StartHeroSelection(fun, n_players)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
+	if fast then
+		HeroSelection:FinishHeroSelection()
+	end
+
 end
 
 function HeroSelection:OnStateChange()
 	print("hero selection on state change", GameRules:State_Get())
- 	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION and not HeroSelection.finished then
+ 	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION then
 		HeroSelection:FinishHeroSelection()
 	end
 end

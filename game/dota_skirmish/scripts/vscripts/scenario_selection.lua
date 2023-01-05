@@ -65,14 +65,35 @@ function ScenarioSelection:StartScenarioSelection(fun, n_players)
 	end, 1.0)
 	GameRules:GetGameModeEntity():SetThink("FinishScenarioSelection", self, "FinishScenarioSelection",
 		SCENARIO_SELECTION_LENGTH)
+
+	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+
 	ScenarioSelection.onFinish = fun
 end
+
+function ScenarioSelection:OnStateChange()
+	print("scenario selection on state change", GameRules:State_Get())
+ 	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION and not ScenarioSelection.finished then
+		ScenarioSelection:FinishScenarioSelectionFast()
+	end
+end
+
 
 function ScenarioSelection:ListenToScenarioPick()
 	CustomGameEventManager:RegisterListener("request_scenario_pick", Dynamic_Wrap(ScenarioSelection, "RequestScenarioPick"))
 end
 
-function ScenarioSelection:FinishScenarioSelection()
+function ScenarioSelection:FinishScenarioSelectionFast()
+	print("finishing fast")
+	ScenarioSelection:FinishScenarioSelectionPrivate(true)
+end
+
+function ScenarioSelection:FinishScenarioSelection() -- slow
+	print("finishing slow")
+	ScenarioSelection:FinishScenarioSelectionPrivate(false)
+end
+
+function ScenarioSelection:FinishScenarioSelectionPrivate(fast)
 	if ScenarioSelection.finished then
 		return
 	else
@@ -101,16 +122,16 @@ function ScenarioSelection:FinishScenarioSelection()
 	print("viable scenarios", scenraio_with_max)
 	local selected_scenario = getRandomValueFromArray(scenraio_with_max)
 	print(selected_scenario)
-	ScenarioSelection:LockScenario(selected_scenario)
+	ScenarioSelection:LockScenario(selected_scenario, fast)
 end
 
-function ScenarioSelection:LockScenario(selected_scenario)
+function ScenarioSelection:LockScenario(selected_scenario, fast)
 	if selected_scenario ~= "custom" then
 		local scenario_fname = ScenarioSelection.scenarios[selected_scenario]["fname"]
 		ScenarioSelection.finished = true
 		GameReader:Init(scenario_fname)
 		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", ScenarioSelection.scenarios[selected_scenario])
-		ScenarioSelection.onFinish()
+		ScenarioSelection.onFinish(fast)
 	else
 		-- TODO use ScenarioSelection.custom_scenario
 		-- selected_scenario = "spirit_lgd_g4"
@@ -121,7 +142,7 @@ function ScenarioSelection:LockScenario(selected_scenario)
 		GameReader:InitObject(ScenarioSelection.custom_scenario)
 		
 		CustomGameEventManager:Send_ServerToAllClients("finish_scenario_selection", {name = "Custom"})
-		ScenarioSelection.onFinish()
+		ScenarioSelection.onFinish(fast)
 	end
 
 end

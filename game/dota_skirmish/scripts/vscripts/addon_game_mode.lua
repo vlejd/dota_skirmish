@@ -1115,11 +1115,11 @@ function SkirmishGameMode:HandleGameStart()
 	return nil
 end
 
-function TriggerStartHeroSelection()
+function TriggerStartHeroSelection(fast)
 	SkirmishGameMode:InitializeTime()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
-		HeroSelection:StartHeroSelection(OnHeroSelectionEnd, SkirmishGameMode.num_human_players)
+		HeroSelection:StartHeroSelection(OnHeroSelectionEnd, SkirmishGameMode.num_human_players, fast)
 	end, 0.01)
 end
 
