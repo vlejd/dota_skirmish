@@ -100,7 +100,7 @@ end
 function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	if setup_stage == -1 then
-		print("Waiting for hero selection")
+		print("")
 		SkirmishGameMode:ReportLoadingProgress("Waiting for hero selection")
 		if SkirmishGameMode.hero_selection_ended then
 			print("Hero selection ended")
@@ -137,6 +137,8 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.1
 		end
 	elseif setup_stage == 2 then
+		SkirmishGameMode:ReportLoadingProgress("Mastering time")
+		GameRules:GetGameModeEntity():SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 		SkirmishGameMode:ReportLoadingProgress("Making bots obedient")
 		SkirmishGameMode:MakeBotsControllable()
 
@@ -1038,7 +1040,6 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		local data = {}
 		print("make_screen_dark")
-		GameRules:GetGameModeEntity():SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", data)
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 

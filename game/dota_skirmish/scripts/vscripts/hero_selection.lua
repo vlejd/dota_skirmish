@@ -29,8 +29,16 @@ function HeroSelection:StartHeroSelection(fun, n_players)
 	GameRules:GetGameModeEntity():SetThink("FinishHeroSelection", self, "FinishHeroSelection", HERO_SELECTION_LENGTH)
 	GameRules:GetGameModeEntity():SetThink("TryToFinishHeroPicking", self, "FinishHeroSelectionNoPlayers", 3)
 
+	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	CustomGameEventManager:Send_ServerToAllClients("generate_hero_ui", heroes)
+end
+
+function HeroSelection:OnStateChange()
+	print("hero selection on state change", GameRules:State_Get())
+ 	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION and not HeroSelection.finished then
+		HeroSelection:FinishHeroSelection()
+	end
 end
 
 function HeroSelection:ListenToHeroPick()
