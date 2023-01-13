@@ -39,6 +39,19 @@ function Util:table_multiinsert(table_dest, what, how_many)
 	end
 end
 
+function Util:CastToBool(something)
+	if type(something) == "boolean" then
+		return something
+	end
+	if type(something) == "number" then
+		return something == 1
+	end
+	if type(something) == "string" then
+		return something ~=""
+	end
+	
+end
+
 function Util:fixPosition(poz)
 	print("fixPosition")
 	print(type(poz))

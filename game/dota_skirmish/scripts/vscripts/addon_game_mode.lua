@@ -22,6 +22,8 @@ require("time_utils")
 require("roshan")
 require("game_state_recreation_functions")
 require("creep_reconstruction")
+require("player_recreation")
+
 
 LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
 
@@ -36,19 +38,6 @@ function Activate()
 	print("Activate")
 	GameRules.AddonTemplate = SkirmishGameMode()
 	GameRules.AddonTemplate:InitGameMode()
-end
-
-function CastToBool(something)
-	if type(something) == "boolean" then
-		return something
-	end
-	if type(something) == "number" then
-		return something == 1
-	end
-	if type(something) == "string" then
-		return something ~=""
-	end
-	
 end
 
 function SkirmishGameMode:InitGameMode()
@@ -143,7 +132,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:MakeBotsControllable()
 
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
-		SkirmishGameMode:FixUpgrades();
+		PlayerRecreation:FixUpgrades();
 		SkirmishGameMode:ReportLoadingProgress("Planting flowers")
 		CreepReconstruction:initWaypoints()
 		SkirmishGameMode:ReportLoadingProgress("Smacking buildings")
@@ -158,7 +147,7 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 25 then
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
 		NeutralItems:Setup(TimeUtils.masterTime)
-		SkirmishGameMode:FixPlayers()
+		PlayerRecreation:FixPlayers()
 		setup_stage = 3
 		return 0.1
 
@@ -223,224 +212,6 @@ function SkirmishGameMode:LoadedHeroes()
 	end
 	return num_players
 end
-
-
-
-
-function SkirmishGameMode:FixUpgrades()
-	print("fixing upgrades")
-
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				if PlayerResource:HasSelectedHero(playerID) then
-					local heroName = PlayerResource:GetSelectedHeroName(playerID)
-					local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
-					local niceHeroName = heroName:sub(15)
-					print(heroName, hHero, niceHeroName)
-					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
-						local heroData = GameReader:GetHeroInfo(niceHeroName)
-						if CastToBool(heroData["has_shard"]) then
-							hHero:AddItemByName("item_aghanims_shard")
-						end
-						if CastToBool(heroData["has_ags"]) then
-							hHero:AddItemByName("item_ultimate_scepter_2")
-						end
-						if CastToBool(heroData["has_moon_shard"]) then
-							hHero:AddItemByName("item_moon_shard")
-							local hMoonShard = hHero:FindItemInInventory("item_moon_shard")
-							ExecuteOrderFromTable({
-								UnitIndex = hHero:entindex(),
-								OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
-								AbilityIndex = hMoonShard:entindex(),
-								TargetIndex = hHero:entindex()
-							})
-						end
-
-						local hTP = hHero:FindItemInInventory("item_tpscroll")
-						if hTP then
-							hTP:EndCooldown()
-						else
-							hTP = hHero:AddItemByName("item_tpscroll")
-							if hTP then
-								hTP:SetCurrentCharges(1)
-								hTP:EndCooldown()
-							end
-						end
-					else
-						print("CRITICAL ERROR")
-					end
-				else
-					print("CRITICAL ERROR")
-				end
-			else
-				print("CRITICAL ERROR")
-			end
-		end
-	end
-end
-
-
-
-function SkirmishGameMode:FixBuildings()
-	print("fixing buildlings")
-
-	for _, building in pairs(GameReader:GetBuildingsInfo() or {}) do
-		local hBuilding = Entities:FindByName(nil, building["name"])
-		if building["health"] ~= -1 then
-			if building["health"] == 0 then
-				hBuilding:Kill(nil, nil)
-			else
-				hBuilding:SetHealth(building["health"])
-			end
-		end
-	end
-end
-
-
-function SkirmishGameMode:FixPlayers()
-	print("fixing players")
-
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				if PlayerResource:HasSelectedHero(playerID) then
-					local heroName = PlayerResource:GetSelectedHeroName(playerID)
-					local hPlayer = PlayerResource:GetPlayer(playerID)
-					local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
-					local niceHeroName = heroName:sub(15)
-					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
-						local heroData = GameReader:GetHeroInfo(niceHeroName)
-						-- TODO add items to courier. 
-						if heroData["team"] == DOTA_TEAM_GOODGUYS then
-							hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
-						elseif heroData["team"] == DOTA_TEAM_BADGUYS then
-							hPlayer:SpawnCourierAtPosition(Vector(7233, 6476, 128))
-						else
-							print("invalid player team")
-						end
-						SkirmishGameMode:FixHero(heroData, hHero)
-					end
-				else
-					print("CRITICAL ERROR")
-				end
-			else
-				print("CRITICAL ERROR")
-			end
-		end
-	end
-end
-
-function SkirmishGameMode:FixHero(heroData, hHero)
-	FindClearSpaceForUnit(hHero, Util:fixPosition(heroData["position"]), true)
-
-	for i = 2, heroData["level"] do
-		hHero:HeroLevelUp(false)
-	end
-
-	for i = 0, 20 do
-		local hItem = hHero:GetItemInSlot(i)
-		if hItem ~= nil then
-			hHero:RemoveItem(hItem)
-		end
-	end
-
-	for _, item in pairs(heroData["items"] or {}) do
-		if type(item) == "table" then
-			print("Complex item")
-			local item_name = item["name"]
-
-			if NeutralItems:IsItemNeutral(item_name) then
-				NeutralItems:AddNeutralItemToHero(hHero, item_name)
-			end
-			local hItem = hHero:AddItemByName(item_name)
-			print(hItem)
-			if hItem then
-				hItem:SetCurrentCharges(item["charges"])
-				hItem:EndCooldown()
-				hItem:StartCooldown(item["cooldown"] + 0.0)
-				hItem:SetLevel(item["level"]+0.0)
-				hItem:SetPurchaseTime(item["acquire_time"])
-			end
-		else
-			if NeutralItems:IsItemNeutral(item) then
-				print("AddNeutralItemToHero", heroData["name"], item)
-				NeutralItems:AddNeutralItemToHero(hHero, item)
-				hHero:AddItemByName(item)
-			else
-				hHero:AddItemByName(item)
-			end
-		end
-
-	end
-
-	local entityIndex = hHero:GetEntityIndex()
-	if heroData["talents"] ~= nil then
-		for _, talentIndex in pairs(heroData["talents"] or {}) do
-			local hAbility = hHero:GetAbilityByIndex(talentIndex) -- starts from 0!
-			local abilityEntityIndex = hAbility:GetEntityIndex()
-			local newOrder = {
-				UnitIndex = entityIndex,
-				OrderType = DOTA_UNIT_ORDER_TRAIN_ABILITY,
-				AbilityIndex = abilityEntityIndex
-			}
-			ExecuteOrderFromTable(newOrder)
-		end
-	end
-
-	print("cooldown", heroData["name"], Util:tablelength(heroData["cooldowns"]))
-	print(heroData["cooldowns"])
-	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
-		if type(cooldown_index) == "string" then
-			cooldown_index = tonumber(cooldown_index)+1  -- TODO what the hell is happening here?!?!
-		end
-		local hAbility = hHero:GetAbilityByIndex(cooldown_index-1) -- starts from 0!
-		print(i, hAbility)
-		if hAbility ~= nil then
-			hAbility:EndCooldown()
-			print(cooldown_value)
-			hAbility:StartCooldown(cooldown_value + 0.0)
-		end
-	end
-
-	print("is_dead", heroData["is_dead"], type(heroData["is_dead"]))
-	if CastToBool(heroData["is_dead"]) then
-		hHero:ForceKill(true)
-		hHero:SetTimeUntilRespawn(heroData["respawn_time"])
-	end
-
-	if heroData["gold_reliable"] ~= nil then
-		hHero:SetGold(heroData["gold_reliable"], true)
-	end
-	if heroData["gold_unreliable"] ~= nil then
-		hHero:SetGold(heroData["gold_unreliable"], false)
-	end
-
-	if heroData["health"] ~= nil then
-		hHero:SetHealth(heroData["health"])
-	end
-
-	if heroData["mana"] ~= nil then
-		hHero:SetMana(heroData["mana"])
-	end
-	
-	if heroData["buyback_cooldown"] ~= nil and heroData["buyback_cooldown"] ~=0 then
-		hHero:SetBuybackCooldownTime(heroData["buyback_cooldown"])
-	end
-
-	if heroData["buffs"] ~= nil then
-		for _, buff_data in pairs(heroData["buffs"]) do
-			print(buff_data)
-			local buff = hHero:AddNewModifier(hero_entity, nil, buff_data["name"], {})
-			buff:SetStackCount(buff_data["stacks"])
-		end
-	end
-
-end
-
-last_secs = 0
 
 
 function SkirmishGameMode:OnStateChange()
