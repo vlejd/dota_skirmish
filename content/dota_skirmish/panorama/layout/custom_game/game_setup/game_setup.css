@@ -81,3 +81,12 @@
 {
 	vertical-align: center;
 }
+
+#game_setup
+{
+	vertical-align: center; 
+	horizontal-align: center; 
+	width: 50%; 
+	height: 50%; 
+	background-color: #000000FF;
+}
