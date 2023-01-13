@@ -10,16 +10,36 @@ if GameStateRecreationFunctions == nil then
 end
 
 -- 		SkirmishGameMode:MakeBotsControllable()
--- initWaypoints
--- FixBuildings
--- FixOutposts
--- MakeCreeps
+
 -- AddThinkers ?!?!?!
--- LaneCreepSpawner
 
--- TODO roshan refactor
--- InitialRoshanSetup
+-- ## BUILDINGS ## -- 
 
+function GameStateRecreationFunctions:FixBuildings()
+	print("fixing buildlings")
+
+	for _, building in pairs(GameReader:GetBuildingsInfo() or {}) do
+		local hBuilding = Entities:FindByName(nil, building["name"])
+		if building["health"] ~= -1 then
+			if building["health"] == 0 then
+				hBuilding:Kill(nil, nil)
+			else
+				hBuilding:SetHealth(building["health"])
+			end
+		end
+	end
+end
+
+-- ## OUTPOSTS ## --
+
+function GameStateRecreationFunctions:FixOutposts()
+	print("fixing outposts")
+
+	for _, building in pairs(GameReader:GetOutpostsInfo() or {}) do
+		local hBuilding = Entities:FindByName(nil, building["name"])
+		hBuilding:SetTeam(building["team"])
+	end
+end
 
 -- ## NEUTRAL ITEMS IN STASH ## -- 
 

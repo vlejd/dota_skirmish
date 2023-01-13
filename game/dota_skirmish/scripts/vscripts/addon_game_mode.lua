@@ -147,9 +147,9 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Planting flowers")
 		CreepReconstruction:initWaypoints()
 		SkirmishGameMode:ReportLoadingProgress("Smacking buildings")
-		SkirmishGameMode:FixBuildings()
+		GameStateRecreationFunctions:FixBuildings()
 		SkirmishGameMode:ReportLoadingProgress("Reshufling outposts")
-		SkirmishGameMode:FixOutposts()
+		GameStateRecreationFunctions:FixOutposts()
 		SkirmishGameMode:ReportLoadingProgress("Warding")
 		GameStateRecreationFunctions:FixWards()
 		setup_stage = 25
@@ -295,15 +295,6 @@ function SkirmishGameMode:FixBuildings()
 				hBuilding:SetHealth(building["health"])
 			end
 		end
-	end
-end
-
-function SkirmishGameMode:FixOutposts()
-	print("fixing outposts")
-
-	for _, building in pairs(GameReader:GetOutpostsInfo() or {}) do
-		local hBuilding = Entities:FindByName(nil, building["name"])
-		hBuilding:SetTeam(building["team"])
 	end
 end
 
