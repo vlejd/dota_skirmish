@@ -5,7 +5,6 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode.random_hero_to_playerID = {}
 	SkirmishGameMode.hero_selection_ended = false
 	SkirmishGameMode.human_player_names = {}
-	SkirmishGameMode.masterTime = nil
 end
 
 isRoshanDead = true
@@ -159,7 +158,7 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 25 then
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
 		SkirmishGameMode:FixPlayers()
-		NeutralItems:Setup(SkirmishGameMode.masterTime)
+		NeutralItems:Setup(TimeUtils.masterTime)
 		setup_stage = 3
 		return 0.1
 
@@ -182,7 +181,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Venesecting")
 		SkirmishGameMode:FixFirstBlood()
 		SkirmishGameMode:ReportLoadingProgress("Putting shinny stones in the river")
-		SkirmishGameMode:FixRunes()
+		GameStateRecreationFunctions:FixRunes()
 		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
 		SkirmishGameMode:SetWinconText()
 		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
@@ -192,7 +191,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
 		print("master time")
-		print(TimeUtils:GetMasterTime(SkirmishGameMode.masterTime))
+		print(TimeUtils:GetMasterTime(TimeUtils.masterTime))
 		-- TODO wait with pause until buffer time is over
 		if START_WITH_PAUSE then
 			PauseGame(true)
@@ -207,33 +206,11 @@ function SkirmishGameMode:WaitForSetup()
 	end
 end
 
-function SkirmishGameMode:FixRunes()
-	print("Fixing runes")
-	local gameModeEnt = GameRules:GetGameModeEntity()
-	gameModeEnt:SetUseDefaultDOTARuneSpawnLogic(false)		-- true = river runes spawn at 2:00, all runes. false = required to disable runes, they start at 0:00
-
-	local rune_state = false
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_DOUBLEDAMAGE , rune_state) --Double Damage
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_HASTE, rune_state) --Haste
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ILLUSION, rune_state) --Illusion
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_INVISIBILITY, rune_state) --Invis
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_REGENERATION, rune_state) --Regen
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ARCANE, rune_state) --Arcane
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_BOUNTY, rune_state) --Bounty
-		-- gameModeEnt:ClearRuneSpawnFilter()
-		-- gameModeEnt:SetBountyRuneSpawnInterval()
-		-- gameModeEnt:SetPowerRuneSpawnInterval()
-		-- gameModeEnt:SetNextBountyRuneSpawnTime()
-		-- gameModeEnt:SetNextRuneSpawnTime()
-
-	gameModeEnt:SetThink("RuneSpawner", self, "RuneSpawnerGlobalThink", 0.1)
-end
-
 
 local next_minute = nil
 
 function SkirmishGameMode:RuneSpawner()
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	print("rune spawner")
 
 	if next_minute == nil then
@@ -325,11 +302,11 @@ local next_wave_time = nil
 
 function SkirmishGameMode:LaneCreepSpawner()
 	-- Spawn enemy creeps for a moment on every wave spawn to fix their agro behavior
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	print("LaneCreepSpawner", time.skirmishTime, next_wave_time)
 
 	if next_wave_time == nil then
-		next_wave_time = SkirmishGameMode.masterTime.skirmishNextWave
+		next_wave_time = TimeUtils.masterTime.skirmishNextWave
 	end
 
 
@@ -466,7 +443,7 @@ end
 function SkirmishGameMode:SetWinconText()
 	if GameReader:GetWinCondition() ~= nil then
 		local end_time = (
-			SkirmishGameMode.masterTime.skirmishStartTime + 
+			TimeUtils.masterTime.skirmishStartTime + 
 			GameReader:GetWinCondition().time)
 		local data = {text = "Ends at", time = end_time }
 		CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
@@ -474,7 +451,7 @@ function SkirmishGameMode:SetWinconText()
 end
 
 function SkirmishGameMode:SetGliphCooldowns()
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 
 	if time.realGameTime > 5 then
 		-- TODO get real glyph cooldowns
@@ -910,7 +887,7 @@ end
 
 function SkirmishGameMode:FixRoshanStatsDrops()
 	print("fixing roshan")
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	local mins = math.floor(time.skirmishTime / 60)
 
 	local hRosh = Entities:FindByName(nil, "npc_dota_roshan") --
@@ -962,7 +939,7 @@ end
 
 function SkirmishGameMode:FixRoshanHealth()
 	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+		local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 		local mins = math.floor(time.skirmishTime / 60)
 		local secs = math.floor(time.skirmishTime)
 
@@ -1203,18 +1180,18 @@ function SkirmishGameMode:AddThinkers()
 end
 
 function SkirmishGameMode:UpdateTime()
-	if SkirmishGameMode.masterTime == nil then
-		print("SkirmishGameMode.masterTime not initialized yet")
+	if TimeUtils.masterTime == nil then
+		print("TimeUtils.masterTime not initialized yet")
 		return 1
 	end
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	local data = {time = time.skirmishTime}
 	CustomGameEventManager:Send_ServerToAllClients("update_game_time", data)
 	return 0.001 
 end
 
 function SkirmishGameMode:CheckWinCondition()
-	local time = TimeUtils:GetMasterTime(SkirmishGameMode.masterTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	if GameReader:GetWinCondition() ~= nil then
 		if time.realGameTime >= GameReader:GetWinTimeCondition() then
 			GameRules:SetGameWinner(GameReader:GetDefaultWinner())
@@ -1354,7 +1331,6 @@ end
 
 function SkirmishGameMode:InitializeTime()
 	print("InitializeTime")
-	SkirmishGameMode.masterTime = TimeUtils:InitialTimeComputations()
-	print(SkirmishGameMode.masterTime)
-	GameRules:SetPreGameTime(SkirmishGameMode.masterTime.realPregameLength)
+	TimeUtils:InitialTimeComputations()
+	GameRules:SetPreGameTime(TimeUtils.masterTime.realPregameLength)
 end

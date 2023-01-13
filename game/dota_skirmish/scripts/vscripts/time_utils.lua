@@ -1,5 +1,6 @@
 if TimeUtils == nil then
 	TimeUtils = class({})
+	masterTime = nil
 end
 
 function TimeUtils:InitialTimeComputations()
@@ -22,7 +23,7 @@ function TimeUtils:InitialTimeComputations()
 		skirmishStartTime = skirmishStartTime,
 		skirmishNextWave = skirmishNextWave
 	}
-	return data
+	TimeUtils.masterTime = data
 end
 
 function TimeUtils:GetMasterTime(masterTime)
