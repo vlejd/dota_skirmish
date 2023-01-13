@@ -39,6 +39,10 @@ function SetLoadingText(data){
 	$("#LoadingText").text = data.text;
 }
 
+function DebugPrint(data){
+	$.Msg("js debug", data);
+}
+
 (function () {
 	//Subscribe to events
 	GameEvents.Subscribe( "make_screen_dark", MakeScreenDark );
@@ -46,4 +50,6 @@ function SetLoadingText(data){
 	GameEvents.Subscribe( "set_loading_text", SetLoadingText );
 	GameEvents.Subscribe( "update_game_time", UpdateTime );	
 	GameEvents.Subscribe( "set_timer_msg", SetTimerMsg );	
+	GameEvents.Subscribe( "debug_print", DebugPrint );	
+	
 })();

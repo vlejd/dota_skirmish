@@ -1,7 +1,7 @@
 require("internal/globals")
 require("internal/util")
 require("game_states/game_reader")
-require("libraries/adv_log")
+require("internal/adv_log")
 
 if ScenarioSelection == nil then
 	ScenarioSelection = class({})

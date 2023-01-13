@@ -17,6 +17,8 @@
 -- Advanced Log and Debugging Library
 --------------------------------------------------------------------------
 
+require("internal/globals")
+
 if Log == nil then
 
 	log = {}
@@ -259,6 +261,13 @@ if Log == nil then
 		for i = 1, #self.targets do
 			if not self:_IsFiltered(self.targets[i].name, level, file) then
 				self.targets[i]:print(levelString, content, trace)
+				
+				-- TODO WARNING RISK: THIS IS VERY QUESTIONABLE
+				local data = {
+					levelString = levelString, 
+					content = content, 
+					trace = trace,
+				}
 			end
 		end
 	end
@@ -382,7 +391,11 @@ if Log == nil then
 		if trace[1]["name"] ~= nil then
 			name = "|" .. trace[1]["name"]
 		end
-		NativePrint("[" .. level .. "][" .. trace[1]["short_src"] .. ":" .. trace[1]["currentline"] .. name .. "] " .. content)
+		local msg = "[" .. level .. "][" .. trace[1]["short_src"] .. ":" .. trace[1]["currentline"] .. name .. "] " .. content
+		NativePrint(msg)
+		if IsServer() and CLIENT_PRINT then
+			CustomGameEventManager:Send_ServerToAllClients("debug_print", {msg = msg})
+		end
 	end
 
 

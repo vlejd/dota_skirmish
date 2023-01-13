@@ -12,7 +12,7 @@ isRoshanDead = true
 local waypointPossitions = {}
 
 require("internal/util")
-require("libraries/adv_log")
+require("internal/adv_log")
 require("string")
 require("game_states/game_reader")
 

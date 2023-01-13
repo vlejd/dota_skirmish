@@ -1,6 +1,6 @@
 require("game_states/game_reader")
 require("internal/globals")
-require("libraries/adv_log")
+require("internal/adv_log")
 
 if HeroSelection == nil then
 	HeroSelection = class({})
