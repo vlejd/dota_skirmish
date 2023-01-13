@@ -1,2 +1,0 @@
-local GameState = {}
-return GameState
