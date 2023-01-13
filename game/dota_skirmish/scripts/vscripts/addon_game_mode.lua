@@ -184,8 +184,6 @@ function SkirmishGameMode:WaitForSetup()
 		GameStateRecreationFunctions:FixRunes()
 		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
 		SkirmishGameMode:SetWinconText()
-		-- GameRules:GetGameModeEntity():SetDaynightCycleDisabled(false)
-		-- GameRules:SetTimeOfDay(140)
 		print("make_screen_not_dark")
 		local data = {}
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
@@ -198,7 +196,7 @@ function SkirmishGameMode:WaitForSetup()
 		end
 		return 2
 	elseif setup_stage == 5 then
-		SkirmishGameMode:SetGliphCooldowns()
+		GameStateRecreationFunctions:SetGlyphCooldowns()
 		return nil
 	else
 		print("Unexpected state: setup_stage", setup_stage)
@@ -450,18 +448,6 @@ function SkirmishGameMode:SetWinconText()
 	end
 end
 
-function SkirmishGameMode:SetGliphCooldowns()
-	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-
-	if time.realGameTime > 5 then
-		-- TODO get real glyph cooldowns
-		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
-		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
-		return nil
-	else
-		return 0.5
-	end
-end
 
 function SkirmishGameMode:InitialRoshanSetup()
 	local GameMode = GameRules:GetGameModeEntity()

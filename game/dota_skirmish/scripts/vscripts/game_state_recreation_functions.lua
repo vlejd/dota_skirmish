@@ -22,9 +22,20 @@ end
 -- TODO roshan refactor
 -- InitialRoshanSetup
 
--- ##  ## --
+-- ## GLYPH  ## --
 
+function GameStateRecreationFunctions:SetGlyphCooldowns()
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 
+	if time.realGameTime > 5 then
+		-- TODO get real glyph cooldowns
+		GameRules:SetGlyphCooldown(DOTA_TEAM_GOODGUYS, 0)
+		GameRules:SetGlyphCooldown(DOTA_TEAM_BADGUYS, 0)
+		return nil
+	else
+		return 0.5
+	end
+end
 
 -- ## FIRST BLOOD ## --
 
