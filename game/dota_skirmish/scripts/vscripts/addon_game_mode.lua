@@ -157,8 +157,8 @@ function SkirmishGameMode:WaitForSetup()
 
 	elseif setup_stage == 25 then
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
-		SkirmishGameMode:FixPlayers()
 		NeutralItems:Setup(TimeUtils.masterTime)
+		SkirmishGameMode:FixPlayers()
 		setup_stage = 3
 		return 0.1
 
@@ -175,7 +175,7 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 4 then
 		setup_stage = 5
 		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
-		SkirmishGameMode:FixNeutralItems()
+		GameStateRecreationFunctions:FixNeutralItems()
 		SkirmishGameMode:ReportLoadingProgress("Contemplating life")
 		SkirmishGameMode:AddThinkers()
 		SkirmishGameMode:ReportLoadingProgress("Venesecting")
@@ -183,7 +183,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Putting shinny stones in the river")
 		GameStateRecreationFunctions:FixRunes()
 		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
-		SkirmishGameMode:SetWinconText()
+		GameStateRecreationFunctions:SetWinconText()
 		print("make_screen_not_dark")
 		local data = {}
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
@@ -438,17 +438,6 @@ function table_multiinsert(table_dest, what, how_many)
 end
 
 
-function SkirmishGameMode:SetWinconText()
-	if GameReader:GetWinCondition() ~= nil then
-		local end_time = (
-			TimeUtils.masterTime.skirmishStartTime + 
-			GameReader:GetWinCondition().time)
-		local data = {text = "Ends at", time = end_time }
-		CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
-	end
-end
-
-
 function SkirmishGameMode:InitialRoshanSetup()
 	local GameMode = GameRules:GetGameModeEntity()
 	SkirmishGameMode:FixRoshanStatsDrops()
@@ -679,18 +668,6 @@ function SkirmishGameMode:FixOutposts()
 	end
 end
 
-function SkirmishGameMode:FixNeutralItems()
-	print("fixing neutral items")
-	for _, item in pairs(GameReader:GetRadiantNeutralItemsInfo() or {}) do
-		print("good", item)
-		NeutralItems:AddItemToStash(item, DOTA_TEAM_GOODGUYS)
-	end
-
-	for _, item in pairs(GameReader:GetDireNeutralItemsInfo() or {}) do
-		print("bad", item)
-		NeutralItems:AddItemToStash(item, DOTA_TEAM_BADGUYS)
-	end
-end
 
 function SkirmishGameMode:FixPlayers()
 	print("fixing players")

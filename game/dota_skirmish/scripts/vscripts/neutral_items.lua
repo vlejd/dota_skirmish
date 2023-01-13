@@ -9,16 +9,15 @@ require("time_utils")
 
 if NeutralItems == nil then
 	NeutralItems = class({})
+	NeutralItems.neutral_items_in_game = {
+		good = {{}, {}, {}, {}, {}},
+		bad = {{}, {}, {}, {}, {}}
+	}
+	NeutralItems.NEUTRAL_ITEMS = {{},{},{},{},{}}
 end
 
 DROP_TIMES = {7, 17, 27, 37, 60}
 
-
-neutral_items_in_game = {
-	good = {{}, {}, {}, {}, {}},
-	bad = {{}, {}, {}, {}, {}}
-}
-NEUTRAL_ITEMS = {{},{},{},{},{}}
 
 
 function GetTeamString(team)
@@ -41,7 +40,7 @@ function NeutralItems:AddItemToStash(item, team)
 		local cItem = CreateItem(item, hPlayer, nil)
 		PlayerResource:AddNeutralItemToStash(playerID, team, cItem)
 		local team_str = GetTeamString(team)
-		table.insert(neutral_items_in_game[team_str][item_tier], item)
+		table.insert(NeutralItems.neutral_items_in_game[team_str][item_tier], item)
 		return true
 	else
 		print("ERROR Adding invalid neutral item to neutral stash")
@@ -56,8 +55,8 @@ function NeutralItems:AddNeutralItemToHero(hHero, item)
 	if hHero ~= nil and item_tier ~= nil then
 		local team = hHero:GetTeam()
 		local team_str = GetTeamString(team)
-		table.insert(neutral_items_in_game[team_str][item_tier], item)
-		print(neutral_items_in_game)
+		table.insert(NeutralItems.neutral_items_in_game[team_str][item_tier], item)
+		print(NeutralItems.neutral_items_in_game)
 		return true
 	else
 		print("Adding invalid neutral item to hero")
@@ -67,7 +66,7 @@ end
 
 function GetNeutralItemTier(query_item)
 	print("GetNeutralItemTier ".. query_item)
-	for i, items in pairs(NEUTRAL_ITEMS) do
+	for i, items in pairs(NeutralItems.NEUTRAL_ITEMS) do
 		for j, item in pairs(items) do
 			if query_item == item then
 				print(i)
@@ -80,7 +79,7 @@ function GetNeutralItemTier(query_item)
 end
 
 function NeutralItems:IsItemNeutral(query_item)
-	for _, items in pairs(NEUTRAL_ITEMS) do
+	for _, items in pairs(NeutralItems.NEUTRAL_ITEMS) do
 		for _, item in pairs(items) do
 			if query_item == item then
 				return true
@@ -103,22 +102,24 @@ function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
 	print("GetPotentialNeutralItemDrop")
 	print(tier)
 	print(team)
+	print(NeutralItems.neutral_items_in_game)
 	local possible_drops = {}
 	local team_str = GetTeamString(team)
 	if team_str == nil then
 		return nil
 	end
 
-	if table.getn(neutral_items_in_game[team_str][tier]) >= 5 then
+	if table.getn(NeutralItems.neutral_items_in_game[team_str][tier]) >= 5 then
 		return nil
 	end
 
-	for _, item in pairs(NEUTRAL_ITEMS[tier]) do
-		if not TableContains(neutral_items_in_game[team_str][tier]) then
+	for _, item in pairs(NeutralItems.NEUTRAL_ITEMS[tier]) do
+		if not TableContains(NeutralItems.neutral_items_in_game[team_str][tier]) then
 			table.insert(possible_drops, item)
 		end
 	end
 	local random_index = RandomInt(1, table.getn(possible_drops))
+	print(possible_drops[random_index])
 	return possible_drops[random_index]
 end
 
@@ -127,7 +128,7 @@ function NeutralItems:Setup(master_time)
 	ListenToGameEvent("entity_killed", Dynamic_Wrap(self, "OnEntityKilled"), self)
 	local NeutralKV = LoadKeyValues("scripts/npc/npc_neutral_items_custom.txt")
 	print("INFO NEUTRAL SETUP")
-	
+	print(NeutralItems.NEUTRAL_ITEMS)
 	for i, tier in pairs({"1", "2", "3", "4", "5"}) do
 		print(i, tier)
 		local tier_data = NeutralKV[tier]
@@ -135,13 +136,13 @@ function NeutralItems:Setup(master_time)
 			if val ~= 1 then
 				print("ERROR invalid neutral item KV "..item.." has value "..val)
 			else
-				table.insert(NEUTRAL_ITEMS[i], item)
+				table.insert(NeutralItems.NEUTRAL_ITEMS[i], item)
 			end
 
 		end
 	end
 	print("INFO NEUTRAL_ITEMS")
-	print(NEUTRAL_ITEMS)
+	print(NeutralItems.NEUTRAL_ITEMS)
 
 end
 
@@ -209,7 +210,7 @@ function NeutralItems:OnEntityKilled(event)
 				local rng = RandomInt(1, 1000)
 				local item_tier = GetNeutralItemTier(potential_drop)
 				if rng <= drop_probability * 1000 then
-					print(neutral_items_in_game)
+					print(NeutralItems.neutral_items_in_game)
 					DropNeutralItemAtPositionForHero(potential_drop, victim_poz, hAttacker, item_tier, true)
 					NeutralItems:AddNeutralItemToHero(hAttacker, potential_drop)
 					return

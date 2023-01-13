@@ -14,13 +14,40 @@ end
 -- FixBuildings
 -- FixOutposts
 -- MakeCreeps
--- FixNeutralItems
 -- AddThinkers ?!?!?!
--- SetWinconText
--- SetGliphCooldowns
 
 -- TODO roshan refactor
 -- InitialRoshanSetup
+
+
+-- ## NEUTRAL ITEMS IN STASH ## -- 
+
+function GameStateRecreationFunctions:FixNeutralItems()
+	print("fixing neutral items")
+	for _, item in pairs(GameReader:GetRadiantNeutralItemsInfo() or {}) do
+		print("good", item)
+		NeutralItems:AddItemToStash(item, DOTA_TEAM_GOODGUYS)
+	end
+
+	for _, item in pairs(GameReader:GetDireNeutralItemsInfo() or {}) do
+		print("bad", item)
+		NeutralItems:AddItemToStash(item, DOTA_TEAM_BADGUYS)
+	end
+	print(NeutralItems.neutral_items_in_game)
+end
+
+
+-- ## WIN CON TEXT ## --
+
+function GameStateRecreationFunctions:SetWinconText()
+	if GameReader:GetWinCondition() ~= nil then
+		local end_time = (
+			TimeUtils.masterTime.skirmishStartTime + 
+			GameReader:GetWinCondition().time)
+		local data = {text = "Ends at", time = end_time }
+		CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
+	end
+end
 
 -- ## GLYPH  ## --
 
