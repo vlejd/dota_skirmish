@@ -166,7 +166,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
 		SkirmishGameMode:MakeCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Stealing neutral items")
-		SkirmishGameMode:FixNeutrals()
+		GameStateRecreationFunctions:FixNeutralCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Summoning Roshan")
 		SkirmishGameMode:InitialRoshanSetup()
 		setup_stage = 4
@@ -179,7 +179,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Contemplating life")
 		SkirmishGameMode:AddThinkers()
 		SkirmishGameMode:ReportLoadingProgress("Venesecting")
-		SkirmishGameMode:FixFirstBlood()
+		GameStateRecreationFunctions:FixFirstBlood()
 		SkirmishGameMode:ReportLoadingProgress("Putting shinny stones in the river")
 		GameStateRecreationFunctions:FixRunes()
 		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
@@ -1291,41 +1291,6 @@ function SkirmishGameMode:initWaypoints()
 			end
 		end
 	end
-end
-
-function SkirmishGameMode:FixFirstBlood()
-	local kills = 0
-	for hero_name, herodata in pairs(GameReader:GetHeroesInfo()) do
-		if herodata.kills then
-			kills = kills + herodata.kills
-		end
-	end
-	print("found kills", kills)
-	if kills > 0 then
-		print("first blood disabled")
-		GameRules:SetFirstBloodActive(false)
-	else
-		print("first blood active")
-		GameRules:SetFirstBloodActive(true)
-	end
-
-end
-
-
-function SkirmishGameMode:FixNeutrals()
-	GameRules:SpawnNeutralCreeps()
-	-- neutralcamp_good_8
-	
-	for i = 1, 10, 1 do
-		-- camps are evil vs good vs bad. omggg
-		local spawner_name = "neutralcamp_evil_"..i
-		local spawner = Entities:FindByName(nil, spawner_name)
-		print("spawner", spawner_name, spawner)
-		if spawner ~= nil then
-			--spawner.SpawnNextBatch(false)
-		end
-	end
-
 end
 
 
