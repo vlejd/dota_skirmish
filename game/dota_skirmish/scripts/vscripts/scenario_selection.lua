@@ -109,7 +109,7 @@ function ScenarioSelection:FinishScenarioSelectionPrivate(fast)
 
 	for scenario, players in pairs(ScenarioSelection.scenarios_picked) do
 		if scenario ~= "pass" then
-			local num_players = tablelength(players)
+			local num_players = Util:tablelength(players)
 			if max_num == num_players then
 				table.insert(scenraio_with_max, scenario)
 			elseif max_num < num_players then
@@ -120,7 +120,7 @@ function ScenarioSelection:FinishScenarioSelectionPrivate(fast)
 	end
 
 	print("viable scenarios", scenraio_with_max)
-	local selected_scenario = getRandomValueFromArray(scenraio_with_max)
+	local selected_scenario = Util:getRandomValueFromArray(scenraio_with_max)
 	print(selected_scenario)
 	ScenarioSelection:LockScenario(selected_scenario, fast)
 end
@@ -157,7 +157,7 @@ function ScenarioSelection:RequestScenarioPick(data)
 	print(data["data"])
 	if data.scenario == "custom" then
 		print("RequestScenarioPick custom")
-		if data["data"]~= nil and tablelength(data)>0 and data["data"]["game"] ~= nil then
+		if data["data"]~= nil and Util:tablelength(data)>0 and data["data"]["game"] ~= nil then
 			print("RequestScenarioPick data not nill")
 			ScenarioSelection.custom_scenario = data["data"]
 			print("ScenarioSelection.custom_scenario")
@@ -180,7 +180,7 @@ function ScenarioSelection:RequestScenarioPick(data)
 	print(ScenarioSelection.scenarios_picked)
 	print(ScenarioSelection.n_players, n_picked)
 
-	-- if you want voting, do this: ScenarioSelection.n_players == tablelength(ScenarioSelection.player_picked_scenarios)
+	-- if you want voting, do this: ScenarioSelection.n_players == Util:tablelength(ScenarioSelection.player_picked_scenarios)
 	if not ScenarioSelection.finished then
 		print("all voted on a scenario")
 		-- TODO Finish this stuff (triges)

@@ -185,15 +185,15 @@ function NeutralItems:OnEntityKilled(event)
 			local hHero = HeroList:GetHero(hID)
 			local team = hHero:GetTeam()
 			local pos = hHero:GetAbsOrigin()
-			local dist = dist2(pos, victim_poz)
+			local dist = Util:dist2(pos, victim_poz)
 			if team == attacker_team then
 				-- print(hID, pos, victim_poz, dist)
-				if dist < sqr(750) then
+				if dist < Util:sqr(750) then
 					friendly_in_range = true
 				end
 			end
 			if team == other_team then
-				if dist < sqr(1200) then
+				if dist < Util:sqr(1200) then
 					enemy_in_range = true
 				end
 			end

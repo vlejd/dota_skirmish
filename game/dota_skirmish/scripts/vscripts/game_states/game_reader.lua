@@ -1,4 +1,4 @@
-local GameState
+require("internal/util")
 
 if GameReader == nil then
 	GameReader = class({})
@@ -37,7 +37,7 @@ function GameReader:GetGameTime()
 end
 
 function GameReader:GetWinCondition()
-	if GameState.wincon ~= nil and tablelength(GameState.wincon) > 0 then
+	if GameState.wincon ~= nil and Util:tablelength(GameState.wincon) > 0 then
 		return GameState.wincon
 	else
 		print("ERROR: Missing win condition.")

@@ -15,6 +15,7 @@ end
 -- FixOutposts
 -- MakeCreeps
 -- AddThinkers ?!?!?!
+-- LaneCreepSpawner
 
 -- TODO roshan refactor
 -- InitialRoshanSetup
@@ -163,8 +164,8 @@ function GameStateRecreationFunctions:RuneSpawner()
 		local rune_options = {DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
                         DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE}
 		local power_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_powerup")
-		local spawner = getRandomValueFromArray(power_rune_spawners)
-		local rune_type = getRandomValueFromArray(rune_options)
+		local spawner = Util:getRandomValueFromArray(power_rune_spawners)
+		local rune_type = Util:getRandomValueFromArray(rune_options)
 		CreateRune(spawner:GetAbsOrigin(), rune_type)
 	end
 

@@ -8,20 +8,19 @@ if SkirmishGameMode == nil then
 end
 
 isRoshanDead = true
-local waypointPossitions = {}
 
 require("internal/util")
 require("internal/adv_log")
 require("string")
 require("game_states/game_reader")
 
-local waypoints = require("waypoints")
 require("neutral_items")
 require("hero_selection")
 require("scenario_selection")
 require("internal/globals")
 require("time_utils")
 require("game_state_recreation_functions")
+require("creep_reconstruction")
 
 LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
 
@@ -126,7 +125,7 @@ function SkirmishGameMode:WaitForSetup()
 		end
 	elseif setup_stage == 1 then
 		SkirmishGameMode:ReportLoadingProgress("Spawning correct heroes")
-		local replaced = tablelength(HeroSelection.heroes_replaced)
+		local replaced = Util:tablelength(HeroSelection.heroes_replaced)
 		print(replaced)
 		if replaced < 10 then
 			print("waiting for hero replacements")
@@ -145,7 +144,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		SkirmishGameMode:FixUpgrades();
 		SkirmishGameMode:ReportLoadingProgress("Planting flowers")
-		SkirmishGameMode:initWaypoints()
+		CreepReconstruction:initWaypoints()
 		SkirmishGameMode:ReportLoadingProgress("Smacking buildings")
 		SkirmishGameMode:FixBuildings()
 		SkirmishGameMode:ReportLoadingProgress("Reshufling outposts")
@@ -164,7 +163,7 @@ function SkirmishGameMode:WaitForSetup()
 
 	elseif setup_stage == 3 then
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
-		SkirmishGameMode:MakeCreeps()
+		CreepReconstruction:MakeCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Stealing neutral items")
 		GameStateRecreationFunctions:FixNeutralCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Summoning Roshan")
@@ -207,75 +206,6 @@ end
 
 local next_minute = nil
 
-function SkirmishGameMode:RuneSpawner()
-	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-	print("rune spawner")
-
-	if next_minute == nil then
-		next_minute = math.floor(time.skirmishTime / 60) * 60 + 60
-	end
-
-	if time.skirmishTime < next_minute then
-		return next_minute - time.skirmishTime
-	end
-	local min_num = next_minute / 60
-
-	next_minute = next_minute + 60
-	print("min_num", min_num)
-	-- bounty runes every 3 minutes
-	-- power runes every 2 minutes after min 4, dissapears
-	-- water runes - not for now
-
-	if min_num > 4 and min_num % 2 == 0 then
-		print("spawning rune power ")
-		-- kill old ones
-		local runes = Entities:FindAllByClassname("dota_item_rune")
-		print(#runes)
-		for i = 1, #runes do
-			local rune = runes[i]
-			if string.find(rune:GetModelName(), "rune_goldxp") == nil then
-				rune:RemoveSelf()
-			end
-		end
-		-- CDOTA_Item_Rune
-		local rune_names = {"item_rune_arcane", "item_rune_doubledamage", "item_rune_haste"}
-		Entities:FindAllByName("dota_item_rune_spawner_powerup")
-
-		-- spawn new runes
-		local rune_options = {DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
-                        DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE}
-		local power_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_powerup")
-		local spawner = getRandomValueFromArray(power_rune_spawners)
-		local rune_type = getRandomValueFromArray(rune_options)
-		CreateRune(spawner:GetAbsOrigin(), rune_type)
-	end
-
-	if min_num > 2 and min_num % 3 == 0 then
-		print("spawning rune bounty")
-		local bounty_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_bounty")
-		for i = 1, #bounty_rune_spawners do
-			local spawner = bounty_rune_spawners[i]
-			CreateRune(spawner:GetAbsOrigin(), DOTA_RUNE_BOUNTY)
-		end
-	end
-
-	return 10
-end
-
-function dump_runes()
-	print("dump_runes")
-	local runes = Entities:FindAllByClassname("dota_item_rune")
-	print(#runes)
-	for i = 1, #runes do
-		local rune = runes[i]
-		print(rune)
-		print(rune:GetModelName())
-		print(rune:GetName())
-		print(rune:GetAbsOrigin())
-		
-	end
-end
-
 
 function SkirmishGameMode:LoadedHeroes()
 	local num_players = 0
@@ -291,150 +221,6 @@ function SkirmishGameMode:LoadedHeroes()
 		end
 	end
 	return num_players
-end
-
-
-creeps_to_kill = nil
-local next_wave_time = nil
-
-
-function SkirmishGameMode:LaneCreepSpawner()
-	-- Spawn enemy creeps for a moment on every wave spawn to fix their agro behavior
-	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-	print("LaneCreepSpawner", time.skirmishTime, next_wave_time)
-
-	if next_wave_time == nil then
-		next_wave_time = TimeUtils.masterTime.skirmishNextWave
-	end
-
-
-	if time.skirmishTime < next_wave_time then
-		print("No time yet, waiting precise", time.skirmishTime, next_wave_time)
-		return next_wave_time - time.skirmishTime
-	end
-
-	next_wave_time = next_wave_time + 30
-
-	local raxes = {good={}, bad={}}
-
-	for _, lane in pairs({"bot", "mid", "top"}) do
-		for _, team in pairs({"good", "bad"}) do
-			for _, rax_type in pairs({"melee", "range"}) do
-				-- good_rax_melee_mid
-				local rax_name = team .. "_rax_" .. rax_type .. "_" .. lane
-				local rax = Entities:FindByName(nil, rax_name)
-				if rax ~= nil then
-					raxes[team][rax_name] = 1
-				end
-			end
-		end
-	end
-	print("raxes", raxes)
-
-	for _, lane in pairs({"bot", "mid", "top"}) do
-		for _, team in pairs({"good", "bad"}) do
-			local spawn_name = "lane_" .. lane .. "_" .. team .. "guys_melee_spawner"
-			local spawner = Entities:FindByName(nil, spawn_name)
-			local other_team = ""
-			local other_team_int = 0
-			local team_int = 0
-
-			if team == "good" then
-				other_team = "bad"
-				other_team_int = DOTA_TEAM_BADGUYS
-				team_int = DOTA_TEAM_GOODGUYS
-			else
-				other_team = "good"
-				other_team_int = DOTA_TEAM_GOODGUYS
-				team_int = DOTA_TEAM_BADGUYS
-			end
-
-			local cPoz = spawner:GetAbsOrigin()
-			-- "npc_dota_creep_" .. team .. "guys_ranged", "npc_dota_creep_" .. team .. "guys_melee"
-			
-
-			local num_melee_creeps = 3
-			local num_range_creeps = 1
-			local num_siege_creeps = 0
-			local num_flag_creeps = 0
-			
-
-			if time.skirmishTime >= 15*60 then
-				num_melee_creeps = num_melee_creeps + 1
-			end
-			if time.skirmishTime >= 30*60 then
-				num_melee_creeps = num_melee_creeps + 1
-			end
-			if time.skirmishTime >= 45*60 then
-				num_melee_creeps = num_melee_creeps + 1
-			end
-			if time.skirmishTime >= 40*60 then
-				num_range_creeps = num_range_creeps + 1
-			end
-
-			local wave_num = math.floor(time.skirmishTime/30)
-			if wave_num % 10 == 0  and wave_num > 0  then
-				num_siege_creeps = num_siege_creeps + 1
-				if time.skirmishTime >= 35*60 then
-					num_siege_creeps = num_siege_creeps + 1
-				end
-			end
-			
-			if wave_num % 2 == 0  and wave_num >= 4  then
-				num_flag_creeps = num_flag_creeps + 1
-				num_melee_creeps = num_melee_creeps - 1
-			end
-
-			local range_upgrade = ""
-			local melee_upgrade = ""
-			local siege_upgrade = ""
-			local flag_upgrade = ""
-			
-			-- if this lane has range
-			-- good_rax_melee_mid
-			if raxes[other_team][other_team .. "_rax_melee_" .. lane] == nil then
-				melee_upgrade = "_upgraded"
-				flag_upgrade = "_upgraded"
-			end
-			if raxes[other_team][other_team .. "_rax_range_" .. lane] == nil then
-				range_upgrade = "_upgraded"
-				siege_upgrade = "_upgraded"
-			end
-			if tablelength(raxes[other_team]) == 0 then
-				melee_upgrade = "_upgraded_mega"
-				flag_upgrade = "_upgraded_mega"
-				melee_upgrade = "_upgraded_mega"
-				siege_upgrade = "_upgraded_mega"
-			end
-			 
-
-			local what_to_spawn = {}
-			table_multiinsert(what_to_spawn, "npc_dota_creep_" .. team .. "guys_ranged" .. range_upgrade, num_range_creeps)
-			table_multiinsert(what_to_spawn, "npc_dota_creep_" .. team .. "guys_melee" .. melee_upgrade, num_melee_creeps)
-			table_multiinsert(what_to_spawn, "npc_dota_" .. team .. "guys_siege" .. siege_upgrade, num_siege_creeps)
-			table_multiinsert(what_to_spawn, "npc_dota_creep_" .. team .. "guys_flagbearer" .. flag_upgrade, num_flag_creeps)			
-			
-			-- TODO proper creep positions
-
-			for _, creep_type in pairs(what_to_spawn) do
-				local hCreep = CreateUnitByName(creep_type, spawner:GetAbsOrigin(), true, nil,
-					nil, team_int)
-				print(hCreep, creep_type)
-				local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), team_int)
-				local waypoint = Entities:FindByName(nil, waypointName)
-				hCreep:SetInitialGoalEntity(waypoint)
-				hCreep:SetMustReachEachGoalEntity(true)
-			end
-		end
-	end
-	return 5
-
-end
-
-function table_multiinsert(table_dest, what, how_many)
-	for i = 1, how_many, 1 do
-		table.insert(table_dest, what)
-	end
 end
 
 
@@ -525,124 +311,7 @@ function SkirmishGameMode:FixUpgrades()
 	end
 end
 
-function getClosestWaypointNext(cPoz, team)
-	local teamName = ""
-	if team == 2 then
-		teamName = "goodguys"
-	else
-		teamName = "badguys"
-	end
 
-	local bestDist = 9999999;
-	local bestWaypoint = "lane_mid_pathcorner_" .. teamName .. "_3";
-
-	for _, path in pairs(waypoints[teamName]) do
-		for i = 1, #path - 1 do
-			local waypointPoz = waypointPossitions[path[i]];
-			local dist = dist2(waypointPoz, cPoz);
-			if dist <= bestDist then
-				bestWaypoint = path[i + 1];
-				bestDist = dist;
-			end
-		end
-	end
-	return bestWaypoint;
-end
-
-function SkirmishGameMode:MakeCreeps()
-	print("making creepes")
-	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
-		
-		local skip = false
-		local skip_list = {"npc_dota_visage_familiar", "npc_dota_broodmother_web"}
-		for _, skip_name in pairs(skip_list) do
-			local find_res = string.find(creepData["name"], skip_name) 
-			if find_res ~= nil then
-				skip = true
-			end
-		end
-
-		if skip then
-			-- TODO fix later
-
-		else
-			
-			local cPoz = Util:fixPosition(creepData["position"])
-			local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
-
-			if creepData["health"] ~= nil then
-				hCreep:SetHealth(creepData["health"])
-			end
-			if creepData["mana"] ~= nil then
-				hCreep:SetMana(creepData["mana"])
-			end
-
-			if creepData["type"] == "lane" then
-				local waypointName = getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
-				local waypoint = Entities:FindByName(nil, waypointName)
-				hCreep:SetInitialGoalEntity(waypoint)
-				hCreep:SetMustReachEachGoalEntity(true)
-
-			elseif creepData["type"] == "controlled" then
-				if creepData["owner"] then
-					if creepData["owner"]["type"] == "hero" then
-						local hero_name = creepData["owner"]["refname"]
-						local hero_entity = Entities:FindByName(nil, hero_name)
-						local player_id = hero_entity:GetPlayerOwnerID()
-						hCreep:SetOwner(hero_entity)
-						hCreep:SetControllableByPlayer(player_id, false)
-
-						if string.find(creepData["name"], "npc_dota_eidolon") then
-							-- TODO add proper duration
-							-- TODO add the split thing
-							-- check this: https://github.com/CryDeS/Angel-Arena-Reborn/search?q=modifier_eidolons_attack_counter
-							hCreep:AddNewModifier(hero_entity, nil, "modifier_demonic_conversion", {duration = 40})
-							hCreep:AddNewModifier(hero_entity, nil, "modifier_eidolons_splitting", {duration = 40})
-							
-							-- hCreep:ForceKill(false)
-						end
-						-- hCreep:AddNewModifier(hero_entity, nil, "modifier_chen_holy_persuasion", {})						
-					else
-						print("ERROR unexpected controller type")
-					end
-
-				else
-					print("ERROR controlled unit does not have owner")
-				end
-			end
-		end
-	end
-end
-
-function SkirmishGameMode:FixWards()
-	print("fixing wards")
-
-	for _, ward in pairs(GameReader:GetWardsInfo() or {}) do
-		-- npc_dota_observer_wards
-		-- npc_dota_sentry_wards
-		local hWard = CreateUnitByName(ward["type"], Util:fixPosition(ward["position"]), true, nil, nil, ward["team"])
-		if ward["type"] == "npc_dota_observer_wards" then
-			local kill_buff = hWard:AddNewModifier(hWard, nil, "modifier_kill", {
-				duration = 360
-			})
-			local ward_buff = hWard:AddNewModifier(hWard, nil, "modifier_item_buff_ward", {})
-			print(kill_buff, ward_buff)
-		elseif ward["type"] == "npc_dota_sentry_wards" then
-			local kill_buff = hWard:AddNewModifier(hWard, nil, "modifier_kill", {
-				duration = 420
-			})
-			local ward_buff = hWard:AddNewModifier(hWard, nil, "modifier_item_buff_ward", {})
-			local sentry_buff = hWard:AddNewModifier(hWard, nil, "modifier_item_ward_true_sight", {
-				true_sight_range = 900
-			})
-			print(kill_buff, ward_buff, sentry_buff)
-
-		else
-			print("Unexpected ward type", ward["type"])
-		end
-
-	end
-end
 
 function SkirmishGameMode:FixBuildings()
 	print("fixing buildlings")
@@ -760,7 +429,7 @@ function SkirmishGameMode:FixHero(heroData, hHero)
 		end
 	end
 
-	print("cooldown", heroData["name"], tablelength(heroData["cooldowns"]))
+	print("cooldown", heroData["name"], Util:tablelength(heroData["cooldowns"]))
 	print(heroData["cooldowns"])
 	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
 		if type(cooldown_index) == "string" then
@@ -985,7 +654,7 @@ function SkirmishGameMode:HandleGameStart()
 								table.insert(available_heroes, hname)
 							end
 						end
-						desired_hero_name = getRandomValueFromArray(available_heroes)
+						desired_hero_name = Util:getRandomValueFromArray(available_heroes)
 						print(available_heroes)
 						print(desired_hero_name)
 						HeroSelection.heroes_picked[desired_hero_name] = true
@@ -1137,7 +806,7 @@ function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
 	-- Add thinkers
 	GameMode:SetThink("CheckWinCondition", self, "CheckWinConditionGlobalThink", 1)
-	GameMode:SetThink("LaneCreepSpawner", self, "LaneCreepSpawnerGlobalThink", 1)
+	GameMode:SetThink("LaneCreepSpawner", CreepReconstruction, "LaneCreepSpawnerGlobalThink", 1)
 
 	GameMode:SetDamageFilter(Dynamic_Wrap(self, "DamageFilterRoshan"), self)
 end
@@ -1243,19 +912,6 @@ function SkirmishGameMode:AddBots()
 	GameRules:GetGameModeEntity():SetBotsMaxPushTier(-1)
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 end
-
-function SkirmishGameMode:initWaypoints()
-	for _, team in pairs({"goodguys", "badguys"}) do
-		for _, path in pairs(waypoints[team]) do
-			for _, point in pairs(path) do
-				local waypoint = Entities:FindByName(nil, point)
-				local poz = waypoint:GetAbsOrigin();
-				waypointPossitions[point] = poz
-			end
-		end
-	end
-end
-
 
 function SkirmishGameMode:InitializeTime()
 	print("InitializeTime")

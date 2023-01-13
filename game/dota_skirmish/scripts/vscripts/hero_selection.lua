@@ -110,7 +110,7 @@ function HeroSelection:RequestHeroPick(data)
 end
 
 function HeroSelection:TryToFinishHeroPicking()
-	if HeroSelection.n_players == tablelength(HeroSelection.player_picked_hero) and not HeroSelection.finished then
+	if HeroSelection.n_players == Util:tablelength(HeroSelection.player_picked_hero) and not HeroSelection.finished then
 		HeroSelection:FinishHeroSelection()
 	end
 end
