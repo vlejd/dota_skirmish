@@ -40,7 +40,6 @@ function GameReader:GetWinCondition()
 	if GameState.wincon ~= nil and Util:tablelength(GameState.wincon) > 0 then
 		return GameState.wincon
 	else
-		print("ERROR: Missing win condition.")
 		return nil
 	end
 end
@@ -49,11 +48,7 @@ function GameReader:GetWinTimeCondition()
 	if GameReader:GetWinCondition() then
 		if GameReader:GetWinCondition()["time"] then
 			return GameReader:GetWinCondition()["time"]
-		else
-			print("ERROR: Missing win time condition.")
 		end
-	else
-		print("ERROR: Missing win condition.")
 	end
 end
 
@@ -64,8 +59,6 @@ function GameReader:GetDefaultWinner()
 		else
 			print("ERROR: Missing default winner.")
 		end
-	else
-		print("ERROR: Missing win condition.")
 	end
 end
 
