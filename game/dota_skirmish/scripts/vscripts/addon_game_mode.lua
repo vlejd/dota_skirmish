@@ -22,6 +22,7 @@ require("hero_selection")
 require("scenario_selection")
 require("internal/globals")
 require("time_utils")
+require("game_state_recreation_functions")
 
 LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
 
@@ -151,7 +152,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Reshufling outposts")
 		SkirmishGameMode:FixOutposts()
 		SkirmishGameMode:ReportLoadingProgress("Warding")
-		SkirmishGameMode:FixWards()
+		GameStateRecreationFunctions:FixWards()
 		setup_stage = 25
 		return 0.1
 
@@ -317,38 +318,6 @@ function SkirmishGameMode:LoadedHeroes()
 	return num_players
 end
 
-function fixPosition(poz)
-	print("fixPosition")
-	print(type(poz))
-	print(poz)
-	if type(poz) == "userdata" then  -- hope this is Vector
-		print("udata")
-		return poz
-	end
-	if type(poz) == "table" then
-		print("table")
-		if poz["0"] then
-			if tablelength(poz) == 2 then
-				return Vector(poz["0"], poz["1"])
-			elseif tablelength(poz) == 3 then
-				return Vector(poz["0"], poz["1"], poz["2"])
-			else
-				print("ERROR invalid vector")
-				return Vector(100,100)
-			end
-		else
-			if tablelength(poz) == 2 then
-				return Vector(poz[1], poz[2])
-			elseif tablelength(poz) == 3 then
-				return Vector(poz[1], poz[2], poz[3])
-			else
-				print("ERROR invalid vector")
-				return Vector(100,100)
-			end
-		end
-		
-	end
-end
 
 creeps_to_kill = nil
 local next_wave_time = nil
@@ -646,7 +615,7 @@ function SkirmishGameMode:MakeCreeps()
 
 		else
 			
-			local cPoz = fixPosition(creepData["position"])
+			local cPoz = Util:fixPosition(creepData["position"])
 			local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
 
 			if creepData["health"] ~= nil then
@@ -699,7 +668,7 @@ function SkirmishGameMode:FixWards()
 	for _, ward in pairs(GameReader:GetWardsInfo() or {}) do
 		-- npc_dota_observer_wards
 		-- npc_dota_sentry_wards
-		local hWard = CreateUnitByName(ward["type"], fixPosition(ward["position"]), true, nil, nil, ward["team"])
+		local hWard = CreateUnitByName(ward["type"], Util:fixPosition(ward["position"]), true, nil, nil, ward["team"])
 		if ward["type"] == "npc_dota_observer_wards" then
 			local kill_buff = hWard:AddNewModifier(hWard, nil, "modifier_kill", {
 				duration = 360
@@ -795,7 +764,7 @@ function SkirmishGameMode:FixPlayers()
 end
 
 function SkirmishGameMode:FixHero(heroData, hHero)
-	FindClearSpaceForUnit(hHero, fixPosition(heroData["position"]), true)
+	FindClearSpaceForUnit(hHero, Util:fixPosition(heroData["position"]), true)
 
 	for i = 2, heroData["level"] do
 		hHero:HeroLevelUp(false)
