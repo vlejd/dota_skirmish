@@ -23,6 +23,7 @@ require("roshan")
 require("game_state_recreation_functions")
 require("creep_reconstruction")
 require("player_recreation")
+require("bots")
 
 
 LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
@@ -129,7 +130,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Mastering time")
 		GameRules:GetGameModeEntity():SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 		SkirmishGameMode:ReportLoadingProgress("Making bots obedient")
-		SkirmishGameMode:MakeBotsControllable()
+		Bots:MakeBotsControllable()
 
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		PlayerRecreation:FixUpgrades();
@@ -314,43 +315,14 @@ end
 function FinishOnHeroSelectionEnd()
 	print("FinishOnHeroSelectionEnd")
 	-- add bots
-	SkirmishGameMode:AddBots()
+	Bots:AddBots(SkirmishGameMode.num_human_players)
 	-- select heros for bots
 	HeroSelection:TotalyRandomForNoHeroSelected()
 	-- start game
 	SkirmishGameMode.hero_selection_ended = true
 end
 
-function SkirmishGameMode:MakeBotsControllable()
-	-- Looks like this is not needed
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		local humans = {}
-		local bots = {}
-		for i = 1, DOUBLE_MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
-				if player_steam_id == 0 then -- this is a bot
-					table.insert(bots, playerID)
-				else
-					table.insert(humans, playerID)
-				end
-			end
-		end
-		print("team", teamNum)
-		print("humans", humans)
-		print("bots", bots)
 
-		for _, botID in pairs(bots) do
-			local bot_hero = PlayerResource:GetSelectedHeroEntity(botID)
-			bot_hero:SetControllableByPlayer(-1, true)
-			
-			for _, humanID in pairs(humans) do
-				bot_hero:SetControllableByPlayer(humanID, false)
-			end 
-		end
-	end
-end
 
 function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
@@ -418,48 +390,7 @@ function SkirmishGameMode:SetHumanPlayersCount()
 	print("SetHumanPlayersCount spectators", SkirmishGameMode.num_spectators)
 end
 
-function SkirmishGameMode:AddBots()
-	print("AddBots")
-	local n_good_players = 0;
-	local n_bad_players = 0;
 
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, DOUBLE_MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local hPlayer = PlayerResource:GetPlayer(playerID)
-				if hPlayer ~= nil then
-					if teamNum == DOTA_TEAM_GOODGUYS then
-						n_good_players = n_good_players + 1
-					else
-						n_bad_players = n_bad_players + 1
-					end
-				end
-			end
-		end
-	end
-
-	if not SkirmishGameMode.num_human_players == n_good_players + n_bad_players then
-		print("CRITICAL ERROR")
-	end
-
-	print(n_good_players, n_bad_players)
-	for i = 1, (5 - n_good_players) do
-		print("good bot")
-		Tutorial:AddBot("", "", "", true)
-	end
-
-	for i = 1, (5 - n_bad_players) do
-		print("good bot")
-		Tutorial:AddBot("", "", "", false)
-	end
-
-	Tutorial:StartTutorialMode();
-	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)
-	GameRules:GetGameModeEntity():SetBotsInLateGame(true)
-	GameRules:GetGameModeEntity():SetBotsMaxPushTier(-1)
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
-end
 
 function SkirmishGameMode:InitializeTime()
 	print("InitializeTime")
