@@ -11,6 +11,107 @@ if PlayerRecreation == nil then
 end
 
 
+function PlayerRecreation:itterPlayers()
+	local ret = {}
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local data = {
+					playerID = playerID,
+					i = i, 
+					team = teamNum,
+				}
+				table.insert(ret, data)
+			end
+		end
+	end
+	return ret
+end
+
+
+function PlayerRecreation:FindDesiredHeroForBot(teamNum)
+	print("this is a bot", teamNum, i, playerID)
+	print(HeroSelection.heroes_picked)
+	-- it is a bot
+	local available_heroes = {}
+	for hname, _ in pairs(HeroSelection.heroes_picked) do
+		local picked = HeroSelection.heroes_picked[hname]
+		if not picked and GameReader:GetHeroTeam(hname) == teamNum then
+			table.insert(available_heroes, hname)
+		end
+	end
+	local desired_hero_name = Util:getRandomValueFromArray(available_heroes)
+	return desired_hero_name
+end
+
+
+function PlayerRecreation:SpawnDesiredHeroes(random_hero_to_playerID)
+	print("SpawnDesiredHeroes")
+	-- Make screen dark to hide the magic!
+	-- replace heroes with the desired ones ...
+	print(random_hero_to_playerID)
+	print(HeroSelection.player_to_hero)
+	for _, data in pairs(PlayerRecreation:itterPlayers()) do
+		if PlayerResource:HasSelectedHero(data["playerID"]) then
+			print("has selected hero", data)
+			PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
+		else
+			print("does not have selected hero", data)
+			print(data)
+		end
+	end
+	return nil
+end
+
+
+function PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
+	local i = data["i"]
+	local playerID = data["playerID"]
+	local teamNum = data["team"]
+	-- TODO CONTINUE HERE
+
+	local current_hero_name = PlayerResource:GetSelectedHeroName(playerID)
+	local original_playerID = random_hero_to_playerID[current_hero_name]
+	print(current_hero_name, playerID, original_playerID)
+	local desired_hero_name = "wisp"
+
+	if original_playerID == nil then
+		-- it is a bot
+		desired_hero_name = PlayerRecreation:FindDesiredHeroForBot(teamNum)
+		print(desired_hero_name)
+		HeroSelection.heroes_picked[desired_hero_name] = true
+	else
+		print("this is not a bot", teamNum, i, playerID, original_playerID)
+		desired_hero_name = HeroSelection.player_to_hero[original_playerID]
+	end
+	local hero_name = "npc_dota_hero_" .. desired_hero_name
+
+	PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
+
+end
+
+
+function PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
+	PrecacheUnitByNameAsync(hero_name, function()
+		local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
+		print(old_hero, playerID, hero_name)
+		if old_hero ~= nil then
+			local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
+			HeroSelection.heroes_replaced[hero_name] = true
+			GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
+				if old_hero then
+					UTIL_Remove(old_hero)
+				end
+			end, 1.0)
+		else
+			print("CRITICAL ERROR")
+		end
+	end)
+
+end
+
+
 function PlayerRecreation:FixUpgrades()
 	print("fixing upgrades")
 
@@ -80,14 +181,7 @@ function PlayerRecreation:FixPlayers()
 					local niceHeroName = heroName:sub(15)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
 						local heroData = GameReader:GetHeroInfo(niceHeroName)
-						-- TODO add items to courier. 
-						if heroData["team"] == DOTA_TEAM_GOODGUYS then
-							hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
-						elseif heroData["team"] == DOTA_TEAM_BADGUYS then
-							hPlayer:SpawnCourierAtPosition(Vector(7233, 6476, 128))
-						else
-							print("invalid player team")
-						end
+						PlayerRecreation:spawnCurier(hPlayer, heroData)
 						PlayerRecreation:FixHero(heroData, hHero)
 					end
 				else
@@ -97,6 +191,17 @@ function PlayerRecreation:FixPlayers()
 				print("CRITICAL ERROR")
 			end
 		end
+	end
+end
+
+function PlayerRecreation:spawnCurier(hPlayer, heroData)
+	-- TODO add items to courier. 
+	if heroData["team"] == DOTA_TEAM_GOODGUYS then
+		hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
+	elseif heroData["team"] == DOTA_TEAM_BADGUYS then
+		hPlayer:SpawnCourierAtPosition(Vector(7233, 6476, 128))
+	else
+		print("invalid player team")
 	end
 end
 
@@ -206,70 +311,3 @@ function PlayerRecreation:FixHero(heroData, hHero)
 	end
 end
 
-
-function PlayerRecreation:SpawnDesiredHeroes(random_hero_to_playerID)
-	print("SpawnDesiredHeroes")
-	-- Make screen dark to hide the magic!
-	-- replace heroes with the desired ones ...
-	print(random_hero_to_playerID)
-	print(HeroSelection.player_to_hero)
-
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				if PlayerResource:HasSelectedHero(playerID) then
-					local current_hero_name = PlayerResource:GetSelectedHeroName(playerID)
-					local original_playerID = random_hero_to_playerID[current_hero_name]
-					print(current_hero_name, playerID, original_playerID)
-					local desired_hero_name = "wisp"
-
-					if original_playerID == nil then
-						print("this is a bot", teamNum, i, playerID)
-						print(HeroSelection.heroes_picked)
-						-- it is a bot
-						local available_heroes = {}
-						for hname, _ in pairs(HeroSelection.heroes_picked) do
-							local picked = HeroSelection.heroes_picked[hname]
-							if not picked and GameReader:GetHeroTeam(hname) == teamNum then
-								table.insert(available_heroes, hname)
-							end
-						end
-						desired_hero_name = Util:getRandomValueFromArray(available_heroes)
-						print(available_heroes)
-						print(desired_hero_name)
-						HeroSelection.heroes_picked[desired_hero_name] = true
-					else
-						print("this is not a bot", teamNum, i, playerID, original_playerID)
-						desired_hero_name = HeroSelection.player_to_hero[original_playerID]
-					end
-					local hero_name = "npc_dota_hero_" .. desired_hero_name
-
-					PrecacheUnitByNameAsync(hero_name, function()
-						local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
-						print(old_hero, playerID, hero_name)
-						if old_hero ~= nil then
-							local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
-							HeroSelection.heroes_replaced[hero_name] = true
-							GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
-								if old_hero then
-									UTIL_Remove(old_hero)
-								end
-							end, 1.0)
-						else
-							print("CRITICAL ERROR")
-						end
-					end)
-
-				else
-					print("CRITICAL ERROR")
-				end
-			end
-		end
-	end
-	-- Random for bots ...
-
-	-- do the remaining setup
-	-- Show screen!
-	return nil
-end

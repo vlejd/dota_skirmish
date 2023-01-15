@@ -281,6 +281,7 @@ function OnHeroSelectionEnd()
 	if CAN_PICK_FROM_OTHER_TEAM then
 		print("reasigning teams")
 		-- reassign teams based on current hero => player id => desired hero => desired team
+		-- TODO, test if this changes the playerID 
 		local need_fix = true
 		while need_fix do
 			print("need_fix")
