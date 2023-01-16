@@ -40,7 +40,7 @@ end
 
 function HeroSelection:OnStateChange()
 	print("hero selection on state change", GameRules:State_Get())
- 	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION then
+ 	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION and not HeroSelection.finished then
 		HeroSelection:FinishHeroSelection()
 	end
 end
@@ -60,17 +60,18 @@ function HeroSelection:FinishHeroSelection()
 
 	print(HeroSelection.player_picked_hero)
 	print(HeroSelection.heroes_picked)
+	print(HeroSelection.player_to_hero)
 	HeroSelection:RandomForNoHeroSelected()
 	print(HeroSelection.player_picked_hero)
 	print(HeroSelection.heroes_picked)
+	print(HeroSelection.player_to_hero)
 
 	local pls = {"pls"}
 	CustomGameEventManager:Send_ServerToAllClients("finish_hero_selection", pls)
-	print(HeroSelection.heroes_picked)
-	print(HeroSelection.player_picked_hero)
-	print(HeroSelection.player_to_hero)
 	HeroSelection.onfinish()
 end
+
+
 
 function HeroSelection:RequestHeroPick(data)
 	print(HeroSelection.player_picked_hero)
@@ -174,6 +175,7 @@ end
 
 function HeroSelection:TotalyRandomForNoHeroSelected()
 	print("TotalyRandomForNoHeroSelected")
+	-- TODO : This may be problematic in case of disconnects. 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i = 1, DOUBLE_MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)

@@ -397,13 +397,13 @@ if Log == nil then
 			local payload = {
 				level = level,
 				trace = trace[1]["short_src"],
+				lina = trace[1]["currentline"],
 				name = name,
 				content = content,
 			}
 			CustomGameEventManager:Send_ServerToAllClients("debug_print", payload)
 		end
 	end
-
 
 
 	-----------------------------------------------------------------

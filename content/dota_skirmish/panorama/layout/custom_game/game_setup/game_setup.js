@@ -40,7 +40,7 @@ function SetLoadingText(data){
 }
 
 function DebugPrint(data){
-	$.Msg("js debug ", data["level"], " ", data["trace"], " ", data["name"], " ", data["content"]);
+	$.Msg("jsd ", data["level"], " ", data["trace"], " ", data["line"], " ", data["name"], " ", data["content"]);
 }
 
 (function () {

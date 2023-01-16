@@ -98,7 +98,7 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.01
 		else
 			print("Hero selection not ended yet")
-			return 0.1
+			return 1.
 		end
 
 	elseif setup_stage == 0 then
@@ -125,8 +125,6 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Summoning Roshan")
 		Roshan:InitialRoshanSetup()
 
-		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
-		GameStateRecreationFunctions:FixNeutralItems()
 		SkirmishGameMode:ReportLoadingProgress("Contemplating life")
 		SkirmishGameMode:AddThinkers()
 		SkirmishGameMode:ReportLoadingProgress("Venesecting")
@@ -167,7 +165,7 @@ function SkirmishGameMode:WaitForSetup()
 		print(replaced)
 		if replaced < 10 then
 			print("waiting for hero replacements")
-			return 0.1
+			return 1
 		else
 			print("all heroes replaced")
 			setup_stage = setup_stage + 1
@@ -184,6 +182,8 @@ function SkirmishGameMode:WaitForSetup()
 		Bots:MakeBotsControllable()
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
 		CreepReconstruction:MakeCreeps()
+		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
+		GameStateRecreationFunctions:FixNeutralItems()
 
 		setup_stage = setup_stage + 1
 		return 0.01 
@@ -201,7 +201,7 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = setup_stage + 1
 		return 5
 		
-	elseif setup_stage == 6 then
+	elseif setup_stage == 7 then
 		GameStateRecreationFunctions:SetGlyphCooldowns()
 		setup_stage = setup_stage + 1
 		return nil
@@ -296,10 +296,7 @@ function OnHeroSelectionEnd()
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
-					local hPlayer = PlayerResource:GetPlayer(playerID)
-					if hPlayer ~= nil then
-						SkirmishGameMode.random_hero_to_playerID[PlayerResource:GetSelectedHeroName(playerID)] = playerID
-					end
+					SkirmishGameMode.random_hero_to_playerID[PlayerResource:GetSelectedHeroName(playerID)] = playerID
 				else
 					print("CRITICAL ERROR, someone does not have a hero")
 				end
@@ -350,14 +347,12 @@ end
 function FinishOnHeroSelectionEnd()
 	print("FinishOnHeroSelectionEnd")
 	-- add bots
-	Bots:AddBots(SkirmishGameMode.num_human_players)
+	Bots:AddBots(SkirmishGameMode.n_good_players, SkirmishGameMode.n_bad_players)
 	-- select heros for bots
 	HeroSelection:TotalyRandomForNoHeroSelected()
 	-- start game
 	SkirmishGameMode.hero_selection_ended = true
 end
-
-
 
 function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
@@ -393,21 +388,32 @@ end
 function SkirmishGameMode:SetHumanPlayersCount()
 	local num_human_players = 0
 	local num_spectators = 0
+	local n_good_players = 0
+	local n_bad_players = 0
 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i = 1, DOUBLE_MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
-				local hPlayer = PlayerResource:GetPlayer(playerID)
 				print("playerID", playerID, hPlayer)
-				if hPlayer ~= nil then
-					num_human_players = num_human_players + 1
+				num_human_players = num_human_players + 1
+				if teamNum == DOTA_TEAM_GOODGUYS then
+					n_good_players = n_good_players + 1
+				else
+					n_bad_players = n_bad_players + 1
 				end
 			end
 		end
 	end
 	SkirmishGameMode.num_human_players = num_human_players
+	SkirmishGameMode.n_good_players = n_good_players
+	SkirmishGameMode.n_bad_players = n_bad_players
 	
+	if not num_human_players == n_good_players + n_bad_players then
+		print("CRITICAL ERROR, num_human_players does not addd up")
+		print(num_human_players, n_good_players, n_bad_players)
+	end
+
 	-- spectators
 	for i = 1, DOUBLE_MAX_PLAYERS do
 		local playerID = PlayerResource:GetNthPlayerIDOnTeam(1, i)
@@ -422,6 +428,8 @@ function SkirmishGameMode:SetHumanPlayersCount()
 	SkirmishGameMode.num_spectators = num_spectators
 
 	print("SetHumanPlayersCount human players", SkirmishGameMode.num_human_players)
+	print("SetHumanPlayersCount good players", SkirmishGameMode.n_good_players)
+	print("SetHumanPlayersCount bad players", SkirmishGameMode.n_bad_players)
 	print("SetHumanPlayersCount spectators", SkirmishGameMode.num_spectators)
 end
 

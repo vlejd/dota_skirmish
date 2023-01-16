@@ -41,32 +41,10 @@ function Bots:MakeBotsControllable()
 	end
 end
 
-function Bots:AddBots(num_human_players)
+function Bots:AddBots(n_good_players, n_bad_players)
 	print("AddBots")
-	local n_good_players = 0;
-	local n_bad_players = 0;
 
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, DOUBLE_MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local hPlayer = PlayerResource:GetPlayer(playerID)
-				if hPlayer ~= nil then
-					if teamNum == DOTA_TEAM_GOODGUYS then
-						n_good_players = n_good_players + 1
-					else
-						n_bad_players = n_bad_players + 1
-					end
-				end
-			end
-		end
-	end
-
-	if not num_human_players == n_good_players + n_bad_players then
-		print("CRITICAL ERROR")
-	end
-
-	print(n_good_players, n_bad_players)
+	print("n_good_players: "..n_good_players, " n_bad_players: "..n_bad_players)
 	for i = 1, (5 - n_good_players) do
 		print("good bot")
 		Tutorial:AddBot("", "", "", true)
