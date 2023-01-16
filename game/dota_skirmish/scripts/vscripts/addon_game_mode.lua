@@ -139,21 +139,29 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = setup_stage + 1
 		return 0.01 
 	elseif setup_stage == 2 then
+		setup_stage = setup_stage + 1
+		return 0.01 
+	elseif setup_stage == 3 then
 
-		SkirmishGameMode:ReportLoadingProgress("Waiting for players to load")
 		local num_players = SkirmishGameMode:LoadedHeroes()
-		if num_players < 10 then
+		local num_disconnects = SkirmishGameMode:NumDisconnects()
+		local msg = "Waiting for players to load "..num_players.."/10 disconnects: "..num_disconnects
+
+		SkirmishGameMode:ReportLoadingProgress(msg)
+		if num_players < 10 or num_disconnects > 0 then
 			print("Waiting for unloaded players", num_players, 10)
+			print("Waiting for disconnected players", num_disconnects)
 			-- return nil
-			return 0.1
+			return 1.
 		else
 			print("players loaded")
 			PlayerRecreation:SpawnDesiredHeroes(SkirmishGameMode.random_hero_to_playerID)
 			setup_stage = setup_stage + 1
 			return 0.01
 		end
+
 		return 0.01 
-	elseif setup_stage == 3 then
+	elseif setup_stage == 4 then
 		SkirmishGameMode:ReportLoadingProgress("Spawning correct heroes")
 		local replaced = Util:tablelength(HeroSelection.heroes_replaced)
 		print(replaced)
@@ -166,7 +174,7 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.01
 		end
 
-	elseif setup_stage == 4 then
+	elseif setup_stage == 5 then
 
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		PlayerRecreation:FixUpgrades();
@@ -180,7 +188,7 @@ function SkirmishGameMode:WaitForSetup()
 		setup_stage = setup_stage + 1
 		return 0.01 
 
-	elseif setup_stage == 5 then
+	elseif setup_stage == 6 then
 		local data = {}
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
@@ -222,6 +230,23 @@ function SkirmishGameMode:LoadedHeroes()
 	end
 	return num_players
 end
+
+function SkirmishGameMode:NumDisconnects()
+	local num_players = 0
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then				 
+				local state = PlayerResource:GetConnectionState(playerID)
+				if state == DOTA_CONNECTION_STATE_DISCONNECTED then
+					num_players = num_players + 1
+				end
+			end
+		end
+	end
+	return num_players
+end
+
 
 
 function SkirmishGameMode:OnStateChange()
