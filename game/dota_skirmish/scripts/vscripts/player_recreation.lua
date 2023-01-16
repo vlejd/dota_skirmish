@@ -176,13 +176,12 @@ function PlayerRecreation:FixPlayers()
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
 					local heroName = PlayerResource:GetSelectedHeroName(playerID)
-					local hPlayer = PlayerResource:GetPlayer(playerID)
 					local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
 					local niceHeroName = heroName:sub(15)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
 						local heroData = GameReader:GetHeroInfo(niceHeroName)
-						PlayerRecreation:spawnCurier(hPlayer, heroData)
 						PlayerRecreation:FixHero(heroData, hHero)
+						PlayerRecreation:spawnCurier(playerID, heroData)
 					end
 				else
 					print("CRITICAL ERROR")
@@ -194,15 +193,24 @@ function PlayerRecreation:FixPlayers()
 	end
 end
 
-function PlayerRecreation:spawnCurier(hPlayer, heroData)
-	-- TODO add items to courier. 
-	if heroData["team"] == DOTA_TEAM_GOODGUYS then
-		hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
-	elseif heroData["team"] == DOTA_TEAM_BADGUYS then
-		hPlayer:SpawnCourierAtPosition(Vector(7233, 6476, 128))
-	else
-		print("invalid player team")
-	end
+function PlayerRecreation:spawnCurier(playerID, heroData)
+	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
+		local hPlayer = PlayerResource:GetPlayer(playerID)
+		if hPlayer == nil then
+			print("waiting disconnected player", playerID)
+			return 1
+		end
+	
+		-- TODO add items to courier. 
+		if heroData["team"] == DOTA_TEAM_GOODGUYS then
+			hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
+		elseif heroData["team"] == DOTA_TEAM_BADGUYS then
+			hPlayer:SpawnCourierAtPosition(Vector(7233, 6476, 128))
+		else
+			print("invalid player team")
+		end
+		return nil
+	end, 0.5)
 end
 
 function PlayerRecreation:FixHero(heroData, hHero)
