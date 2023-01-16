@@ -163,8 +163,9 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Spawning correct heroes")
 		local replaced = Util:tablelength(HeroSelection.heroes_replaced)
 		print(replaced)
+		print(HeroSelection.heroes_replaced)
 		if replaced < 10 then
-			print("waiting for hero replacements")
+			print("waiting for hero replacements", replaced)
 			return 1
 		else
 			print("all heroes replaced")
@@ -282,7 +283,21 @@ function TriggerStartHeroSelection(fast)
 	SkirmishGameMode:InitializeTime()
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		print("Create Hero UI!")
-		HeroSelection:StartHeroSelection(OnHeroSelectionEnd, SkirmishGameMode.num_human_players, fast)
+		HeroSelection:StartHeroSelection(OnHeroSelectionEndWithoutDiscnonects, SkirmishGameMode.num_human_players, fast)
+	end, 0.01)
+end
+
+function OnHeroSelectionEndWithoutDiscnonects()
+	GameRules:GetGameModeEntity():SetContextThink("OnHeroSelectionEndWithoutDiscnonects", function()
+		local num_disconnects = SkirmishGameMode:NumDisconnects()
+		if num_disconnects > 0 then
+			print("Can not end hero selection, disconnects "..num_disconnects)
+			return 1
+		else
+			print("All players connected to end hero selection")
+			OnHeroSelectionEnd()
+			return nil
+		end
 	end, 0.01)
 end
 

@@ -74,6 +74,7 @@ end
 function ScenarioSelection:OnStateChange()
 	print("scenario selection on state change", GameRules:State_Get())
  	if GameRules:State_Get() > DOTA_GAMERULES_STATE_HERO_SELECTION and not ScenarioSelection.finished then
+		print("FinishScenarioSelectionFast")
 		ScenarioSelection:FinishScenarioSelectionFast()
 	end
 end

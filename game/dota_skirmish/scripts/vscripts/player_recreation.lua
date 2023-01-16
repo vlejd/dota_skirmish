@@ -31,7 +31,7 @@ end
 
 
 function PlayerRecreation:FindDesiredHeroForBot(teamNum)
-	print("this is a bot", teamNum, i, playerID)
+	print("Finding hero for bot on team ".. teamNum)
 	print(HeroSelection.heroes_picked)
 	-- it is a bot
 	local available_heroes = {}
@@ -42,6 +42,7 @@ function PlayerRecreation:FindDesiredHeroForBot(teamNum)
 		end
 	end
 	local desired_hero_name = Util:getRandomValueFromArray(available_heroes)
+	print("Finding hero for bot on team ".. teamNum.."  desired_hero_name")
 	return desired_hero_name
 end
 
@@ -95,7 +96,8 @@ end
 function PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
 	PrecacheUnitByNameAsync(hero_name, function()
 		local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
-		print(old_hero, playerID, hero_name)
+		print("ReplaceWithCorrectHero", old_hero, playerID, hero_name)
+		print(HeroSelection.heroes_replaced)
 		if old_hero ~= nil then
 			local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
 			HeroSelection.heroes_replaced[hero_name] = true
