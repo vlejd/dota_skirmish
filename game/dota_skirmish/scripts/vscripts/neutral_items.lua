@@ -65,11 +65,9 @@ function NeutralItems:AddNeutralItemToHero(hHero, item)
 end
 
 function GetNeutralItemTier(query_item)
-	print("GetNeutralItemTier ".. query_item)
 	for i, items in pairs(NeutralItems.NEUTRAL_ITEMS) do
 		for j, item in pairs(items) do
 			if query_item == item then
-				print(i)
 				return i
 			end
 		end
@@ -99,9 +97,7 @@ function TableContains(table, element)
 end
 
 function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
-	print("GetPotentialNeutralItemDrop")
-	print(tier)
-	print(team)
+	print("GetPotentialNeutralItemDrop", tier, team)
 	print(NeutralItems.neutral_items_in_game)
 	local possible_drops = {}
 	local team_str = GetTeamString(team)
@@ -119,7 +115,7 @@ function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
 		end
 	end
 	local random_index = RandomInt(1, table.getn(possible_drops))
-	print(possible_drops[random_index])
+	print("possible drops", possible_drops[random_index])
 	return possible_drops[random_index]
 end
 
@@ -127,8 +123,6 @@ function NeutralItems:Setup(master_time)
 	NeutralItems.master_time = master_time
 	ListenToGameEvent("entity_killed", Dynamic_Wrap(self, "OnEntityKilled"), self)
 	local NeutralKV = LoadKeyValues("scripts/npc/npc_neutral_items_custom.txt")
-	print("INFO NEUTRAL SETUP")
-	print(NeutralItems.NEUTRAL_ITEMS)
 	for i, tier in pairs({"1", "2", "3", "4", "5"}) do
 		print(i, tier)
 		local tier_data = NeutralKV[tier]
@@ -141,8 +135,6 @@ function NeutralItems:Setup(master_time)
 
 		end
 	end
-	print("INFO NEUTRAL_ITEMS")
-	print(NeutralItems.NEUTRAL_ITEMS)
 
 end
 

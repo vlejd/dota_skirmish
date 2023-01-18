@@ -262,7 +262,6 @@ if Log == nil then
 			if not self:_IsFiltered(self.targets[i].name, level, file) then
 				self.targets[i]:print(levelString, content, trace)
 				
-				-- TODO WARNING RISK: THIS IS VERY QUESTIONABLE
 				local data = {
 					levelString = levelString, 
 					content = content, 
@@ -394,6 +393,7 @@ if Log == nil then
 		local msg = "[" .. level .. "][" .. trace[1]["short_src"] .. ":" .. trace[1]["currentline"] .. name .. "] " .. content
 		NativePrint(msg)
 		if IsServer() and CLIENT_PRINT then
+			-- TODO WARNING RISK: THIS IS VERY QUESTIONABLE
 			local payload = {
 				level = level,
 				trace = trace[1]["short_src"],
