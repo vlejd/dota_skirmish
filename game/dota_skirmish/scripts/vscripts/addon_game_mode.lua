@@ -77,8 +77,6 @@ function Spawn()
 
 end
 
-setup_stage = -1
-
 function SkirmishGameMode:ReportLoadingProgress(loading_text)
 	print(loading_text)
 	local data = {
@@ -88,10 +86,17 @@ function SkirmishGameMode:ReportLoadingProgress(loading_text)
 end
 
 
+setup_stage = -2
+
 function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	Util:log_players("WaitForSetup start")
-	if setup_stage == -1 then
+	if setup_stage == -2 then
+		print("make_screen_dark")
+		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
+		setup_stage = setup_stage+1
+		return 0.01
+	elseif setup_stage == -1 then
 		SkirmishGameMode:ReportLoadingProgress("Waiting for hero selection")
 		if SkirmishGameMode.hero_selection_ended then
 			print("Hero selection ended")
@@ -292,8 +297,6 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		local data = {}
-		print("make_screen_dark")
-		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", data)
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
