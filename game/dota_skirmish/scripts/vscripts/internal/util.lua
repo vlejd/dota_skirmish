@@ -84,3 +84,29 @@ function Util:fixPosition(poz)
 		
 	end
 end
+
+function Util:log_players(context)
+
+	print(context)
+	local ret = {}
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			ret = {
+				team = teamNum,
+				i = i, 
+				playerID = playerID,
+			}
+			if playerID ~= nil and playerID ~= -1 then
+				local hPlayer = PlayerResource:GetPlayer(playerID)
+				ret["hPlayer"] = hPlayer
+				ret["player_name"] = PlayerResource:GetPlayerName(playerID)
+				ret["has_hero"] = PlayerResource:HasSelectedHero(playerID)
+				ret["hero"] = PlayerResource:GetSelectedHeroName(playerID)
+				ret["steam_id"] = PlayerResource:GetSteamAccountID(playerID)
+				ret["steam_acc_id"] = PlayerResource:GetSteamAccountID(playerID)
+			end
+			print(ret)
+		end
+	end
+end

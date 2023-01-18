@@ -83,7 +83,7 @@ function PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
 		print(desired_hero_name)
 		HeroSelection.heroes_picked[desired_hero_name] = true
 	else
-		print("this is not a bot", teamNum, i, playerID, original_playerID)
+		print("this is not a bot ".. teamNum.. " " .. i.. " " .. playerID.. " " .. original_playerID)
 		desired_hero_name = HeroSelection.player_to_hero[original_playerID]
 	end
 	local hero_name = "npc_dota_hero_" .. desired_hero_name
@@ -96,7 +96,8 @@ end
 function PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
 	PrecacheUnitByNameAsync(hero_name, function()
 		local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
-		print("ReplaceWithCorrectHero", old_hero, playerID, hero_name)
+		print("ReplaceWithCorrectHero".. playerID.. " " .. hero_name)
+		print(old_hero)
 		print(HeroSelection.heroes_replaced)
 		if old_hero ~= nil then
 			local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
@@ -125,7 +126,8 @@ function PlayerRecreation:FixUpgrades()
 					local heroName = PlayerResource:GetSelectedHeroName(playerID)
 					local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
 					local niceHeroName = heroName:sub(15)
-					print(heroName, hHero, niceHeroName)
+					print(heroName.. " " .. niceHeroName)
+					print(hHero)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
 						local heroData = GameReader:GetHeroInfo(niceHeroName)
 						if Util:CastToBool(heroData["has_shard"]) then
@@ -199,7 +201,7 @@ function PlayerRecreation:spawnCurier(playerID, heroData)
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		local hPlayer = PlayerResource:GetPlayer(playerID)
 		if hPlayer == nil then
-			print("waiting disconnected player", playerID)
+			print("waiting disconnected player".. playerID)
 			return 1
 		end
 	
@@ -248,7 +250,7 @@ function PlayerRecreation:FixHero(heroData, hHero)
 			end
 		else
 			if NeutralItems:IsItemNeutral(item) then
-				print("AddNeutralItemToHero", heroData["name"], item)
+				print("AddNeutralItemToHero ".. heroData["name"].. " " .. item)
 				NeutralItems:AddNeutralItemToHero(hHero, item)
 				hHero:AddItemByName(item)
 			else
@@ -272,14 +274,14 @@ function PlayerRecreation:FixHero(heroData, hHero)
 		end
 	end
 
-	print("cooldown", heroData["name"], Util:tablelength(heroData["cooldowns"]))
+	print("cooldown ".. heroData["name"].." "..Util:tablelength(heroData["cooldowns"]))
 	print(heroData["cooldowns"])
 	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
 		if type(cooldown_index) == "string" then
 			cooldown_index = tonumber(cooldown_index)+1  -- TODO what the hell is happening here?!?!
 		end
 		local hAbility = hHero:GetAbilityByIndex(cooldown_index-1) -- starts from 0!
-		print(i, hAbility)
+		print(cooldown_index, hAbility)
 		if hAbility ~= nil then
 			hAbility:EndCooldown()
 			print(cooldown_value)
@@ -287,7 +289,7 @@ function PlayerRecreation:FixHero(heroData, hHero)
 		end
 	end
 
-	print("is_dead", heroData["is_dead"], type(heroData["is_dead"]))
+	print("is_dead".." ".. tostring(heroData["is_dead"]).." ".. type(heroData["is_dead"]))
 	if Util:CastToBool(heroData["is_dead"]) then
 		hHero:ForceKill(true)
 		hHero:SetTimeUntilRespawn(heroData["respawn_time"])
