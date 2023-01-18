@@ -58,7 +58,7 @@ function PlayerRecreation:SpawnDesiredHeroes(random_hero_to_playerID)
 			print("has selected hero", data)
 			PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
 		else
-			print("does not have selected hero", data)
+			print("CRITICAL ERROR does not have selected hero", data)
 			print(data)
 		end
 	end

@@ -177,9 +177,9 @@ function HeroSelection:TotalyRandomForNoHeroSelected()
 	print("TotalyRandomForNoHeroSelected")
 	-- TODO : This may be problematic in case of disconnects. 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, DOUBLE_MAX_PLAYERS do
+		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			print(teamNum, i, playerID)
+			print(teamNum.." "..i.." "..playerID)
 			if playerID ~= nil and playerID ~= -1 then
 				print(PlayerResource:HasSelectedHero(playerID), PlayerResource:GetSelectedHeroName(playerID))
 				if not PlayerResource:HasSelectedHero(playerID) then

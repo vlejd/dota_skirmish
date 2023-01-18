@@ -80,7 +80,7 @@ end
 setup_stage = -1
 
 function SkirmishGameMode:ReportLoadingProgress(loading_text)
-	print(text)
+	print(loading_text)
 	local data = {
 		text = loading_text
 	}
@@ -144,13 +144,18 @@ function SkirmishGameMode:WaitForSetup()
 
 		local num_players = SkirmishGameMode:LoadedHeroes()
 		local num_disconnects = SkirmishGameMode:NumDisconnects()
-		local msg = "Waiting for players to load "..num_players.."/10 disconnects: "..num_disconnects
+		local num_handles = SkirmishGameMode:NumValidPlayerHandles()
+		
+		local msg = (
+			"Waiting for players to load "..num_players.."/10 \n".. 
+			"disconnects: "..num_disconnects .. "\n"..
+			"num_handles:"..num_handles
+		)
 
 		SkirmishGameMode:ReportLoadingProgress(msg)
-		if num_players < 10 or num_disconnects > 0 then
-			print("Waiting for unloaded players ".. num_players.." "..10)
-			print("Waiting for disconnected players "..num_disconnects)
-			-- return nil
+		-- TODO FIX for case without bots
+		if num_players < 10 or num_handles < 10 or num_disconnects > 0 then
+			print(msg)
 			return 1.
 		else
 			print("players loaded")
@@ -250,6 +255,22 @@ function SkirmishGameMode:NumDisconnects()
 end
 
 
+function SkirmishGameMode:NumValidPlayerHandles()
+	local num_players = 0
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then				 
+				local hPlayer = PlayerResource:GetPlayer(playerID)
+				if hPlayer ~= nil then
+					num_players = num_players + 1
+				end
+			end
+		end
+	end
+	return num_players
+end
+
 
 function SkirmishGameMode:OnStateChange()
 	print("state change "..GameRules:State_Get())
@@ -292,8 +313,11 @@ end
 function OnHeroSelectionEndWithoutDiscnonects()
 	GameRules:GetGameModeEntity():SetContextThink("OnHeroSelectionEndWithoutDiscnonects", function()
 		local num_disconnects = SkirmishGameMode:NumDisconnects()
-		if num_disconnects > 0 then
+		local num_handles = SkirmishGameMode:NumValidPlayerHandles()
+
+		if num_disconnects > 0 or num_handles < SkirmishGameMode.num_human_players then
 			print("Can not end hero selection, disconnects "..num_disconnects)
+			print("Can not end hero selection, num_handles "..num_handles)
 			return 1
 		else
 			print("All players connected to end hero selection")
