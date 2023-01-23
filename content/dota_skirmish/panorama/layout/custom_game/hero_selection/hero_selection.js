@@ -288,12 +288,14 @@ function AddPredefinedScenarios(data) {
 function GenerateScenarioUI(data) {
 	$.Msg("GenerateScenarioUI");
 
-	AddPredefinedScenarios(data);
+	AddPredefinedScenarios(data.screnarios);
 	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
-	var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
-
-	//AddPassElement(parent);	
-	//AddCustomScenarioElement(parent);
+	
+	if (data.settings.ALLOW_CUSTOM_SCENARIO){
+		var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
+		AddPassElement(parent);	
+		AddCustomScenarioElement(parent);
+	}
 }
 
 function ScenarioAssigned(data) {

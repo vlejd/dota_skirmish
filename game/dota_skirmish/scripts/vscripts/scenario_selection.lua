@@ -61,7 +61,7 @@ function ScenarioSelection:StartScenarioSelection(fun, n_players)
 	print(n_players)
 	ScenarioSelection.n_players = n_players
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("generate_scenario_ui"), function()
-		CustomGameEventManager:Send_ServerToAllClients("generate_scenario_ui", ScenarioSelection.scenarios)
+		CustomGameEventManager:Send_ServerToAllClients("generate_scenario_ui", {screnarios = ScenarioSelection.scenarios, settings = {ALLOW_CUSTOM_SCENARIO = ALLOW_CUSTOM_SCENARIO}})
 	end, 1.0)
 	GameRules:GetGameModeEntity():SetThink("FinishScenarioSelection", self, "FinishScenarioSelection",
 		SCENARIO_SELECTION_LENGTH)
