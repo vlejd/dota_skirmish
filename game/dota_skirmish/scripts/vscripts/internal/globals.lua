@@ -7,3 +7,4 @@ HERO_SELECTION_LENGTH = 600
 START_WITH_PAUSE = true
 CLIENT_PRINT = false
 ALLOW_CUSTOM_SCENARIO = true
+WORKING_BOTS = false		-- BOTS are always added, this just makes them move

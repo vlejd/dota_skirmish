@@ -39,6 +39,7 @@ function Bots:MakeBotsControllable()
 			end 
 		end
 	end
+	GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)
 end
 
 function Bots:AddBots()
@@ -76,5 +77,4 @@ function Bots:AddBots()
 	GameRules:GetGameModeEntity():SetBotsAlwaysPushWithHuman(true)
 	GameRules:GetGameModeEntity():SetBotsInLateGame(true)
 	GameRules:GetGameModeEntity():SetBotsMaxPushTier(-1)
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
 end
