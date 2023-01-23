@@ -8,3 +8,4 @@ START_WITH_PAUSE = true
 CLIENT_PRINT = false
 ALLOW_CUSTOM_SCENARIO = true
 WORKING_BOTS = false		-- BOTS are always added, this just makes them move
+INCLUDED_SCENARIOS = {"n3_ti_rng_entity_87min"}
