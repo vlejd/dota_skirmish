@@ -112,7 +112,7 @@
 				</Panel>
 			</Panel>
 			
-			<Label id="Version" text="Version: 2023_01_30_1619" />
+			<Label id="Version" text="Version: 2023_01_30_1630" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/pass_icon.png" style="width:0px; height:0px;"/>

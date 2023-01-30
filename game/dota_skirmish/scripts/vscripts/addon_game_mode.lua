@@ -152,9 +152,10 @@ function SkirmishGameMode:WaitForSetup()
 		local num_handles = SkirmishGameMode:NumValidPlayerHandles()
 		
 		local msg = (
-			"Waiting for players to load "..num_players.."/10 \n".. 
-			"disconnects: "..num_disconnects .. "\n"..
-			"num_handles:"..num_handles
+			"Loaded players "..num_players.."/10 \n".. 
+			"Initialized players: "..num_handles .. "/10 \n"..
+			"Disconnects: "..num_disconnects .. "\n"..
+			""
 		)
 
 		SkirmishGameMode:ReportLoadingProgress(msg)
