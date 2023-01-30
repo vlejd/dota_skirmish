@@ -132,8 +132,18 @@ function GenerateHeroUI(data) {
 
 	var index = 0;
 
+	var sorted = [];
+	for(var key in data) {
+		sorted[sorted.length] = key;
+	}
+	sorted.sort()
+	$.Msg("sorted")
+	$.Msg(data)
+	$.Msg(sorted)
+
 	// Generate hero buttons
-	for (var hero in data) {
+	for (var i=0; i<sorted.length; i++) {
+		var hero = sorted[i];
 		var hero_name = "npc_dota_hero_" + hero;
 		var parent = $.GetContextPanel().FindChildTraverse("HeroSelectionRow1");
 	
