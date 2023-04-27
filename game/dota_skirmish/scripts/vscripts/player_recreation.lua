@@ -70,7 +70,6 @@ function PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
 	local i = data["i"]
 	local playerID = data["playerID"]
 	local teamNum = data["team"]
-	-- TODO CONTINUE HERE
 
 	local current_hero_name = PlayerResource:GetSelectedHeroName(playerID)
 	local original_playerID = random_hero_to_playerID[current_hero_name]
@@ -125,9 +124,9 @@ function PlayerRecreation:FixUpgrades()
 				if PlayerResource:HasSelectedHero(playerID) then
 					local heroName = PlayerResource:GetSelectedHeroName(playerID)
 					local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
-					if DEBUG then
-						hHero:SetDayTimeVisionRange(1000000)  -- TODO UNDO 
-						hHero:SetNightTimeVisionRange(100000)  -- TODO UNDO 
+					if PLAYER_LARGE_VISSION then
+						hHero:SetDayTimeVisionRange(1000000)
+						hHero:SetNightTimeVisionRange(100000)
 					end
 					
 					local niceHeroName = heroName:sub(15)

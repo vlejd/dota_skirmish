@@ -22,11 +22,15 @@ function Roshan:InitialRoshanSetup()
 		local time_passed = GameReader:GetRoshanInfo()["time_since_death"]
 		local rosh_sudo_respaun = RandomInt(math.max(0, (8 * 60) - time_passed), math.max(0, (11 * 60) - time_passed))
 		print("respawn time", rosh_sudo_respaun)
-		GameMode:SetThink("PutRoshanBack", self, "PutRoshBackTinker", rosh_sudo_respaun)
+		GameMode:SetThink("PutRoshanBack", self, "PutRoshBackTinker", 10)
 	end
 
 	GameRules:GetGameModeEntity():SetDamageFilter(
 		Dynamic_Wrap(self, "DamageFilterRoshan"), self)
+
+	if TRACK_ROSHAN then
+		GameMode:SetThink("Tracker", self, "TrackRoshTinker", 1)
+	end
 
 end
 
@@ -53,13 +57,30 @@ function Roshan:FixRoshan()
 	end
 end
 
+function Roshan:Tracker()
+	local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+	if hRosh ~= nil then
+		print("Rosh position", hRosh:GetAbsOrigin())
+	end
+	return 1
+end
+
 function Roshan:PutRoshanBack()
 	local GameMode = GameRules:GetGameModeEntity()
 	local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
-	local hRoshanSpawner = Entities:FindByName(nil, "roshan_location")
+
+	-- local hRoshanSpawner = Entities:FindByName(nil, "roshan_location")  -- npc_dota_roshan_spawner
+	-- roshan_location = hRoshanSpawner:GetAbsOrigin()
+	local roshan_location = nil
+	if GameRules:IsDaytime() then
+		roshan_location = Vector(7872, -7808)
+	else
+		roshan_location = Vector(-7808, 7680)
+	end
 	print("hRoshanSpawner", hRoshanSpawner)
+	print(roshan_location)
 	print(hRosh:GetAbsOrigin())
-	FindClearSpaceForUnit(hRosh, hRoshanSpawner:GetAbsOrigin(), true)
+	FindClearSpaceForUnit(hRosh, roshan_location, true)
 	Roshan:FixRoshan()
 	GameMode:SetThink("FixRoshan", self, "FixRoshanGlobalThink", 1)
 	return nil
@@ -79,6 +100,7 @@ function Roshan:DamageFilterRoshan(keys)
 end
 
 function Roshan:FixRoshanStatsDrops()
+	-- TODO Roshan drops may not work properly because of the conditional drop thingy
 	print("fixing roshan")
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	local mins = math.floor(time.skirmishTime / 60)
@@ -104,21 +126,14 @@ function Roshan:FixRoshanStatsDrops()
 		if GameReader:GetRoshanDeaths() >= 1 then
 			table.insert(roshan_items, "item_cheese")
 		end
-		if GameReader:GetRoshanDeaths() == 1 then
-			table.insert(roshan_items, "item_aghanims_shard_roshan")
-		end
-		if GameReader:GetRoshanDeaths() == 2 then
-			local rng = RandomInt(0, 1)
-			if rng == 0 then
-				table.insert(roshan_items, "item_refresher_shard")
-			else
-				table.insert(roshan_items, "item_ultimate_scepter_roshan")
-			end
-		end
-		if GameReader:GetRoshanDeaths() >= 3 then
-			table.insert(roshan_items, "item_refresher_shard")
-			table.insert(roshan_items, "item_ultimate_scepter_roshan")
-		end
+
+		-- print("roshan location")
+		-- print(hRosh:GetAbsOrigin()) 
+		-- if hRosh:GetAbsOrigin()[0] > 0
+		-- if radient side -> Aghanim's Scepter 
+		-- table.insert(roshan_items, "item_ultimate_scepter_roshan")
+		-- if dire side -> refresher
+		-- table.insert(roshan_items, "item_refresher_shard")
 
 		for _, itemName in pairs(roshan_items) do
 			hRosh:AddItemByName(itemName)

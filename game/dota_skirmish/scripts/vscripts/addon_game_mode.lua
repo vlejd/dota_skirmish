@@ -24,6 +24,8 @@ require("game_state_recreation_functions")
 require("creep_reconstruction")
 require("player_recreation")
 require("bots")
+require("day_night")
+
 
 
 LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
@@ -61,6 +63,8 @@ function SkirmishGameMode:InitGameMode()
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
 
+	DayNight:PreGameInit()
+
 	-- GameRules:SetCustomGameTeamMaxPlayers(1, 10)
 	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, DOUBLE_MAX_PLAYERS)
 	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, DOUBLE_MAX_PLAYERS)
@@ -95,6 +99,7 @@ function SkirmishGameMode:WaitForSetup()
 		print("make_screen_dark")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
 		setup_stage = setup_stage+1
+		DayNight:Init(TimeUtils.masterTime)
 		return 0.01
 	elseif setup_stage == -1 then
 		SkirmishGameMode:ReportLoadingProgress("Waiting for hero selection")

@@ -12,3 +12,6 @@ INCLUDED_SCENARIOS = {"n2_ti_liquid_ta_1"}
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false
+PRINT_DAY_NIGHT = false
+TRACK_ROSHAN = false
+PLAYER_LARGE_VISSIO = false
