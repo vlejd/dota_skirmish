@@ -9,3 +9,6 @@ CLIENT_PRINT = false
 ALLOW_CUSTOM_SCENARIO = true
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
 INCLUDED_SCENARIOS = {"n2_ti_liquid_ta_1"}
+
+DEBUG = false
+SLOW_TIME_FRIENDLY = false

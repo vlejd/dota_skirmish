@@ -192,9 +192,13 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
 		PlayerRecreation:FixPlayers()
 		SkirmishGameMode:ReportLoadingProgress("Making bots obedient")
-		Bots:MakeBotsControllable()
+		if not SLOW_TIME_FRIENDLY then
+			Bots:MakeBotsControllable()
+		end
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
-		CreepReconstruction:MakeCreeps()
+		if not SLOW_TIME_FRIENDLY then
+			CreepReconstruction:MakeCreeps()
+		end
 		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
 		GameStateRecreationFunctions:FixNeutralItems()
 
@@ -406,7 +410,9 @@ function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
 	-- Add thinkers
 	GameMode:SetThink("CheckWinCondition", self, "CheckWinConditionGlobalThink", 1)
-	GameMode:SetThink("LaneCreepSpawner", CreepReconstruction, "LaneCreepSpawnerGlobalThink", 1)
+	if not SLOW_TIME_FRIENDLY then
+		GameMode:SetThink("LaneCreepSpawner", CreepReconstruction, "LaneCreepSpawnerGlobalThink", 1)
+	end
 end
 
 function SkirmishGameMode:UpdateTime()

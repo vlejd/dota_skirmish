@@ -137,6 +137,9 @@ function GameStateRecreationFunctions:FixRunes()
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_REGENERATION, rune_state) --Regen
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ARCANE, rune_state) --Arcane
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_BOUNTY, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_WATER, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_XP, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_SHIELD, rune_state) --Bounty
 		-- gameModeEnt:ClearRuneSpawnFilter()
 		-- gameModeEnt:SetBountyRuneSpawnInterval()
 		-- gameModeEnt:SetPowerRuneSpawnInterval()
@@ -177,12 +180,11 @@ function GameStateRecreationFunctions:RuneSpawner()
 			end
 		end
 		-- CDOTA_Item_Rune
-		local rune_names = {"item_rune_arcane", "item_rune_doubledamage", "item_rune_haste"}
 		Entities:FindAllByName("dota_item_rune_spawner_powerup")
 
 		-- spawn new runes
 		local rune_options = {DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
-                        DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE}
+                        DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE, DOTA_RUNE_SHIELD}
 		local power_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_powerup")
 		local spawner = Util:getRandomValueFromArray(power_rune_spawners)
 		local rune_type = Util:getRandomValueFromArray(rune_options)
@@ -195,6 +197,15 @@ function GameStateRecreationFunctions:RuneSpawner()
 		for i = 1, #bounty_rune_spawners do
 			local spawner = bounty_rune_spawners[i]
 			CreateRune(spawner:GetAbsOrigin(), DOTA_RUNE_BOUNTY)
+		end
+	end
+
+	if min_num > 6 and min_num % 7 == 0 then
+		print("spawning rune bounty")
+		local xp_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_xp")
+		for i = 1, #xp_rune_spawners do
+			local spawner = xp_rune_spawners[i]
+			CreateRune(spawner:GetAbsOrigin(), DOTA_RUNE_XP)
 		end
 	end
 
