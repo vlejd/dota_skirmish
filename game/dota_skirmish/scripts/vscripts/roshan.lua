@@ -22,7 +22,7 @@ function Roshan:InitialRoshanSetup()
 		local time_passed = GameReader:GetRoshanInfo()["time_since_death"]
 		local rosh_sudo_respaun = RandomInt(math.max(0, (8 * 60) - time_passed), math.max(0, (11 * 60) - time_passed))
 		print("respawn time", rosh_sudo_respaun)
-		GameMode:SetThink("PutRoshanBack", self, "PutRoshBackTinker", 10)
+		GameMode:SetThink("PutRoshanBack", self, "PutRoshBackTinker", rosh_sudo_respaun)
 	end
 
 	GameRules:GetGameModeEntity():SetDamageFilter(
