@@ -2,6 +2,7 @@
 {
 	flow-children: right;
 	width: 100%;
+	opacity: 0.5; /* TODO UNDO */
 }
 
 #TimerPanels
@@ -19,7 +20,7 @@
 	margin-left: 47.4%;
 	flow-children: down;
 	width: 100px;
-	height: 46px;
+	height: 106px; /* TODO UNDO */
 	z-index: 2;
 }
 

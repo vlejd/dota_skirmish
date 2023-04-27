@@ -61,6 +61,8 @@ function SkirmishGameMode:InitGameMode()
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
 
+	GameRules:GetGameModeEntity():SetDaynightCycleDisabled(true) -- TODO UNDO
+
 	-- GameRules:SetCustomGameTeamMaxPlayers(1, 10)
 	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, DOUBLE_MAX_PLAYERS)
 	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, DOUBLE_MAX_PLAYERS)
@@ -192,7 +194,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
 		PlayerRecreation:FixPlayers()
 		SkirmishGameMode:ReportLoadingProgress("Making bots obedient")
-		Bots:MakeBotsControllable()
+		-- TODO UNDO Bots:MakeBotsControllable()
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
 		CreepReconstruction:MakeCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
@@ -217,6 +219,13 @@ function SkirmishGameMode:WaitForSetup()
 	elseif setup_stage == 7 then
 		GameStateRecreationFunctions:SetGlyphCooldowns()
 		setup_stage = setup_stage + 1
+
+		-- TODO UNDO
+		print("SetTimeOfDay")
+		SendToServerConsole("dota_daynightcycle_toggle")
+		--GameRules:SetTimeOfDay(100)
+
+
 		return nil
 	else
 		print("Unexpected state: setup_stage "..setup_stage)
@@ -406,7 +415,7 @@ function SkirmishGameMode:AddThinkers()
 	local GameMode = GameRules:GetGameModeEntity()
 	-- Add thinkers
 	GameMode:SetThink("CheckWinCondition", self, "CheckWinConditionGlobalThink", 1)
-	GameMode:SetThink("LaneCreepSpawner", CreepReconstruction, "LaneCreepSpawnerGlobalThink", 1)
+	-- TODO UNDO GameMode:SetThink("LaneCreepSpawner", CreepReconstruction, "LaneCreepSpawnerGlobalThink", 1)
 end
 
 function SkirmishGameMode:UpdateTime()

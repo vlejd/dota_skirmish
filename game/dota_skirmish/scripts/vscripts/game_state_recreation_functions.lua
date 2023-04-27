@@ -137,13 +137,16 @@ function GameStateRecreationFunctions:FixRunes()
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_REGENERATION, rune_state) --Regen
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ARCANE, rune_state) --Arcane
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_BOUNTY, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_WATER, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_XP, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_SHIELD, rune_state) --Bounty	
 		-- gameModeEnt:ClearRuneSpawnFilter()
 		-- gameModeEnt:SetBountyRuneSpawnInterval()
 		-- gameModeEnt:SetPowerRuneSpawnInterval()
 		-- gameModeEnt:SetNextBountyRuneSpawnTime()
 		-- gameModeEnt:SetNextRuneSpawnTime()
 
-	gameModeEnt:SetThink("RuneSpawner", self, "RuneSpawnerGlobalThink", 0.1)
+	-- TODO UNDO gameModeEnt:SetThink("RuneSpawner", self, "RuneSpawnerGlobalThink", 0.1)
 end
 
 function GameStateRecreationFunctions:RuneSpawner()

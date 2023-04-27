@@ -24,7 +24,7 @@
 				"bShowSpectatorTeam" : true
 			};
 
-			GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP_TIMEOFDAY, false );
+			GameUI.SetDefaultUIEnabled(DotaDefaultUIElement_t.DOTA_DEFAULT_UI_TOP_TIMEOFDAY, true ); /* TODO UNDO */
 	</script> 
 
 	<Panel>
