@@ -72,8 +72,14 @@ function GetNeutralItemTier(query_item)
 			end
 		end
 	end
+	if string.sub(query_item, 1, 9) == "item_tier" and string.sub(query_item, 11, 17) == "_token" then
+		print("neutral token")
+		return tonumber(string.sub(query_item, 10, 10))
+	end
+
+	print(query_item)
 	print("ERROR neutral item not found")
-	return nil
+	return 1
 end
 
 function NeutralItems:IsItemNeutral(query_item)
@@ -84,6 +90,11 @@ function NeutralItems:IsItemNeutral(query_item)
 			end
 		end
 	end
+	if string.sub(query_item, 1, 9) == "item_tier" and string.sub(query_item, 11, 17) == "_token" then
+		print("neutral token")
+		return true		
+	end
+
 	return false
 end
 
@@ -109,14 +120,7 @@ function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
 		return nil
 	end
 
-	for _, item in pairs(NeutralItems.NEUTRAL_ITEMS[tier]) do
-		if not TableContains(NeutralItems.neutral_items_in_game[team_str][tier]) then
-			table.insert(possible_drops, item)
-		end
-	end
-	local random_index = RandomInt(1, table.getn(possible_drops))
-	print("possible drops", possible_drops[random_index])
-	return possible_drops[random_index]
+	return "item_tier"..tier.."_token"
 end
 
 function NeutralItems:Setup(master_time)

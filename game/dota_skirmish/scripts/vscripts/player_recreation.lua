@@ -127,7 +127,7 @@ function PlayerRecreation:FixUpgrades()
 					local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
 					if DEBUG then
 						hHero:SetDayTimeVisionRange(1000000)  -- TODO UNDO 
-						hHero:SetNightTimeVisionRange(1000000)  -- TODO UNDO 
+						hHero:SetNightTimeVisionRange(100000)  -- TODO UNDO 
 					end
 					
 					local niceHeroName = heroName:sub(15)
