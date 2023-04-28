@@ -6,9 +6,9 @@ SCENARIO_SELECTION_LENGTH = 600
 HERO_SELECTION_LENGTH = 600
 START_WITH_PAUSE = true
 CLIENT_PRINT = false
-ALLOW_CUSTOM_SCENARIO = true
+ALLOW_CUSTOM_SCENARIO = false
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
-INCLUDED_SCENARIOS = {"g_2023_berlin_major_gg_liquid_g1_38"}
+INCLUDED_SCENARIOS = {"n3_ti_rng_entity_87min"}
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false
