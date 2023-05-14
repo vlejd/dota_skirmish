@@ -233,6 +233,7 @@ function GameStateRecreationFunctions:OnRuneActivated(keys)
 
 		hero:AddExperience(xp_to_be_added, DOTA_ModifyXP_CreepKill, false, true)
 		-- TODO: fix the message
+		-- TODO: experiment with SetModifyExperienceFilter
 		SendOverheadEventMessage(PlayerResource:GetPlayer(hero:GetPlayerOwnerID()), OVERHEAD_ALERT_XP, hero, xp_to_be_added, nil)
 	end
 end
