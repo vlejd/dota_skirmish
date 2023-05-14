@@ -56,8 +56,9 @@ function TimeUtils:GetMasterTime(masterTime)
 	-- print(debug)
 	local data = {
 		gameTimeWithPregame = gameTimeWithPregame,
-		skirmishTime = skirmishTime,
-		realGameTime = realGameTime
+		skirmishTime = skirmishTime,		  -- what time it is according to the mod / game situation
+		realGameTime = realGameTime,          -- how long was the game running
+		gameTimeNegative = gameTimeNegative   -- what the game thinks is the time
 	}
 
 	return data

@@ -130,16 +130,17 @@ function GameStateRecreationFunctions:FixRunes()
 	gameModeEnt:SetUseDefaultDOTARuneSpawnLogic(false)		-- true = river runes spawn at 2:00, all runes. false = required to disable runes, they start at 0:00
 
 	local rune_state = false
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_DOUBLEDAMAGE , rune_state) --Double Damage
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_HASTE, rune_state) --Haste
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ILLUSION, rune_state) --Illusion
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_INVISIBILITY, rune_state) --Invis
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_REGENERATION, rune_state) --Regen
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ARCANE, rune_state) --Arcane
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_BOUNTY, rune_state) --Bounty
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_WATER, rune_state) --Bounty
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_XP, rune_state) --Bounty
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_SHIELD, rune_state) --Bounty
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_DOUBLEDAMAGE , rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_HASTE, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ILLUSION, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_INVISIBILITY, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_REGENERATION, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ARCANE, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_BOUNTY, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_WATER, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_XP, rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_SHIELD, rune_state)
+
 		-- gameModeEnt:ClearRuneSpawnFilter()
 		-- gameModeEnt:SetBountyRuneSpawnInterval()
 		-- gameModeEnt:SetPowerRuneSpawnInterval()
@@ -147,6 +148,9 @@ function GameStateRecreationFunctions:FixRunes()
 		-- gameModeEnt:SetNextRuneSpawnTime()
 
 	gameModeEnt:SetThink("RuneSpawner", self, "RuneSpawnerGlobalThink", 0.1)
+
+	ListenToGameEvent('dota_rune_activated_server', Dynamic_Wrap(GameStateRecreationFunctions, "OnRuneActivated"), self)
+
 end
 
 function GameStateRecreationFunctions:RuneSpawner()
@@ -201,7 +205,7 @@ function GameStateRecreationFunctions:RuneSpawner()
 	end
 
 	if min_num > 6 and min_num % 7 == 0 then
-		print("spawning rune bounty")
+		print("spawning rune xp")
 		local xp_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_xp")
 		for i = 1, #xp_rune_spawners do
 			local spawner = xp_rune_spawners[i]
@@ -211,6 +215,28 @@ function GameStateRecreationFunctions:RuneSpawner()
 
 	return 10
 end
+
+function GameStateRecreationFunctions:OnRuneActivated(keys)
+
+	print("OnRuneActivated", keys.PlayerID, keys.rune)
+	local hero = PlayerResource:GetPlayer(keys.PlayerID):GetAssignedHero()
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
+
+	if keys.rune == DOTA_RUNE_XP then
+		print("XP rune", time.gameTimeNegative, time.realGameTime, time.skirmishTime)
+		local multiplier = 280
+
+		local game_xp = math.max(0, math.floor(time.gameTimeNegative/(7*60))) * multiplier
+		local desired_xp = math.floor(time.skirmishTime/(7*60)) * multiplier
+		local xp_to_be_added =  desired_xp - game_xp
+		print(game_xp, desired_xp, xp_to_be_added)
+
+		hero:AddExperience(xp_to_be_added, DOTA_ModifyXP_CreepKill, false, true)
+		-- TODO: fix the message
+		SendOverheadEventMessage(PlayerResource:GetPlayer(hero:GetPlayerOwnerID()), OVERHEAD_ALERT_XP, hero, xp_to_be_added, nil)
+	end
+end
+
 
 -- ## WARDS ## --
 function GameStateRecreationFunctions:FixWards()
