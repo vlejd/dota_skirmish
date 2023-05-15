@@ -152,6 +152,20 @@ function string_endswith(what, suffix)
 end
 
 
+function scale_by_constants(hCreep, multiplier, hp_bonus, dmg_min, dmg_max, dmg_bonus, gold_min, gold_max, gold_bonus, xp, xp_bonus)
+	local new_max_health = hCreep:GetMaxHealth() + multiplier * hp_bonus
+	hCreep:SetBaseMaxHealth(new_max_health)
+	hCreep:SetMaxHealth(new_max_health)
+	hCreep:SetHealth(new_max_health)
+
+	
+	hCreep:SetBaseDamageMax(dmg_max + multiplier*dmg_bonus)
+	hCreep:SetBaseDamageMin(dmg_min + multiplier*dmg_bonus)
+	hCreep:SetMaximumGoldBounty(gold_max + multiplier*gold_bonus)
+	hCreep:SetMinimumGoldBounty(gold_min + multiplier*gold_bonus)
+	hCreep:SetDeathXP(xp + multiplier*xp_bonus)
+end
+
 function CreepReconstruction:scaleCreep(hCreep, creep_name)
 	-- TODO conteract the game scaling
 	-- TODO capp it on the mega creep values
@@ -162,56 +176,17 @@ function CreepReconstruction:scaleCreep(hCreep, creep_name)
 	-- Ranged Creep			Gains 12 health, 2 damage, 6 gold and 8 xp bounty per upgrade
 	-- Super Ranged Creep		Gains 18 health, 3 damage, and 1.5 gold bounty per upgrade
 
-	if true then
-		-- This scaling function somehow does not work... 
-		-- I probably need a modifier
-		return nil
-	end
-
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	local multiplier = math.max(0, math.floor(time.skirmishTime / (7*60 + 30)))
 
 	if string_endswith(creep_name, "melee") then
-		hCreep:SetMaxHealth(hCreep:GetMaxHealth() + multiplier*12)
-		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*1)
-		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*1)
-
-		hCreep:SetMaximumGoldBounty(hCreep:GetMaximumGoldBounty() + multiplier*1)
-		hCreep:SetMinimumGoldBounty(hCreep:GetMinimumGoldBounty() + multiplier*1)
-		
-		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*0)
-
+		scale_by_constants(hCreep, multiplier, 12, 19, 23, 1, 32, 38, 1, 57, 0)
 	elseif string_endswith(creep_name,"melee_upgraded") then
-		hCreep:SetMaxHealth(hCreep:GetMaxHealth() + multiplier*19)
-		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*2)
-		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*2)
-
-		hCreep:SetMaximumGoldBounty(math.floor(hCreep:GetMaximumGoldBounty() + multiplier*1.5))
-		hCreep:SetMinimumGoldBounty(math.floor(hCreep:GetMinimumGoldBounty() + multiplier*1.5))
-		
-		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*0)
-
+		scale_by_constants(hCreep, multiplier, 19, 36, 44, 2, 19, 27, 1.5, 25, 0)
 	elseif string_endswith(creep_name,"ranged") then
-		local new_max_health = hCreep:GetMaxHealth() + multiplier*12
-		print("new_max_health", new_max_health)
-		hCreep:SetMaxHealth(new_max_health)
-		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*2)
-		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*2)
-
-		hCreep:SetMaximumGoldBounty(math.floor(hCreep:GetMaximumGoldBounty() + multiplier*6))
-		hCreep:SetMinimumGoldBounty(math.floor(hCreep:GetMinimumGoldBounty() + multiplier*6))
-		
-		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*8)
-
+		scale_by_constants(hCreep, multiplier, 12, 21, 26, 2, 50, 56, 6, 69, 8)
 	elseif string_endswith(creep_name,"ranged_upgraded") then
-		hCreep:SetMaxHealth(hCreep:GetMaxHealth() + multiplier*18)
-		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*3)
-		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*3)
-
-		hCreep:SetMaximumGoldBounty(math.floor(hCreep:GetMaximumGoldBounty() + multiplier*1.5))
-		hCreep:SetMinimumGoldBounty(math.floor(hCreep:GetMinimumGoldBounty() + multiplier*1.5))
-		
-		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*8)
+		scale_by_constants(hCreep, multiplier, 18, 41, 46, 3, 21, 29, 1.5, 22, 0)
 	end
 
 end
@@ -286,6 +261,7 @@ function CreepReconstruction:MakeCreeps()
 
 			if creepData["type"] == "lane" then
 				CreepReconstruction:scaleCreep(hCreep,	creepData["name"])
+				hCreep:SetHealth(creepData["health"])  -- Important
 
 				local waypointName = CreepReconstruction:getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
 				local waypoint = Entities:FindByName(nil, waypointName)
