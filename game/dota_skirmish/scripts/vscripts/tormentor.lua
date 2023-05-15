@@ -17,6 +17,8 @@ end
 -- check every tik for a game tormentor. if there is one, hide it 
 -- add ondeath modifier that spawns another one. 
 -- add tormentor scaling eventually. TODO
+--  there is some strange bug with the particles. they are at 0,0... TODO
+
 
 function Tormentor:InitialTormentorSetup()
 	print("InitialTormentorSetup")

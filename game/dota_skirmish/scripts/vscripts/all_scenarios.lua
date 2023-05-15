@@ -40,7 +40,14 @@ all_scenarios = {
 		description = "Just before the engagemet that started the end. Last chance to win TI.",
 		fname = "game_states/2022_ti/last_chance_to_win_ti",
 		img = "states/2022_ti/last_chance_to_win_ti.png"
+	},
+	g_2023_berlin_major_gg_liquid_g1_38 = {
+		name = "Berlin Major 2023, GG vs Liquid g1",
+		description = "Radiant is pushing T3 mid with aegis. Scenario ends at min 43 with Dire as the default winner.",
+		fname = "game_states/2023_berlin_major/gg_liquid_g1_38",
+		img = "states/generic.png"
 	}
+
 }
 
 return all_scenarios
