@@ -134,9 +134,8 @@ function CreepReconstruction:LaneCreepSpawner()
 			-- TODO proper creep positions
 
 			for _, creep_type in pairs(what_to_spawn) do
-				local hCreep = CreateUnitByName(creep_type, spawner:GetAbsOrigin(), true, nil,
-					nil, team_int)
-				print(hCreep, creep_type)
+				local hCreep = CreateUnitByName(creep_type, spawner:GetAbsOrigin(), true, nil, nil, team_int)
+				CreepReconstruction:scaleCreep(hCreep, creep_type)
 				local waypointName = CreepReconstruction:getClosestWaypointNext(hCreep:GetAbsOrigin(), team_int)
 				local waypoint = Entities:FindByName(nil, waypointName)
 				hCreep:SetInitialGoalEntity(waypoint)
@@ -147,6 +146,76 @@ function CreepReconstruction:LaneCreepSpawner()
 	return 5
 
 end
+
+function string_endswith(what, suffix)
+    return what:sub(-#suffix) == suffix
+end
+
+
+function CreepReconstruction:scaleCreep(hCreep, creep_name)
+	-- TODO conteract the game scaling
+	-- TODO capp it on the mega creep values
+
+	-- every 7*60+30
+	-- Melee Creep : Gains 12 health, 1 damage, and 1 gold bounty per upgrade
+	-- Super Melee Creep	Gains 19 health, 2 damage, and 1.5 gold bounty per upgrade
+	-- Ranged Creep			Gains 12 health, 2 damage, 6 gold and 8 xp bounty per upgrade
+	-- Super Ranged Creep		Gains 18 health, 3 damage, and 1.5 gold bounty per upgrade
+
+	if true then
+		-- This scaling function somehow does not work... 
+		-- I probably need a modifier
+		return nil
+	end
+
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
+	local multiplier = math.max(0, math.floor(time.skirmishTime / (7*60 + 30)))
+
+	if string_endswith(creep_name, "melee") then
+		hCreep:SetMaxHealth(hCreep:GetMaxHealth() + multiplier*12)
+		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*1)
+		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*1)
+
+		hCreep:SetMaximumGoldBounty(hCreep:GetMaximumGoldBounty() + multiplier*1)
+		hCreep:SetMinimumGoldBounty(hCreep:GetMinimumGoldBounty() + multiplier*1)
+		
+		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*0)
+
+	elseif string_endswith(creep_name,"melee_upgraded") then
+		hCreep:SetMaxHealth(hCreep:GetMaxHealth() + multiplier*19)
+		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*2)
+		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*2)
+
+		hCreep:SetMaximumGoldBounty(math.floor(hCreep:GetMaximumGoldBounty() + multiplier*1.5))
+		hCreep:SetMinimumGoldBounty(math.floor(hCreep:GetMinimumGoldBounty() + multiplier*1.5))
+		
+		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*0)
+
+	elseif string_endswith(creep_name,"ranged") then
+		local new_max_health = hCreep:GetMaxHealth() + multiplier*12
+		print("new_max_health", new_max_health)
+		hCreep:SetMaxHealth(new_max_health)
+		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*2)
+		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*2)
+
+		hCreep:SetMaximumGoldBounty(math.floor(hCreep:GetMaximumGoldBounty() + multiplier*6))
+		hCreep:SetMinimumGoldBounty(math.floor(hCreep:GetMinimumGoldBounty() + multiplier*6))
+		
+		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*8)
+
+	elseif string_endswith(creep_name,"ranged_upgraded") then
+		hCreep:SetMaxHealth(hCreep:GetMaxHealth() + multiplier*18)
+		hCreep:SetBaseDamageMax(hCreep:GetDamageMax() + multiplier*3)
+		hCreep:SetBaseDamageMin(hCreep:GetDamageMin() + multiplier*3)
+
+		hCreep:SetMaximumGoldBounty(math.floor(hCreep:GetMaximumGoldBounty() + multiplier*1.5))
+		hCreep:SetMinimumGoldBounty(math.floor(hCreep:GetMinimumGoldBounty() + multiplier*1.5))
+		
+		hCreep:SetDeathXP(hCreep:GetDeathXP() + multiplier*8)
+	end
+
+end
+
 
 function CreepReconstruction:getClosestWaypointNext(cPoz, team)
 	if CreepReconstruction.waypointPossitions == nil then
@@ -216,6 +285,8 @@ function CreepReconstruction:MakeCreeps()
 			end
 
 			if creepData["type"] == "lane" then
+				CreepReconstruction:scaleCreep(hCreep,	creepData["name"])
+
 				local waypointName = CreepReconstruction:getClosestWaypointNext(hCreep:GetAbsOrigin(), creepData["team"])
 				local waypoint = Entities:FindByName(nil, waypointName)
 				hCreep:SetInitialGoalEntity(waypoint)
