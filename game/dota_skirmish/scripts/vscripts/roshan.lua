@@ -1,9 +1,10 @@
 if Roshan == nil then
 	Roshan = class({})
 	Roshan.isRoshanDead = true
-	
+	Roshan.last_secs = -1
 end
-
+-- Somewhere in the game there is a thinker that sets roshan health. We need to override it.
+-- Alternative is to rewrite roshan from scratch. especially bad in the new patch where roshan changes pits.
 
 function Roshan:InitialRoshanSetup()
 	local GameMode = GameRules:GetGameModeEntity()
@@ -146,30 +147,25 @@ function Roshan:FixRoshanStatsDrops()
 end
 
 function Roshan:FixRoshanHealth()
-	if GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
-		local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-		local mins = math.floor(time.skirmishTime / 60)
-		local secs = math.floor(time.skirmishTime)
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
+	local mins = math.floor(time.skirmishTime / 60)
+	local secs = math.floor(time.skirmishTime)
+	local twentith = math.floor(time.skirmishTime*20)
 
-		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+	local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
 
-		if hRosh ~= nil then
-			local desired_max_health = 6000 + mins * 115
+	if hRosh ~= nil then
+		local desired_max_health = 6000 + mins * 115
 
-			local current_max_health = hRosh:GetMaxHealth()
-			local current_health = hRosh:GetHealth()
-			hRosh:SetMaxHealth(desired_max_health)
-			local new_health = math.floor(current_health / current_max_health * desired_max_health)
-			if last_secs ~= secs then
-				new_health = new_health + 20
-			end
-			hRosh:SetHealth(new_health)
-			last_secs = secs
-
-			return 0.001
+		local current_max_health = hRosh:GetMaxHealth()
+		local current_health = hRosh:GetHealth()
+		hRosh:SetBaseMaxHealth(desired_max_health)
+		hRosh:SetMaxHealth(desired_max_health)
+		local new_health = math.floor(current_health / current_max_health * desired_max_health)
+		if Roshan.last_secs ~= twentith then
+			new_health = new_health + 1
 		end
-		return 0.1
-	else
-		return 1
+		hRosh:SetHealth(new_health)
+		Roshan.last_secs = twentith
 	end
 end
