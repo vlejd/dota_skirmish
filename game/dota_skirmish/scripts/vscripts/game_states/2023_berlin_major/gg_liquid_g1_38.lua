@@ -1571,7 +1571,7 @@ local GameState = {
 	},
 	wincon = { 
 		time = 2700-120-2312,
-		default_winner = 2,
+		default_winner = 3,
 	}
   }
 
