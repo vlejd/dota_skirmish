@@ -10,8 +10,16 @@ ALLOW_CUSTOM_SCENARIO = true
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
 INCLUDED_SCENARIOS = {"g_2023_berlin_major_gg_liquid_g1_38"}
 
-DEBUG = true
-SLOW_TIME_FRIENDLY = true
+DEBUG = false
+SLOW_TIME_FRIENDLY = false
 PRINT_DAY_NIGHT = false
 TRACK_ROSHAN = false
 PLAYER_LARGE_VISSIO = false
+
+if not IsInToolsMode() then
+	DEBUG = false
+	SLOW_TIME_FRIENDLY = false
+	PRINT_DAY_NIGHT = false
+	TRACK_ROSHAN = false
+	PLAYER_LARGE_VISSIO = false
+end

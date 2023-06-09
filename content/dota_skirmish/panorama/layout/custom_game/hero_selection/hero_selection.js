@@ -272,10 +272,7 @@ function AddCustomScenarioElement(parent){
 		if(TEXT_FIELD.text.length == 0){
 		} else {
 			const text_raw = TEXT_FIELD.text;
-			const obj = JSON.parse(text_raw);
-			$.Msg(text_raw);
-			$.Msg(obj);
-			RequestScenarioPick(scenario, obj);
+			RequestScenarioPick(scenario, text_raw);
 		}
 	});
 

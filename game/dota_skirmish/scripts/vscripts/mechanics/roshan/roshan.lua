@@ -35,6 +35,9 @@ end
 
 
 function Roshan:OnEntityKilled(keys)
+	if keys == nil then
+		return
+	end
 	local spawnedUnit = EntIndexToHScript(keys.entindex)
 
 	if spawnedUnit then
@@ -46,6 +49,10 @@ end
 
 
 function Roshan:OnNPCSpawned(keys)
+	if keys == nil then
+		return
+	end
+
 	local spawnedUnit = EntIndexToHScript(keys.entindex)
 
 	if spawnedUnit then

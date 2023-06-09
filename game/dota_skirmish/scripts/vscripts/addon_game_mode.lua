@@ -29,6 +29,7 @@ require("creep_reconstruction")
 require("player_recreation")
 require("bots")
 require("day_night")
+require("mechanics/api/utils")
 
 
 

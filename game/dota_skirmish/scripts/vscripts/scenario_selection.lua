@@ -111,6 +111,52 @@ function ScenarioSelection:LockScenario(selected_scenario, fast)
 
 end
 
+function FailState()
+	print("Failstate")
+end
+
+function ScenarioSelection:HandleAccessCode(data)
+	print("RequestScenarioPick data not nill")
+	local endpoint = "get_state_by_code/"..data["data"]
+	print("Senging the request to ", endpoint)
+	
+	function GotState(state)
+		print("Got state")
+		print(state)
+		ScenarioSelection.custom_scenario = state
+		local data = data
+		data["data"] = state
+		ScenarioSelection:ConfirmScenarioSelection(data)
+	
+		print("RequestScenarioPick here")
+		print(ScenarioSelection.scenarios_picked)
+	
+		-- if you want voting, do this: ScenarioSelection.n_players == Util:tablelength(ScenarioSelection.player_picked_scenarios)
+		if not ScenarioSelection.finished then
+			print("all voted on a scenario")
+			-- TODO Finish this stuff (triges)
+			ScenarioSelection:FinishScenarioSelection()
+		end
+	end
+	api:Request(endpoint, GotState, FailState)
+
+	ScenarioSelection.custom_scenario = data["data"]
+	print("ScenarioSelection.custom_scenario")
+	print(ScenarioSelection.custom_scenario)
+	-- TODO fix, this is not an error
+	DisplayError(data.PlayerID, "#dota_hud_error_waiting")
+	print("Waiting for server")
+end
+
+function ScenarioSelection:HandleJsonState(data)
+	print("RequestScenarioPick data not nill")
+	local obj = json.decode(data["data"])
+	ScenarioSelection.custom_scenario = obj
+	print("ScenarioSelection.custom_scenario")
+	print(ScenarioSelection.custom_scenario)
+
+end
+
 function ScenarioSelection:RequestScenarioPick(data)
 	print("RequestScenarioPick")
 	print(ScenarioSelection.player_picked_scenarios)
@@ -121,11 +167,13 @@ function ScenarioSelection:RequestScenarioPick(data)
 	print(data["data"])
 	if data.scenario == "custom" then
 		print("RequestScenarioPick custom")
-		if data["data"]~= nil and Util:tablelength(data)>0 and data["data"]["game"] ~= nil then
-			print("RequestScenarioPick data not nill")
-			ScenarioSelection.custom_scenario = data["data"]
-			print("ScenarioSelection.custom_scenario")
-			print(ScenarioSelection.custom_scenario)
+		if data["data"]~= nil and Util:tablelength(data)>0 then			
+			if data["data"]:sub(1,1) == "{" then
+				ScenarioSelection:HandleJsonState(data)
+			else
+				ScenarioSelection:HandleAccessCode(data)
+				return	-- important, because it is async
+			end
 		else
 			DisplayError(data.PlayerID, "#dota_hud_error_invalid_custom_data")
 			print("Player picked scenario already!")
