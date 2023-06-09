@@ -33,7 +33,7 @@ function Tormentors:Init(spawnTimes, initial_daths)
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	
 	-- TODO get this from state
-	local spawn = math.max(time.skirmishTime-1200, 0) 
+	local spawn = math.max(1200-time.skirmishTime, 0) 
 	spawnTimes = {[DOTA_TEAM_GOODGUYS]=spawn, [DOTA_TEAM_BADGUYS]=spawn} 
 
 	local level = math.max(math.floor((time.skirmishTime-1200)/600), 0) 
