@@ -97,10 +97,28 @@ end
 
 setup_stage = -2
 
+function SkirmishGameMode:PlayerPrinter()
+	print("PlayerPrinter")
+	for teamNum = 0, 3 do
+		local team_count = 0
+		for i = 1, DOUBLE_MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				team_count = team_count + 1
+			end
+		end
+		print(teamNum.." "..team_count)
+	end
+	return 2
+end
+
+
 function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	Util:log_players("WaitForSetup start")
 	if setup_stage == -2 then
+		GameRules:GetGameModeEntity():SetThink("PlayerPrinter", self, "PlayerPrinterThink", 1)
+
 		print("make_screen_dark")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
 		setup_stage = setup_stage+1
