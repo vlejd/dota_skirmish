@@ -55,5 +55,19 @@ function DebugPrint(data){
 	GameEvents.Subscribe( "update_game_time", UpdateTime );	
 	GameEvents.Subscribe( "set_timer_msg", SetTimerMsg );	
 	GameEvents.Subscribe( "debug_print", DebugPrint );	
+	GameEvents.Subscribe( "all_clients_msg", AllClientMsg );	
+	GameEvents.Subscribe( "team_msg", TeamMsg );	
 	
 })();
+
+function AllClientMsg(data){
+	$.Msg("AllClientMsg");
+	$("#GMsgClient").text = "Yes, is client";
+
+}
+
+function TeamMsg(data){
+	$.Msg("TeamMsg", data);
+	$("#GMsgTeam").text = "Team " + data.data;
+	$("#GMsgSpectator").text = "Not a spectator ";	
+}

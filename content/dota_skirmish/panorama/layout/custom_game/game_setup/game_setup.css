@@ -4,6 +4,29 @@
 	width: 100%;
 }
 
+.MsgDBGWrapp
+{
+	flow-children: down;
+	width: 20%;
+	height: 20%;
+	margin-top: 10%;
+	margin-left: 1%;
+	background-color: rgb(0, 0, 0);
+	opacity: 0.2;
+}
+
+.MsgDBG
+{
+	margin-top: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #ffffff;
+	opacity: 1;
+	text-align: left;
+	margin-left: 10px;
+	width: 100%;
+}
+
 #TimerPanels
 {
 	margin-left: 1%;

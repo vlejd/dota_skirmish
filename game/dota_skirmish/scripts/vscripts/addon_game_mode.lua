@@ -113,14 +113,26 @@ function SkirmishGameMode:PlayerPrinter()
 end
 
 
+function SkirmishGameMode:sentMessage()
+	CustomGameEventManager:Send_ServerToAllClients("all_clients_msg", {})
+	CustomGameEventManager:Send_ServerToTeam(0, "team_msg", {data=0})
+	CustomGameEventManager:Send_ServerToTeam(1, "team_msg", {data=1})
+	CustomGameEventManager:Send_ServerToTeam(2, "team_msg", {data=2})
+	CustomGameEventManager:Send_ServerToTeam(3, "team_msg", {data=3})
+	return 1
+end
+
 function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	Util:log_players("WaitForSetup start")
-	if setup_stage == -2 then
-		GameRules:GetGameModeEntity():SetThink("PlayerPrinter", self, "PlayerPrinterThink", 1)
-
+	if setup_stage < 6 then
 		print("make_screen_dark")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
+	end
+	if setup_stage == -2 then
+		GameRules:GetGameModeEntity():SetThink("PlayerPrinter", self, "PlayerPrinterThink", 1)
+		GameRules:GetGameModeEntity():SetThink("sentMessage", self, "sentMessageThink", 1)
+
 		setup_stage = setup_stage+1
 		DayNight:Init(TimeUtils.masterTime)
 		return 0.01

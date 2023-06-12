@@ -13,8 +13,13 @@
 		<Panel class="Timers">
 			<Panel class="GameTimeWrapp">
 				<Label class="GameTimer" id="GameTimerMsg" text="" />
-				<Label class="GameTimer" id="GameTimerId" text="--:--" />
+				<Label class="GameTimer" id="GameTimerId" text="--:--" />				
 			</Panel>
+		</Panel>
+		<Panel class="MsgDBGWrapp">
+				<Label class="MsgDBG" id="GMsgClient" text="Is client" />
+				<Label class="MsgDBG" id="GMsgTeam" text="Is team" />
+				<Label class="MsgDBG" id="GMsgSpectator" text="Spectator" />
 		</Panel>
 		<Panel hittest="true" id="game_setup">
 			<Label class="Loading" id="LoadingDisclaimerTop" text="DONT PRESS ANYTHING!" />
@@ -22,4 +27,5 @@
 			<Label class="Loading" id="LoadingDisclaimerBot" text="DONT PRESS ANYTHING!" />
 		</Panel>	
 	</Panel>
+
 </root>
