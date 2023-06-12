@@ -3,11 +3,13 @@ if Roshan == nil then
 	Roshan.isRoshanDead = true
 	Roshan.last_secs = -1
 	ListenToGameEvent('npc_spawned', Dynamic_Wrap(Roshan, 'OnNPCSpawned'), Roshan)
-	ListenToGameEvent("entity_killed", Dynamic_Wrap(Roshan, "OnEntityKilled"), self)
+	ListenToGameEvent("entity_killed", Dynamic_Wrap(Roshan, "OnEntityKilled"), Roshan)
+	print("Roshan setup")
 
 end
 
 function Roshan:InitialRoshanSetup()
+	print("InitialRoshanSetup")
 	local GameMode = GameRules:GetGameModeEntity()
 	--Roshan:FixRoshanStatsDrops()
 
@@ -29,7 +31,7 @@ function Roshan:InitialRoshanSetup()
 		GameMode:SetThink("Tracker", self, "TrackRoshTinker", 1)
 	end
 
-	GameMode:SetThink("FixRoshanDrops", self, "FixRoshanDropsTinker", 0.1)
+	--GameMode:SetThink("FixRoshanDrops", self, "FixRoshanDropsTinker", 0.1)
 
 end
 
@@ -38,11 +40,27 @@ function Roshan:OnEntityKilled(keys)
 	if keys == nil then
 		return
 	end
-	local spawnedUnit = EntIndexToHScript(keys.entindex)
-
+	local spawnedUnit = EntIndexToHScript(keys.entindex_killed)
 	if spawnedUnit then
 		if spawnedUnit:GetClassname() == "npc_dota_roshan" then
 			GameReader:SetRoshanInfo(GameReader:GetRoshanInfo()["deaths"] + 1)
+			print("Roshan died")
+			print(GameReader:GetWinCondition())
+			if GameReader:GetWinCondition() ~= nil then
+				if GameReader:GetWinCondition().type == "roshan" then
+					if keys.entindex_attacker ~= nil then
+						hAttacker = EntIndexToHScript(keys.entindex_attacker)
+						if hAttacker:GetTeam() == DOTA_TEAM_GOODGUYS or hAttacker:GetTeam() == DOTA_TEAM_BADGUYS then
+							GameRules:ForceGameStart()
+							GameRules:SetGameWinner(hAttacker:GetTeam())
+						else
+							print("Rosh killed by unexpected team")
+						end
+					else
+						print("Rosh killed by unexpected entity")
+					end
+				end
+			end
 		end
 	end
 end
@@ -109,7 +127,6 @@ end
 
 function Roshan:FixRoshanDrops()
 	-- TODO Roshan drops may not work properly because of the conditional drop thingy
-	print("fixing roshan")
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	local mins = math.floor(time.skirmishTime / 60)
 

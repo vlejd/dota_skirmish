@@ -32,7 +32,11 @@ function UpdateTime(data) {
 }
 
 function SetTimerMsg(data){
-	$("#GameTimerMsg").text = data.text + " " + SecToText(data.time);
+	if (data.time){
+		$("#GameTimerMsg").text = data.text + " " + SecToText(data.time);
+	} else {
+		$("#GameTimerMsg").text = data.text;
+	}
 }
 
 function SetLoadingText(data){

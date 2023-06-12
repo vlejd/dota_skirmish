@@ -62,11 +62,17 @@ end
 
 function GameStateRecreationFunctions:SetWinconText()
 	if GameReader:GetWinCondition() ~= nil then
-		local end_time = (
-			TimeUtils.masterTime.skirmishStartTime + 
-			GameReader:GetWinCondition().time)
-		local data = {text = "Ends at", time = end_time }
-		CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
+		if GameReader:GetWinCondition().type == "time" then
+			local end_time = (
+				TimeUtils.masterTime.skirmishStartTime + 
+				GameReader:GetWinCondition().time)
+			local data = {text = "Ends at", time = end_time }
+			CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
+		elseif GameReader:GetWinCondition().type == "roshan" then
+			local data = {text = "Kill Rosh"}
+			CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)			
+		end
+
 	end
 end
 
