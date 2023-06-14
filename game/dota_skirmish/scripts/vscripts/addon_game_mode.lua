@@ -432,14 +432,14 @@ function SkirmishGameMode:UpdateTime()
 		return 1
 	end
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-	local data = {time = time.skirmishTime}
+	local data = {time = time.skirmishTime, isday=GameRules:IsDaytime()}
 	CustomGameEventManager:Send_ServerToAllClients("update_game_time", data)
 	return 0.001 
 end
 
 function SkirmishGameMode:CheckWinCondition()
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-	if GameReader:GetWinCondition() ~= nil then
+	if GameReader:GetWinCondition() ~= nil and GameReader:GetWinCondition()["time"] ~= nil then
 		if time.realGameTime >= GameReader:GetWinTimeCondition() then
 			GameRules:SetGameWinner(GameReader:GetDefaultWinner())
 			return nil

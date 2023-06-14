@@ -28,6 +28,11 @@ function SecToText( seconds ) {
 function UpdateTime(data) {
 	var seconds = data.time;
 	var text = SecToText(seconds);
+	if(data.isday){
+		text = "D " + text;
+	} else {
+		text = "N " + text;
+	}
 	$("#GameTimerId").text = text;
 }
 

@@ -46,6 +46,12 @@ all_scenarios = {
 		description = "Radiant is pushing T3 mid with aegis. Scenario ends at min 43 with Dire as the default winner.",
 		fname = "game_states/2023_berlin_major/gg_liquid_g1_38",
 		img = "states/generic.png"
+	},
+	g_2023_berlin_major_eg_og_g1_52 = {
+		name = "Berlin Major 2023, EG vs OG g1",
+		description = "Who wins the Rosh fight will win the game.",
+		fname = "game_states/2023_berlin_major/eg_og_g1_52",
+		img = "states/generic.png"
 	}
 
 }

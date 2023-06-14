@@ -62,7 +62,6 @@ function modifier_roshan_inherent_buffs_custom:OnStackCountChanged()
 	local stack_count = self:GetStackCount()
 
 	if stack_count ~= self.previousStack then
-		self.previousStack = stack_count
 
 		local bonus_health = self.bonusHealth * stack_count
 		local new_health = self.baseMaxHealth + bonus_health
@@ -70,8 +69,8 @@ function modifier_roshan_inherent_buffs_custom:OnStackCountChanged()
 		self.parent:SetMaxHealth(new_health)
 		self.parent:SetBaseMaxHealth(new_health)
 
-		self.parent:Heal(self.bonusHealth, self.parent)
-		
+		self.parent:Heal(self.bonusHealth*(stack_count-self.previousStack), self.parent)
+		self.previousStack = stack_count
 	end
 end
 

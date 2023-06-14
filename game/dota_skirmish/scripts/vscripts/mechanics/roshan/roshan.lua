@@ -15,6 +15,9 @@ function Roshan:InitialRoshanSetup()
 
 	if GameReader:GetRoshanInfo()["alive"] then
 		local hRosh = Entities:FindByName(nil, "npc_dota_roshan")
+		hRosh:SetInitialGoalEntity(nil)
+		Roshan:PutRoshanBack()
+
 		if GameReader:GetRoshanInfo()["rosh_hp"] ~= nil then
 			hRosh:SetHealth(GameReader:GetRoshanInfo()["rosh_hp"])
 		end
