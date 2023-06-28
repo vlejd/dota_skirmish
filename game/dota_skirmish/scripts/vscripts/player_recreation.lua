@@ -93,23 +93,24 @@ end
 
 
 function PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
-	PrecacheUnitByNameAsync(hero_name, function()
+	-- TODO fix this. It used to be async. now soe decisionms dont make sense
+	--Async(hero_name, function() 
 		local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
-		print("ReplaceWithCorrectHero".. playerID.. " " .. hero_name)
+		print("ReplaceWithCorrectHero ".. playerID.. " " .. hero_name)
 		print(old_hero)
 		print(HeroSelection.heroes_replaced)
 		if old_hero ~= nil then
 			local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
+			print(new_hero)
+			local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
+			print(hHero)
+			--UTIL_Remove(old_hero)
+			
 			HeroSelection.heroes_replaced[hero_name] = true
-			GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
-				if old_hero then
-					UTIL_Remove(old_hero)
-				end
-			end, 1.0)
 		else
 			print("CRITICAL ERROR")
 		end
-	end)
+	--end)
 
 end
 
@@ -130,6 +131,7 @@ function PlayerRecreation:FixUpgrades()
 					end
 					
 					local niceHeroName = heroName:sub(15)
+					print(playerID, teamNum, i)
 					print(heroName.. " " .. niceHeroName)
 					print(hHero)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then

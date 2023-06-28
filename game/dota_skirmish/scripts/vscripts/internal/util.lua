@@ -105,6 +105,7 @@ function Util:log_players(context)
 				ret["hero"] = PlayerResource:GetSelectedHeroName(playerID)
 				ret["steam_id"] = PlayerResource:GetSteamAccountID(playerID)
 				ret["steam_acc_id"] = PlayerResource:GetSteamAccountID(playerID)
+				ret["hHero"] = PlayerResource:GetSelectedHeroEntity(playerID)
 			end
 			print(ret)
 		end
