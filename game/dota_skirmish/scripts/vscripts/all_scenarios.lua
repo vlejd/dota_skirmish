@@ -54,7 +54,7 @@ all_scenarios = {
 		img = "states/generic.png"
 	},
 	g_2023_riyad_masters_liquid_talon_g3 = {
-		name = "Berlin Major 2023, Liquid vs Talon g3",
+		name = "Riyadh Masters 2023, Liquid vs Talon g3",
 		description = "Train how to base race.",
 		fname = "game_states/2023_riyad/liquid_talon_g3",
 		img = "states/generic.png"
