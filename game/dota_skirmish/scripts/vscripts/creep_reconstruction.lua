@@ -236,7 +236,7 @@ function CreepReconstruction:MakeCreeps()
 	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
 		
 		local skip = false
-		local skip_list = {"npc_dota_visage_familiar", "npc_dota_broodmother_web"}
+		local skip_list = {"npc_dota_visage_familiar", "npc_dota_broodmother_web", "npc_dota_broodmother_spiderling"}
 		for _, skip_name in pairs(skip_list) do
 			local find_res = string.find(creepData["name"], skip_name) 
 			if find_res ~= nil then

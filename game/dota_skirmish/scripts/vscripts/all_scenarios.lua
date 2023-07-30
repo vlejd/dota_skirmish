@@ -52,8 +52,13 @@ all_scenarios = {
 		description = "Who wins the Rosh fight will win the game.",
 		fname = "game_states/2023_berlin_major/eg_og_g1_52",
 		img = "states/generic.png"
-	}
-
+	},
+	g_2023_riyad_masters_liquid_talon_g3 = {
+		name = "Berlin Major 2023, Liquid vs Talon g3",
+		description = "Train how to base race.",
+		fname = "game_states/2023_riyad/liquid_talon_g3",
+		img = "states/generic.png"
+	},
 }
 
 return all_scenarios
