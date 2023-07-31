@@ -19,24 +19,21 @@ end
 function DayNight:Init(master_time)
 	DayNight.master_time = master_time
 	GameRules:GetGameModeEntity():SetThink("Thinker", self, "DayNightThink", 0.1)
+	GameRules:GetGameModeEntity():SetThink("PrintDayNight", self, "PrintDayNightThink", 0.1)
 end
 
 function DayNight:Thinker()
 	local time = TimeUtils:GetMasterTime(DayNight.master_time)
-	local should_be_day = (math.mod(math.floor(time.skirmishTime / (5*60)), 2) == 0 ) 
-	local is_day = GameRules:IsDaytime()
-	if PRINT_DAY_NIGHT then
-		print("DayNight cycle", is_day, should_be_day)
-	end
 
-	if is_day ~= should_be_day then
-		SendToServerConsole("dota_daynightcycle_toggle")
-		if DayNight.first_change then
-			DayNight.first_change = false
-			return 1
-		else
-			return 60*4+50
-		end
+	-- 150 is there to add 2.5 min to the time. 
+	-- Time of day works in a way where 0.25 is the start of a day, and 0.75 is the end of a day.
+	-- I suspect this is to make it easier witht the pre game time. still, WTF valve... 
+	local time_of_day = ((time.skirmishTime+150) / (10*60))  
+	local time_fraction = time_of_day-math.floor(time_of_day)
+
+	GameRules:SetTimeOfDay(time_fraction)
+	if PRINT_DAY_NIGHT then
+		print("Daynight state", time_fraction, GameRules:GetTimeOfDay(), GameRules:IsDaytime())
 	end
-	return 1	
+	return 1
 end

@@ -8,7 +8,7 @@ START_WITH_PAUSE = true
 CLIENT_PRINT = false
 ALLOW_CUSTOM_SCENARIO = true
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
-INCLUDED_SCENARIOS = {"g_2023_riyad_masters_liquid_talon_g3"}
+INCLUDED_SCENARIOS = {"g_2023_riyad_masters_liquid_talon_g3", "g_2023_berlin_major_eg_og_g1_52"}
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false
