@@ -1,9 +1,21 @@
-# Overview
-Trade places with pros in the most clutch situations! Relive the glory of the pro fight. Could you break that highround? Snatch that aegis? Win that game?
+# Not maintained
+Because of Valves approach to game monetization (as of 2023-08-06), this project is no longer maintained. 
+More info:
+ - [https://www.reddit.com/r/DotA2/comments/15i6sai/valve_lawyers_sent_out_emails_to_dota_2_custom/]
+ - [https://www.reddit.com/r/DotA2/comments/15j6l8l/the_dota_2_arcade_situation_w_sunsfan_jenkins/]
+
+If you are an org that would like to fund this, let us know at our discord server.
 
 
 # Dota 2 Skirmish
-Dota mod for reproducing interesting in-game scenarios. Pretty much an attempt to reimplement replay takeover with limited games.
+
+Recreate any situation inside Dota 2 lobby. 
+ - Play only 5 min late game teamfight instead of a full 40 min game.
+ - Improve at high level objectives: rosh fights, highground pushing, team fights, base racing,
+ - Find the best strategy for any situation.
+ - Train the same moment until perfection.
+
+It is a Dota 2 Mod (arcade game, custom game) for reproducing interesting in-game scenarios. Pretty much an attempt to reimplement replay takeover.
 Game state is receovered using this fork of [redota](https://github.com/timkurvers/redota): [https://github.com/vlejd/redota](https://github.com/vlejd/redota)
 
 
@@ -11,30 +23,4 @@ Game state is receovered using this fork of [redota](https://github.com/timkurve
 - Join the discord: [https://discord.com/invite/pNTKs38mDp](https://discord.com/invite/pNTKs38mDp)
 - Workshop mod submission: [https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333](https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333)
 - This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
-- Issues: https://github.com/vlejd/dota_skirmish_issues
 
-# Games
-- Liquid vs CH Fighters group stage 74th min, 6080190774: https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333
-- OG vs VP game 2 group stage 42nd min, 6213144598: https://steamcommunity.com/sharedfiles/filedetails/?id=2622200533
-- Secret vs Elephant game 1 group stage 53rd min, 6214179880: https://steamcommunity.com/sharedfiles/filedetails/?id=2623874668
-- Aster vs T1 game 1 group stage 40th min, 6214919117: https://steamcommunity.com/sharedfiles/filedetails/?id=2623932473
-- LGD vs fnatic game 1 group stage 32:29, 6213829716: https://steamcommunity.com/sharedfiles/filedetails/?id=2625655651
-- T1 vs psg lgd game 2 47:29, 6220754493  https://steamcommunity.com/sharedfiles/filedetails/?id=2627767069
-- spirit vs IG game 2 27:29 6225461282 https://steamcommunity.com/sharedfiles/filedetails/?id=2628286945
-
-- placeholders: 
-- https://steamcommunity.com/sharedfiles/filedetails/?id=2628286264
-- https://steamcommunity.com/sharedfiles/filedetails/?id=2628286713
-- https://steamcommunity.com/sharedfiles/filedetails/?id=2628286945
-
-- spirit vs LGD game 1 28:29 6227105229 https://steamcommunity.com/sharedfiles/filedetails/?id=2631571743
-- spirit vs LGD game 2 19:29 6227203516 https://steamcommunity.com/sharedfiles/filedetails/?id=2632273378
-- spirit vs LGD game 3 25:29 6227305557 https://steamcommunity.com/sharedfiles/filedetails/?id=2631314858
-- spirit vs LGD game 4 20:59 6227419633 https://steamcommunity.com/sharedfiles/filedetails/?id=2632686984
-- spirit vs LGD game 5 20:29 6227492909 https://steamcommunity.com/sharedfiles/filedetails/?id=2630861259
-
-- final dev: https://steamcommunity.com/sharedfiles/filedetails/?id=2651790718
-- final final: https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333
-
-# Help wanted!
-There is a ton of things need to be added. Check issues. 
