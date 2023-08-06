@@ -25,6 +25,19 @@ There is an accompanying website dota2skirmish.com , where you can make an accou
 - Workshop mod submission: [https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333](https://steamcommunity.com/sharedfiles/filedetails/?id=2575815333)
 - This repo: [https://github.com/vlejd/dota_skirmish](https://github.com/vlejd/dota_skirmish)
 
+# For modders
+
+If you are a modder, there is a few interesting things we had to reimplement that you can find here:
+- Modular roshan with controlled time scaling
+- Modular tormentor with controlled time scaling
+- Run spawning systen
+- Neutral item dropping
+- Lane creep spawning aand scaling
+- Completely custom hero selection process
+- A bunch of random hacks, because Dota has "awesome" API
+
+In the code you may also find a lot of sadness, despair, frustration and ocasional curse words. Godspeed. 
+
 
 # Shoutout
 Send some love to: moddota.com . This is a bunch of the most dedicated people I have seen in a while. They work in the worst software development environment I have ever seen, but they still move forward.
