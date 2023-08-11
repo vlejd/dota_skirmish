@@ -18,7 +18,7 @@ Recreate any situation inside Dota 2 lobby.
 
 It is a Dota 2 Mod (arcade game, custom game) for reproducing interesting in-game scenarios. Pretty much an attempt to reimplement replay takeover.
 Game state is receovered using this fork of [redota](https://github.com/timkurvers/redota): [https://github.com/vlejd/redota](https://github.com/vlejd/redota). Huge shoutout!
-There is an accompanying website dota2skirmish.com , where you can make an account, and extract the game satate from any replay you want.
+There is an accompanying website dota2skirmish.com , where you can make an account, and extract the game state from any replay you want.
 
 # Links
 - Join the discord: [https://discord.com/invite/pNTKs38mDp](https://discord.com/invite/pNTKs38mDp)
@@ -30,9 +30,9 @@ There is an accompanying website dota2skirmish.com , where you can make an accou
 If you are a modder, there is a few interesting things we had to reimplement that you can find here:
 - Modular roshan with controlled time scaling
 - Modular tormentor with controlled time scaling
-- Run spawning systen
+- Rune spawning systen
 - Neutral item dropping
-- Lane creep spawning aand scaling
+- Lane creep spawning and scaling
 - Completely custom hero selection process
 - A bunch of random hacks, because Dota has "awesome" API
 
