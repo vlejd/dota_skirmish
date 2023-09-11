@@ -442,3 +442,35 @@
 	font-size: 15px;
 	color: #1fa03b;
 }
+
+#DashboardButton {
+	width: 32px;
+	height: 32px;
+	background-size: contain;
+	transform: scaleY(-1);
+	vertical-align: top;
+	wash-color: #444A55;
+	margin-left: 14px;
+	margin-top: 12px;
+	transition-property: opacity;
+	transition-duration: 0.2s;
+}
+
+#SettingsButton {
+	width: 32px;
+	height: 32px;
+	background-size: 27px;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	vertical-align: top;
+	wash-color: #444A55;
+	margin-left: 62px;
+	margin-top: 13px;
+	transition-property: opacity;
+	transition-duration: 0.2s;
+}
+
+#HeaderCenter {
+	margin-top: 20px;
+	align: center center;
+}

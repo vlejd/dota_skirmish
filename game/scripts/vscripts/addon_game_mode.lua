@@ -33,7 +33,7 @@ require("mechanics/api/utils")
 
 
 
-LinkLuaModifier("modifier_eidolons_splitting","mechanics/modifier_eidolons_splitting",LUA_MODIFIER_MOTION_NONE)
+LinkLuaModifier("modifier_eidolons_splitting", "mechanics/modifier_eidolons_splitting", LUA_MODIFIER_MOTION_NONE)
 
 function Precache(context)
 	PrecacheResource("model", "*.vmdl", context)
@@ -63,6 +63,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled(true)
 	-- GameRules:GetGameModeEntity():SetCustomGameForceHero("npc_dota_hero_wisp") -- Disable vanilla hero selection
 	GameRules:SetCreepSpawningEnabled(false)
+	GameRules:GetGameModeEntity():SetPauseEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	HeroSelection:ListenToHeroPick()
@@ -73,17 +74,14 @@ function SkirmishGameMode:InitGameMode()
 	-- GameRules:SetCustomGameTeamMaxPlayers(1, 10)
 	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, DOUBLE_MAX_PLAYERS)
 	-- GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, DOUBLE_MAX_PLAYERS)
-
 end
 
 function Spawn()
-	local gameModeEnt = GameRules:GetGameModeEntity()	
+	local gameModeEnt = GameRules:GetGameModeEntity()
 	print("spawn")
 	GameRules:SetCustomGameTeamMaxPlayers(1, 10)
 	GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 5)
 	GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 5)
-
-
 end
 
 function SkirmishGameMode:ReportLoadingProgress(loading_text)
@@ -94,7 +92,6 @@ function SkirmishGameMode:ReportLoadingProgress(loading_text)
 	CustomGameEventManager:Send_ServerToAllClients("set_loading_text", data)
 end
 
-
 setup_stage = -2
 
 function SkirmishGameMode:WaitForSetup()
@@ -103,7 +100,7 @@ function SkirmishGameMode:WaitForSetup()
 	if setup_stage == -2 then
 		print("make_screen_dark")
 		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
-		setup_stage = setup_stage+1
+		setup_stage = setup_stage + 1
 		DayNight:Init(TimeUtils.masterTime)
 		return 0.01
 	elseif setup_stage == -1 then
@@ -116,7 +113,6 @@ function SkirmishGameMode:WaitForSetup()
 			print("Hero selection not ended yet")
 			return 1.
 		end
-
 	elseif setup_stage == 0 then
 		SkirmishGameMode:ReportLoadingProgress("Mastering time")
 		GameRules:GetGameModeEntity():SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
@@ -130,12 +126,10 @@ function SkirmishGameMode:WaitForSetup()
 		GameStateRecreationFunctions:FixWards()
 		SkirmishGameMode:ReportLoadingProgress("Neutralizing items")
 		NeutralItems:Setup(TimeUtils.masterTime)
-		
+
 		setup_stage = setup_stage + 1
-		return 0.01 
-
+		return 0.01
 	elseif setup_stage == 1 then
-
 		SkirmishGameMode:ReportLoadingProgress("Stealing neutral items")
 		GameStateRecreationFunctions:FixNeutralCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Summoning Roshan")
@@ -152,20 +146,19 @@ function SkirmishGameMode:WaitForSetup()
 		GameStateRecreationFunctions:SetWinconText()
 
 		setup_stage = setup_stage + 1
-		return 0.01 
+		return 0.01
 	elseif setup_stage == 2 then
 		setup_stage = setup_stage + 1
-		return 0.01 
+		return 0.01
 	elseif setup_stage == 3 then
-
 		local num_players = SkirmishGameMode:LoadedHeroes()
 		local num_disconnects = SkirmishGameMode:NumDisconnects()
 		local num_handles = SkirmishGameMode:NumValidPlayerHandles()
-		
+
 		local msg = (
-			"Loaded players "..num_players.."/10 \n".. 
-			"Initialized players: "..num_handles .. "/10 \n"..
-			"Disconnects: "..num_disconnects .. "\n"..
+			"Loaded players " .. num_players .. "/10 \n" ..
+			"Initialized players: " .. num_handles .. "/10 \n" ..
+			"Disconnects: " .. num_disconnects .. "\n" ..
 			""
 		)
 
@@ -181,23 +174,21 @@ function SkirmishGameMode:WaitForSetup()
 			return 0.01
 		end
 
-		return 0.01 
+		return 0.01
 	elseif setup_stage == 4 then
 		SkirmishGameMode:ReportLoadingProgress("Spawning correct heroes")
 		local replaced = Util:tablelength(HeroSelection.heroes_replaced)
 		print(replaced)
 		print(HeroSelection.heroes_replaced)
 		if replaced < 10 then
-			print("waiting for hero replacements "..replaced)
+			print("waiting for hero replacements " .. replaced)
 			return 1
 		else
 			print("all heroes replaced")
 			setup_stage = setup_stage + 1
 			return 0.01
 		end
-
 	elseif setup_stage == 5 then
-
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		PlayerRecreation:FixUpgrades();
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
@@ -214,8 +205,7 @@ function SkirmishGameMode:WaitForSetup()
 		GameStateRecreationFunctions:FixNeutralItems()
 
 		setup_stage = setup_stage + 1
-		return 0.01 
-
+		return 0.01
 	elseif setup_stage == 6 then
 		local data = {}
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
@@ -223,22 +213,24 @@ function SkirmishGameMode:WaitForSetup()
 		print("master time")
 		print(TimeUtils:GetMasterTime(TimeUtils.masterTime))
 
+		GameRules:GetGameModeEntity():SetPauseEnabled(true)
+
 		if START_WITH_PAUSE then
 			PauseGame(true)
 		end
+
 		setup_stage = setup_stage + 1
+
 		return 5
-		
 	elseif setup_stage == 7 then
 		GameStateRecreationFunctions:SetGlyphCooldowns()
 		setup_stage = setup_stage + 1
 		return nil
 	else
-		print("Unexpected state: setup_stage "..setup_stage)
+		print("Unexpected state: setup_stage " .. setup_stage)
 		return nil
 	end
 end
-
 
 local next_minute = nil
 
@@ -264,7 +256,7 @@ function SkirmishGameMode:NumDisconnects()
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then				 
+			if playerID ~= nil and playerID ~= -1 then
 				local state = PlayerResource:GetConnectionState(playerID)
 				if state == DOTA_CONNECTION_STATE_DISCONNECTED then
 					num_players = num_players + 1
@@ -275,13 +267,12 @@ function SkirmishGameMode:NumDisconnects()
 	return num_players
 end
 
-
 function SkirmishGameMode:NumValidPlayerHandles()
 	local num_players = 0
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		for i = 1, MAX_PLAYERS do
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then				 
+			if playerID ~= nil and playerID ~= -1 then
 				local hPlayer = PlayerResource:GetPlayer(playerID)
 				if hPlayer ~= nil then
 					num_players = num_players + 1
@@ -292,9 +283,8 @@ function SkirmishGameMode:NumValidPlayerHandles()
 	return num_players
 end
 
-
 function SkirmishGameMode:OnStateChange()
-	print("state change "..GameRules:State_Get())
+	print("state change " .. GameRules:State_Get())
 	Util:log_players("OnStateChange start")
 
 	if false then
@@ -307,19 +297,16 @@ function SkirmishGameMode:OnStateChange()
 		-- SkirmishGameMode:MakeEveryoneRadiant()
 		SkirmishGameMode:SetHumanPlayersCount()
 		ScenarioSelection:StartScenarioSelection(TriggerStartHeroSelection, SkirmishGameMode.num_human_players)
-
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_STRATEGY_TIME then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_TEAM_SHOWCASE then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_MAP_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_PRE_GAME then
 		local data = {}
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
-
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 	end
 end
-
 
 function TriggerStartHeroSelection(fast)
 	SkirmishGameMode:InitializeTime()
@@ -335,8 +322,8 @@ function OnHeroSelectionEndWithoutDiscnonects()
 		local num_handles = SkirmishGameMode:NumValidPlayerHandles()
 
 		if num_disconnects > 0 or num_handles < SkirmishGameMode.num_human_players then
-			print("Can not end hero selection, disconnects "..num_disconnects)
-			print("Can not end hero selection, num_handles "..num_handles)
+			print("Can not end hero selection, disconnects " .. num_disconnects)
+			print("Can not end hero selection, num_handles " .. num_handles)
 			return 1
 		else
 			print("All players connected to end hero selection")
@@ -354,7 +341,7 @@ function OnHeroSelectionEnd()
 	-- make hero to player id mapping
 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, DOUBLE_MAX_PLAYERS do  -- CHECK: SUPER_MAX_PLAYERS
+		for i = 1, DOUBLE_MAX_PLAYERS do -- CHECK: SUPER_MAX_PLAYERS
 			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
 			if playerID ~= nil and playerID ~= -1 then
 				if PlayerResource:HasSelectedHero(playerID) then
@@ -370,11 +357,11 @@ function OnHeroSelectionEnd()
 	print(SkirmishGameMode.random_hero_to_playerID)
 	print(HeroSelection.player_to_hero)
 
-	
+
 	if CAN_PICK_FROM_OTHER_TEAM then
 		print("reasigning teams")
 		-- reassign teams based on current hero => player id => desired hero => desired team
-		-- TODO, test if this changes the playerID 
+		-- TODO, test if this changes the playerID
 		local need_fix = true
 		while need_fix do
 			print("need_fix")
@@ -387,11 +374,11 @@ function OnHeroSelectionEnd()
 							local selected_hero = PlayerResource:GetSelectedHeroName(playerID)
 							local original_playerID = SkirmishGameMode.random_hero_to_playerID[selected_hero]
 							local desired_hero = HeroSelection.player_to_hero[original_playerID]
-							print(playerID.." "..original_playerID.." "..desired_hero)
+							print(playerID .. " " .. original_playerID .. " " .. desired_hero)
 							local desired_team = GameReader:GetHeroTeam(desired_hero)
 							local current_team = PlayerResource:GetTeam(playerID)
 							if (desired_team ~= current_team) then
-								print("player needs team fix "..playerID)
+								print("player needs team fix " .. playerID)
 								need_fix = true
 								PlayerResource:SetCustomTeamAssignment(playerID, desired_team)
 							end
@@ -432,9 +419,9 @@ function SkirmishGameMode:UpdateTime()
 		return 1
 	end
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
-	local data = {time = time.skirmishTime, isday=GameRules:IsDaytime()}
+	local data = { time = time.skirmishTime, isday = GameRules:IsDaytime() }
 	CustomGameEventManager:Send_ServerToAllClients("update_game_time", data)
-	return 0.001 
+	return 0.001
 end
 
 function SkirmishGameMode:CheckWinCondition()
@@ -472,10 +459,10 @@ function SkirmishGameMode:SetHumanPlayersCount()
 	SkirmishGameMode.num_human_players = num_human_players
 	SkirmishGameMode.n_good_players = n_good_players
 	SkirmishGameMode.n_bad_players = n_bad_players
-	
+
 	if not num_human_players == n_good_players + n_bad_players then
 		print("CRITICAL ERROR, num_human_players does not addd up")
-		print(num_human_players.." "..n_good_players.." "..n_bad_players)
+		print(num_human_players .. " " .. n_good_players .. " " .. n_bad_players)
 	end
 
 	-- spectators
@@ -491,13 +478,11 @@ function SkirmishGameMode:SetHumanPlayersCount()
 	end
 	SkirmishGameMode.num_spectators = num_spectators
 
-	print("SetHumanPlayersCount human players "..SkirmishGameMode.num_human_players)
-	print("SetHumanPlayersCount original good players "..SkirmishGameMode.n_good_players)
-	print("SetHumanPlayersCount original bad players "..SkirmishGameMode.n_bad_players)
-	print("SetHumanPlayersCount spectators "..SkirmishGameMode.num_spectators)
+	print("SetHumanPlayersCount human players " .. SkirmishGameMode.num_human_players)
+	print("SetHumanPlayersCount original good players " .. SkirmishGameMode.n_good_players)
+	print("SetHumanPlayersCount original bad players " .. SkirmishGameMode.n_bad_players)
+	print("SetHumanPlayersCount spectators " .. SkirmishGameMode.num_spectators)
 end
-
-
 
 function SkirmishGameMode:InitializeTime()
 	print("InitializeTime")

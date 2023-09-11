@@ -19,7 +19,7 @@ function PlayerRecreation:itterPlayers()
 			if playerID ~= nil and playerID ~= -1 then
 				local data = {
 					playerID = playerID,
-					i = i, 
+					i = i,
 					team = teamNum,
 				}
 				table.insert(ret, data)
@@ -29,9 +29,8 @@ function PlayerRecreation:itterPlayers()
 	return ret
 end
 
-
 function PlayerRecreation:FindDesiredHeroForBot(teamNum)
-	print("Finding hero for bot on team ".. teamNum)
+	print("Finding hero for bot on team " .. teamNum)
 	print(HeroSelection.heroes_picked)
 	-- it is a bot
 	local available_heroes = {}
@@ -42,10 +41,9 @@ function PlayerRecreation:FindDesiredHeroForBot(teamNum)
 		end
 	end
 	local desired_hero_name = Util:getRandomValueFromArray(available_heroes)
-	print("Finding hero for bot on team ".. teamNum.."  desired_hero_name")
+	print("Finding hero for bot on team " .. teamNum .. "  desired_hero_name")
 	return desired_hero_name
 end
-
 
 function PlayerRecreation:SpawnDesiredHeroes(random_hero_to_playerID)
 	print("SpawnDesiredHeroes")
@@ -65,7 +63,6 @@ function PlayerRecreation:SpawnDesiredHeroes(random_hero_to_playerID)
 	return nil
 end
 
-
 function PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
 	local i = data["i"]
 	local playerID = data["playerID"]
@@ -82,38 +79,35 @@ function PlayerRecreation:SpawnDesiredHeroSingle(random_hero_to_playerID, data)
 		print(desired_hero_name)
 		HeroSelection.heroes_picked[desired_hero_name] = true
 	else
-		print("this is not a bot ".. teamNum.. " " .. i.. " " .. playerID.. " " .. original_playerID)
+		print("this is not a bot " .. teamNum .. " " .. i .. " " .. playerID .. " " .. original_playerID)
 		desired_hero_name = HeroSelection.player_to_hero[original_playerID]
 	end
 	local hero_name = "npc_dota_hero_" .. desired_hero_name
 
 	PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
-
 end
-
 
 function PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
-	-- TODO fix this. It used to be async. now soe decisionms dont make sense
-	--Async(hero_name, function() 
-		local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
-		print("ReplaceWithCorrectHero ".. playerID.. " " .. hero_name)
-		print(old_hero)
-		print(HeroSelection.heroes_replaced)
-		if old_hero ~= nil then
-			local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
-			print(new_hero)
-			local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
-			print(hHero)
-			--UTIL_Remove(old_hero)
-			
-			HeroSelection.heroes_replaced[hero_name] = true
-		else
-			print("CRITICAL ERROR")
-		end
-	--end)
+	local old_hero = PlayerResource:GetSelectedHeroEntity(playerID)
+	print("ReplaceWithCorrectHero " .. playerID .. " " .. hero_name)
+	print(old_hero)
+	print(HeroSelection.heroes_replaced)
 
+	if old_hero ~= nil then
+		local new_hero = PlayerResource:ReplaceHeroWith(playerID, hero_name, 0, 0)
+		print(new_hero)
+		local hHero = PlayerResource:GetSelectedHeroEntity(playerID)
+		print(hHero)
+		--UTIL_Remove(old_hero)
+
+		PrecacheUnitByNameAsync(hero_name, function()
+		end)
+
+		HeroSelection.heroes_replaced[hero_name] = true
+	else
+		print("CRITICAL ERROR")
+	end
 end
-
 
 function PlayerRecreation:FixUpgrades()
 	print("fixing upgrades")
@@ -129,10 +123,10 @@ function PlayerRecreation:FixUpgrades()
 						hHero:SetDayTimeVisionRange(1000000)
 						hHero:SetNightTimeVisionRange(100000)
 					end
-					
+
 					local niceHeroName = heroName:sub(15)
 					print(playerID, teamNum, i)
-					print(heroName.. " " .. niceHeroName)
+					print(heroName .. " " .. niceHeroName)
 					print(hHero)
 					if GameReader:GetHeroInfo(niceHeroName) ~= nil then
 						local heroData = GameReader:GetHeroInfo(niceHeroName)
@@ -176,7 +170,6 @@ function PlayerRecreation:FixUpgrades()
 	end
 end
 
-
 function PlayerRecreation:FixPlayers()
 	print("fixing players")
 
@@ -207,11 +200,11 @@ function PlayerRecreation:spawnCurier(playerID, heroData)
 	GameRules:GetGameModeEntity():SetContextThink(DoUniqueString("delay_ui_creation"), function()
 		local hPlayer = PlayerResource:GetPlayer(playerID)
 		if hPlayer == nil then
-			print("waiting disconnected player".. playerID)
+			print("waiting disconnected player" .. playerID)
 			return 1
 		end
-	
-		-- TODO add items to courier. 
+
+		-- TODO add items to courier.
 		if heroData["team"] == DOTA_TEAM_GOODGUYS then
 			hPlayer:SpawnCourierAtPosition(Vector(-7071, -6625, 128))
 		elseif heroData["team"] == DOTA_TEAM_BADGUYS then
@@ -251,19 +244,18 @@ function PlayerRecreation:FixHero(heroData, hHero)
 				hItem:SetCurrentCharges(item["charges"])
 				hItem:EndCooldown()
 				hItem:StartCooldown(item["cooldown"] + 0.0)
-				hItem:SetLevel(item["level"]+0.0)
+				hItem:SetLevel(item["level"] + 0.0)
 				hItem:SetPurchaseTime(item["acquire_time"])
 			end
 		else
 			if NeutralItems:IsItemNeutral(item) then
-				print("AddNeutralItemToHero ".. heroData["name"].. " " .. item)
+				print("AddNeutralItemToHero " .. heroData["name"] .. " " .. item)
 				NeutralItems:AddNeutralItemToHero(hHero, item)
 				hHero:AddItemByName(item)
 			else
 				hHero:AddItemByName(item)
 			end
 		end
-
 	end
 
 	local entityIndex = hHero:GetEntityIndex()
@@ -280,13 +272,13 @@ function PlayerRecreation:FixHero(heroData, hHero)
 		end
 	end
 
-	print("cooldown ".. heroData["name"].." "..Util:tablelength(heroData["cooldowns"]))
+	print("cooldown " .. heroData["name"] .. " " .. Util:tablelength(heroData["cooldowns"]))
 	print(heroData["cooldowns"])
 	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
 		if type(cooldown_index) == "string" then
-			cooldown_index = tonumber(cooldown_index)+1  -- TODO what the hell is happening here?!?!
+			cooldown_index = tonumber(cooldown_index) + 1      -- TODO what the hell is happening here?!?!
 		end
-		local hAbility = hHero:GetAbilityByIndex(cooldown_index-1) -- starts from 0!
+		local hAbility = hHero:GetAbilityByIndex(cooldown_index - 1) -- starts from 0!
 		print(cooldown_index, hAbility)
 		if hAbility ~= nil then
 			hAbility:EndCooldown()
@@ -295,7 +287,7 @@ function PlayerRecreation:FixHero(heroData, hHero)
 		end
 	end
 
-	print("is_dead".." ".. tostring(heroData["is_dead"]).." ".. type(heroData["is_dead"]))
+	print("is_dead" .. " " .. tostring(heroData["is_dead"]) .. " " .. type(heroData["is_dead"]))
 	if Util:CastToBool(heroData["is_dead"]) then
 		hHero:ForceKill(true)
 		hHero:SetTimeUntilRespawn(heroData["respawn_time"])
@@ -315,8 +307,8 @@ function PlayerRecreation:FixHero(heroData, hHero)
 	if heroData["mana"] ~= nil then
 		hHero:SetMana(heroData["mana"])
 	end
-	
-	if heroData["buyback_cooldown"] ~= nil and heroData["buyback_cooldown"] ~=0 then
+
+	if heroData["buyback_cooldown"] ~= nil and heroData["buyback_cooldown"] ~= 0 then
 		hHero:SetBuybackCooldownTime(heroData["buyback_cooldown"])
 	end
 
@@ -328,4 +320,3 @@ function PlayerRecreation:FixHero(heroData, hHero)
 		end
 	end
 end
-

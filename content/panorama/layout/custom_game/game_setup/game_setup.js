@@ -52,7 +52,17 @@ function DebugPrint(data){
 	$.Msg("jsd ", data["level"], " ", data["trace"], " ", data["line"], " ", data["name"], " ", data["content"]);
 }
 
+function OverrideVanillaUI() {
+	const GameTimeParent = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("GameTime");
+
+	if (GameTimeParent) {
+		GameTimeParent.style.opacity = 0;
+	}
+}
+
 (function () {
+	OverrideVanillaUI();
+
 	//Subscribe to events
 	GameEvents.Subscribe( "make_screen_dark", MakeScreenDark );
 	GameEvents.Subscribe( "make_screen_not_dark", MakeScreenNotDark );
@@ -60,5 +70,4 @@ function DebugPrint(data){
 	GameEvents.Subscribe( "update_game_time", UpdateTime );	
 	GameEvents.Subscribe( "set_timer_msg", SetTimerMsg );	
 	GameEvents.Subscribe( "debug_print", DebugPrint );	
-	
 })();

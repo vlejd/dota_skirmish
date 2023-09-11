@@ -340,9 +340,32 @@ function FinishScenratioSelection(data) {
 }
 // Scenario selection end
 
+function OverrideVanillaUI() {
+	const parent = $("#CustomTopBar");
+
+	if (parent) {
+		const dashboard = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("DashboardButton");
+		const settings = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("SettingsButton");
+		const header = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("HeaderCenter");
+
+		if (dashboard)
+			dashboard.SetParent(parent);
+
+		if (settings)
+			settings.SetParent(parent);
+
+		if (header) {
+			header.SetParent(parent);
+			header.FindChildTraverse("GameModeLabel").text = $.Localize("#addon_game_name");
+		}
+	}
+}
+
 (function () {
 	//Subscribe to events
 	$.Msg("hero_selection subscribe");
+
+	OverrideVanillaUI();
 
 	GameEvents.Subscribe( "generate_hero_ui", GenerateHeroUI );
 	GameEvents.Subscribe( "activation_done", DrawHeroSelectionUI );
