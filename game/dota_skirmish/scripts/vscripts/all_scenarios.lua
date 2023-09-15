@@ -58,6 +58,12 @@ all_scenarios = {
 		description = "Train how to base race.",
 		fname = "game_states/2023_riyad/liquid_talon_g3",
 		img = "states/generic.png"
+	},	
+	m_seb = {
+		name = "OG vs PSG.LGD",
+		description = "CEEEEEEEEEB.",
+		fname = "game_states/og_historic/ceb",
+		img = "states/generic.png"
 	},
 }
 

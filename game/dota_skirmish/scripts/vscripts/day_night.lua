@@ -19,7 +19,7 @@ end
 function DayNight:Init(master_time)
 	DayNight.master_time = master_time
 	GameRules:GetGameModeEntity():SetThink("Thinker", self, "DayNightThink", 0.1)
-	GameRules:GetGameModeEntity():SetThink("PrintDayNight", self, "PrintDayNightThink", 0.1)
+	-- GameRules:GetGameModeEntity():SetThink("PrintDayNight", self, "PrintDayNightThink", 0.1)
 end
 
 function DayNight:Thinker()

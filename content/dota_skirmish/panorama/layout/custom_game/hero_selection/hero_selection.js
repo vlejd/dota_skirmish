@@ -300,7 +300,7 @@ function GenerateScenarioUI(data) {
 	
 	if (data.settings.ALLOW_CUSTOM_SCENARIO){
 		var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
-		AddPassElement(parent);	
+		//AddPassElement(parent);	
 		AddCustomScenarioElement(parent);
 	}
 }
