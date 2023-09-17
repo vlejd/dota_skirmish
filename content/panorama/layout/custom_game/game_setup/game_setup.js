@@ -28,11 +28,11 @@ function SecToText( seconds ) {
 function UpdateTime(data) {
 	var seconds = data.time;
 	var text = SecToText(seconds);
-	if(data.isday){
-		text = "D " + text;
-	} else {
-		text = "N " + text;
-	}
+	// if(data.isday){
+	// 	text = "D " + text;
+	// } else {
+	// 	text = "N " + text;
+	// }
 	$("#GameTimerId").text = text;
 }
 
@@ -53,10 +53,41 @@ function DebugPrint(data){
 }
 
 function OverrideVanillaUI() {
-	const GameTimeParent = $.GetContextPanel().GetParent().GetParent().GetParent().FindChildTraverse("GameTime");
+	const VanillaParent = $.GetContextPanel().GetParent().GetParent().GetParent();
+	const GameTimeParent = VanillaParent.FindChildTraverse("GameTime");
 
 	if (GameTimeParent) {
 		GameTimeParent.style.opacity = 0;
+	}
+
+	const RadiantTeamInfo = VanillaParent.FindChildTraverse("TopBarRadiantTeamInfo");
+
+	if (RadiantTeamInfo) {
+		RadiantTeamInfo.style.visibility = "visible";
+
+		const RadiantTeamImage = RadiantTeamInfo.FindChildTraverse("RadiantTeamImage");
+
+		if (RadiantTeamImage) {
+			RadiantTeamImage.style.visibility = "visible";
+			RadiantTeamImage.style.backgroundImage = "url('file://{images}/teams/team_unknown_web.png')";
+			RadiantTeamImage.style.backgroundSize = "cover";
+			RadiantTeamImage.style.backgroundPosition = "0% 80%";
+		}
+	}
+
+	const DireTeamInfo = VanillaParent.FindChildTraverse("TopBarDireTeamInfo");
+
+	if (DireTeamInfo) {
+		DireTeamInfo.style.visibility = "visible";
+
+		const DireTeamImage = DireTeamInfo.FindChildTraverse("DireTeamImage");
+
+		if (DireTeamImage) {
+			DireTeamImage.style.visibility = "visible";
+			DireTeamImage.style.backgroundImage = "url('file://{images}/teams/team_unknown_web.png')";
+			DireTeamImage.style.backgroundSize = "cover";
+			DireTeamImage.style.backgroundPosition = "0% 80%";
+		}
 	}
 }
 

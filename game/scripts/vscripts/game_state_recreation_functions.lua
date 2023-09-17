@@ -13,7 +13,7 @@ end
 
 -- AddThinkers ?!?!?!
 
--- ## BUILDINGS ## -- 
+-- ## BUILDINGS ## --
 
 function GameStateRecreationFunctions:FixBuildings()
 	print("fixing buildlings")
@@ -41,7 +41,7 @@ function GameStateRecreationFunctions:FixOutposts()
 	end
 end
 
--- ## NEUTRAL ITEMS IN STASH ## -- 
+-- ## NEUTRAL ITEMS IN STASH ## --
 
 function GameStateRecreationFunctions:FixNeutralItems()
 	print("fixing neutral items")
@@ -57,22 +57,20 @@ function GameStateRecreationFunctions:FixNeutralItems()
 	print(NeutralItems.neutral_items_in_game)
 end
 
-
 -- ## WIN CON TEXT ## --
 
 function GameStateRecreationFunctions:SetWinconText()
 	if GameReader:GetWinCondition() ~= nil then
 		if GameReader:GetWinCondition().type == "time" then
 			local end_time = (
-				TimeUtils.masterTime.skirmishStartTime + 
+				TimeUtils.masterTime.skirmishStartTime +
 				GameReader:GetWinCondition().time)
-			local data = {text = "Ends at", time = end_time }
+			local data = { text = "Ends at", time = end_time }
 			CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
 		elseif GameReader:GetWinCondition().type == "roshan" then
-			local data = {text = "Kill Rosh"}
-			CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)			
+			local data = { text = "Kill Rosh" }
+			CustomGameEventManager:Send_ServerToAllClients("set_timer_msg", data)
 		end
-
 	end
 end
 
@@ -108,7 +106,6 @@ function GameStateRecreationFunctions:FixFirstBlood()
 		print("first blood active")
 		GameRules:SetFirstBloodActive(true)
 	end
-
 end
 
 -- ## NEUTRAL CREEPS ## --
@@ -116,27 +113,26 @@ end
 function GameStateRecreationFunctions:FixNeutralCreeps()
 	GameRules:SpawnNeutralCreeps()
 	-- neutralcamp_good_8
-	
+
 	for i = 1, 10, 1 do
 		-- camps are evil vs good vs bad. omggg
-		local spawner_name = "neutralcamp_evil_"..i
+		local spawner_name = "neutralcamp_evil_" .. i
 		local spawner = Entities:FindByName(nil, spawner_name)
 		print("spawner", spawner_name, spawner)
 		if spawner ~= nil then
 			--spawner.SpawnNextBatch(false)
 		end
 	end
-
 end
 
 -- ## RUNES ## --
 function GameStateRecreationFunctions:FixRunes()
 	print("Fixing runes")
 	local gameModeEnt = GameRules:GetGameModeEntity()
-	gameModeEnt:SetUseDefaultDOTARuneSpawnLogic(false)		-- true = river runes spawn at 2:00, all runes. false = required to disable runes, they start at 0:00
+	gameModeEnt:SetUseDefaultDOTARuneSpawnLogic(false) -- true = river runes spawn at 2:00, all runes. false = required to disable runes, they start at 0:00
 
 	local rune_state = false
-	gameModeEnt:SetRuneEnabled(DOTA_RUNE_DOUBLEDAMAGE , rune_state)
+	gameModeEnt:SetRuneEnabled(DOTA_RUNE_DOUBLEDAMAGE, rune_state)
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_HASTE, rune_state)
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_ILLUSION, rune_state)
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_INVISIBILITY, rune_state)
@@ -147,16 +143,15 @@ function GameStateRecreationFunctions:FixRunes()
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_XP, rune_state)
 	gameModeEnt:SetRuneEnabled(DOTA_RUNE_SHIELD, rune_state)
 
-		-- gameModeEnt:ClearRuneSpawnFilter()
-		-- gameModeEnt:SetBountyRuneSpawnInterval()
-		-- gameModeEnt:SetPowerRuneSpawnInterval()
-		-- gameModeEnt:SetNextBountyRuneSpawnTime()
-		-- gameModeEnt:SetNextRuneSpawnTime()
+	-- gameModeEnt:ClearRuneSpawnFilter()
+	-- gameModeEnt:SetBountyRuneSpawnInterval()
+	-- gameModeEnt:SetPowerRuneSpawnInterval()
+	-- gameModeEnt:SetNextBountyRuneSpawnTime()
+	-- gameModeEnt:SetNextRuneSpawnTime()
 
 	gameModeEnt:SetThink("RuneSpawner", self, "RuneSpawnerGlobalThink", 0.1)
 
 	ListenToGameEvent('dota_rune_activated_server', Dynamic_Wrap(GameStateRecreationFunctions, "OnRuneActivated"), self)
-
 end
 
 function GameStateRecreationFunctions:RuneSpawner()
@@ -193,8 +188,8 @@ function GameStateRecreationFunctions:RuneSpawner()
 		Entities:FindAllByName("dota_item_rune_spawner_powerup")
 
 		-- spawn new runes
-		local rune_options = {DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
-                        DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE, DOTA_RUNE_SHIELD}
+		local rune_options = { DOTA_RUNE_DOUBLEDAMAGE, DOTA_RUNE_HASTE, DOTA_RUNE_ILLUSION, DOTA_RUNE_INVISIBILITY,
+			DOTA_RUNE_REGENERATION, DOTA_RUNE_ARCANE, DOTA_RUNE_SHIELD }
 		local power_rune_spawners = Entities:FindAllByName("dota_item_rune_spawner_powerup")
 		local spawner = Util:getRandomValueFromArray(power_rune_spawners)
 		local rune_type = Util:getRandomValueFromArray(rune_options)
@@ -223,7 +218,6 @@ function GameStateRecreationFunctions:RuneSpawner()
 end
 
 function GameStateRecreationFunctions:OnRuneActivated(keys)
-
 	print("OnRuneActivated", keys.PlayerID, keys.rune)
 	local hero = PlayerResource:GetPlayer(keys.PlayerID):GetAssignedHero()
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
@@ -232,9 +226,9 @@ function GameStateRecreationFunctions:OnRuneActivated(keys)
 		print("XP rune", time.gameTimeNegative, time.realGameTime, time.skirmishTime)
 		local multiplier = 280
 
-		local game_xp = math.max(0, math.floor(time.gameTimeNegative/(7*60))) * multiplier
-		local desired_xp = math.floor(time.skirmishTime/(7*60)) * multiplier
-		local xp_to_be_added =  desired_xp - game_xp
+		local game_xp = math.max(0, math.floor(time.gameTimeNegative / (7 * 60))) * multiplier
+		local desired_xp = math.floor(time.skirmishTime / (7 * 60)) * multiplier
+		local xp_to_be_added = desired_xp - game_xp
 		print(game_xp, desired_xp, xp_to_be_added)
 
 		hero:AddExperience(xp_to_be_added, DOTA_ModifyXP_CreepKill, false, true)
@@ -243,7 +237,6 @@ function GameStateRecreationFunctions:OnRuneActivated(keys)
 		SendOverheadEventMessage(PlayerResource:GetPlayer(hero:GetPlayerOwnerID()), OVERHEAD_ALERT_XP, hero, xp_to_be_added, nil)
 	end
 end
-
 
 -- ## WARDS ## --
 function GameStateRecreationFunctions:FixWards()
@@ -268,10 +261,8 @@ function GameStateRecreationFunctions:FixWards()
 				true_sight_range = 900
 			})
 			print(kill_buff, ward_buff, sentry_buff)
-
 		else
 			print("Unexpected ward type", ward["type"])
 		end
-
 	end
 end
