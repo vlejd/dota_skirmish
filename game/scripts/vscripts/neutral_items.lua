@@ -1,8 +1,8 @@
 -- stuff from here: https://dota2.fandom.com/wiki/Neutral_Items and here: https://github.com/SteamDatabase/GameTracking-Dota2/blob/master/game/dota/pak01_dir/scripts/npc/neutral_items.txt
 -- load file with timing
 -- hook on every death of neutral creep
--- if time for neutral item, and conditions are met, 
--- GetPotentialNeutralItemDrop and drop it. 
+-- if time for neutral item, and conditions are met,
+-- GetPotentialNeutralItemDrop and drop it.
 require("internal/util")
 require("time_utils")
 
@@ -10,13 +10,13 @@ require("time_utils")
 if NeutralItems == nil then
 	NeutralItems = class({})
 	NeutralItems.neutral_items_in_game = {
-		good = {{}, {}, {}, {}, {}},
-		bad = {{}, {}, {}, {}, {}}
+		good = { {}, {}, {}, {}, {} },
+		bad = { {}, {}, {}, {}, {} }
 	}
-	NeutralItems.NEUTRAL_ITEMS = {{},{},{},{},{}}
+	NeutralItems.NEUTRAL_ITEMS = { {}, {}, {}, {}, {} }
 end
 
-DROP_TIMES = {7, 17, 27, 37, 60}
+DROP_TIMES = { 7, 17, 27, 37, 60 }
 
 
 
@@ -56,7 +56,7 @@ function NeutralItems:AddNeutralItemToHero(hHero, item)
 		local team = hHero:GetTeam()
 		local team_str = GetTeamString(team)
 		table.insert(NeutralItems.neutral_items_in_game[team_str][item_tier], item)
-		print(NeutralItems.neutral_items_in_game)
+		-- print(NeutralItems.neutral_items_in_game)
 		return true
 	else
 		print("Adding invalid neutral item to hero")
@@ -92,7 +92,7 @@ function NeutralItems:IsItemNeutral(query_item)
 	end
 	if string.sub(query_item, 1, 9) == "item_tier" and string.sub(query_item, 11, 17) == "_token" then
 		print("neutral token")
-		return true		
+		return true
 	end
 
 	return false
@@ -120,28 +120,25 @@ function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
 		return nil
 	end
 
-	return "item_tier"..tier.."_token"
+	return "item_tier" .. tier .. "_token"
 end
 
 function NeutralItems:Setup(master_time)
 	NeutralItems.master_time = master_time
 	ListenToGameEvent("entity_killed", Dynamic_Wrap(self, "OnEntityKilled"), self)
 	local NeutralKV = LoadKeyValues("scripts/npc/npc_neutral_items_custom.txt")
-	for i, tier in pairs({"1", "2", "3", "4", "5"}) do
+	for i, tier in pairs({ "1", "2", "3", "4", "5" }) do
 		print(i, tier)
 		local tier_data = NeutralKV[tier]
 		for item, val in pairs(tier_data["items"]) do
 			if val ~= 1 then
-				print("ERROR invalid neutral item KV "..item.." has value "..val)
+				print("ERROR invalid neutral item KV " .. item .. " has value " .. val)
 			else
 				table.insert(NeutralItems.NEUTRAL_ITEMS[i], item)
 			end
-
 		end
 	end
-
 end
-
 
 function NeutralItems:OnEntityKilled(event)
 	local hVictim = nil
@@ -219,11 +216,10 @@ function NeutralItems:OnEntityKilled(event)
 	-- TODO readjust drop probabilities
 	-- TODO support old items
 	-- check drop conditions
-	-- attacker is near, and it is not an illusion 750radius 
+	-- attacker is near, and it is not an illusion 750radius
 	-- attacker not channeling TP or boots
 	-- no enemy hero is near
 	-- The team of the unit is neutral
 	-- check drop probability (is ancient, triple the probability)
 	-- drop the item
 end
-

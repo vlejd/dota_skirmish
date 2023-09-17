@@ -232,14 +232,14 @@ function PlayerRecreation:FixHero(heroData, hHero)
 
 	for _, item in pairs(heroData["items"] or {}) do
 		if type(item) == "table" then
-			print("Complex item")
+			-- print("Complex item")
 			local item_name = item["name"]
 
 			if NeutralItems:IsItemNeutral(item_name) then
 				NeutralItems:AddNeutralItemToHero(hHero, item_name)
 			end
 			local hItem = hHero:AddItemByName(item_name)
-			print(hItem)
+			-- print(hItem)
 			if hItem then
 				hItem:SetCurrentCharges(item["charges"])
 				hItem:EndCooldown()
@@ -249,7 +249,7 @@ function PlayerRecreation:FixHero(heroData, hHero)
 			end
 		else
 			if NeutralItems:IsItemNeutral(item) then
-				print("AddNeutralItemToHero " .. heroData["name"] .. " " .. item)
+				-- print("AddNeutralItemToHero " .. heroData["name"] .. " " .. item)
 				NeutralItems:AddNeutralItemToHero(hHero, item)
 				hHero:AddItemByName(item)
 			else
@@ -272,22 +272,22 @@ function PlayerRecreation:FixHero(heroData, hHero)
 		end
 	end
 
-	print("cooldown " .. heroData["name"] .. " " .. Util:tablelength(heroData["cooldowns"]))
-	print(heroData["cooldowns"])
+	-- print("cooldown " .. heroData["name"] .. " " .. Util:tablelength(heroData["cooldowns"]))
+	-- print(heroData["cooldowns"])
 	for cooldown_index, cooldown_value in pairs(heroData["cooldowns"]) do
 		if type(cooldown_index) == "string" then
 			cooldown_index = tonumber(cooldown_index) + 1      -- TODO what the hell is happening here?!?!
 		end
 		local hAbility = hHero:GetAbilityByIndex(cooldown_index - 1) -- starts from 0!
-		print(cooldown_index, hAbility)
+		-- print(cooldown_index, hAbility)
 		if hAbility ~= nil then
 			hAbility:EndCooldown()
-			print(cooldown_value)
+			-- print(cooldown_value)
 			hAbility:StartCooldown(cooldown_value + 0.0)
 		end
 	end
 
-	print("is_dead" .. " " .. tostring(heroData["is_dead"]) .. " " .. type(heroData["is_dead"]))
+	-- print("is_dead" .. " " .. tostring(heroData["is_dead"]) .. " " .. type(heroData["is_dead"]))
 	if Util:CastToBool(heroData["is_dead"]) then
 		hHero:ForceKill(true)
 		hHero:SetTimeUntilRespawn(heroData["respawn_time"])
@@ -314,7 +314,7 @@ function PlayerRecreation:FixHero(heroData, hHero)
 
 	if heroData["buffs"] ~= nil then
 		for _, buff_data in pairs(heroData["buffs"]) do
-			print(buff_data)
+			-- print(buff_data)
 			local buff = hHero:AddNewModifier(hero_entity, nil, buff_data["name"], {})
 			buff:SetStackCount(buff_data["stacks"])
 		end

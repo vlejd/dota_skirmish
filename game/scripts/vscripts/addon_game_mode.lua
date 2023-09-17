@@ -98,8 +98,8 @@ function SkirmishGameMode:WaitForSetup()
 	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
 	Util:log_players("WaitForSetup start")
 	if setup_stage == -2 then
-		print("make_screen_dark")
-		CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
+		-- print("make_screen_dark")
+		-- CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
 		setup_stage = setup_stage + 1
 		DayNight:Init(TimeUtils.masterTime)
 		return 0.01

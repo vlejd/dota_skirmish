@@ -47,21 +47,20 @@ function Util:CastToBool(something)
 		return something == 1
 	end
 	if type(something) == "string" then
-		return something ~=""
+		return something ~= ""
 	end
-	
 end
 
 function Util:fixPosition(poz)
-	print("fixPosition")
-	print(type(poz))
-	print(poz)
-	if type(poz) == "userdata" then  -- hope this is Vector
+	-- print("fixPosition")
+	-- print(type(poz))
+	-- print(poz)
+	if type(poz) == "userdata" then -- hope this is Vector
 		print("udata")
 		return poz
 	end
 	if type(poz) == "table" then
-		print("table")
+		-- print("table")
 		if poz["0"] then
 			if Util:tablelength(poz) == 2 then
 				return Vector(poz["0"], poz["1"])
@@ -69,7 +68,7 @@ function Util:fixPosition(poz)
 				return Vector(poz["0"], poz["1"], poz["2"])
 			else
 				print("ERROR invalid vector")
-				return Vector(100,100)
+				return Vector(100, 100)
 			end
 		else
 			if Util:tablelength(poz) == 2 then
@@ -78,36 +77,34 @@ function Util:fixPosition(poz)
 				return Vector(poz[1], poz[2], poz[3])
 			else
 				print("ERROR invalid vector")
-				return Vector(100,100)
+				return Vector(100, 100)
 			end
 		end
-		
 	end
 end
 
 function Util:log_players(context)
-
-	print(context)
-	local ret = {}
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		for i = 1, MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			ret = {
-				team = teamNum,
-				i = i, 
-				playerID = playerID,
-			}
-			if playerID ~= nil and playerID ~= -1 then
-				local hPlayer = PlayerResource:GetPlayer(playerID)
-				ret["hPlayer"] = hPlayer
-				ret["player_name"] = PlayerResource:GetPlayerName(playerID)
-				ret["has_hero"] = PlayerResource:HasSelectedHero(playerID)
-				ret["hero"] = PlayerResource:GetSelectedHeroName(playerID)
-				ret["steam_id"] = PlayerResource:GetSteamAccountID(playerID)
-				ret["steam_acc_id"] = PlayerResource:GetSteamAccountID(playerID)
-				ret["hHero"] = PlayerResource:GetSelectedHeroEntity(playerID)
-			end
-			print(ret)
-		end
-	end
+	-- print(context)
+	-- local ret = {}
+	-- for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+	-- 	for i = 1, MAX_PLAYERS do
+	-- 		local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+	-- 		ret = {
+	-- 			team = teamNum,
+	-- 			i = i,
+	-- 			playerID = playerID,
+	-- 		}
+	-- 		if playerID ~= nil and playerID ~= -1 then
+	-- 			local hPlayer = PlayerResource:GetPlayer(playerID)
+	-- 			ret["hPlayer"] = hPlayer
+	-- 			ret["player_name"] = PlayerResource:GetPlayerName(playerID)
+	-- 			ret["has_hero"] = PlayerResource:HasSelectedHero(playerID)
+	-- 			ret["hero"] = PlayerResource:GetSelectedHeroName(playerID)
+	-- 			ret["steam_id"] = PlayerResource:GetSteamAccountID(playerID)
+	-- 			ret["steam_acc_id"] = PlayerResource:GetSteamAccountID(playerID)
+	-- 			ret["hHero"] = PlayerResource:GetSelectedHeroEntity(playerID)
+	-- 		end
+	-- 		print(ret)
+	-- 	end
+	-- end
 end

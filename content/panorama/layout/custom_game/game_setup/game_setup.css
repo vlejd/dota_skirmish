@@ -86,9 +86,92 @@
 {
 	vertical-align: center; 
 	horizontal-align: center; 
-	width: 50%; 
-	height: 50%; 
-	background-color: #000000FF;
-	visibility: collapse;
-	opacity: 0;	
+	opacity: 1;
+	transition-property: opacity;
+	transition-duration: 0.18s;
+	transition-timing-function: ease-in-out;
+}
+
+#game_setup.ready
+{
+	opacity: 1;
+}
+
+#game_setup.hide
+{
+	opacity: 0;
+}
+
+.AddonLoadingTitle {
+	align: center top;
+}
+
+.AddonLoadingTitleText {
+	align: center top;
+	text-transform: uppercase;
+	font-size: 18px;
+	color: #cccccc;
+	text-shadow: 2px 2px 2px #000000;
+
+	margin: 10px;
+}
+
+.AddonLoadingPlayerContainer {
+	align: center center;
+	background-color: #000000;
+	border-radius: 10px;
+	flow-children: down;
+}
+
+#PlayerContainer {
+	flow-children: down;
+}
+
+.AddonLoadingPlayer {
+	align: center center;
+	margin: 10px;
+	flow-children: right;
+}
+
+.AddonLoadingPlayerAvatar {
+	width: 40px;
+	height: 40px;
+	background-color: black;
+}
+
+.AddonLoadingPlayerName {
+	min-width: 200px;
+	margin-left: 10px;
+
+	/* Label */
+	font-size: 16px;
+	color: #cccccc;
+	text-shadow: 2px 2px 2px #000000;
+
+	align: center center;
+}
+
+.AddonLoadingPlayerStatus {
+	min-width: 100px;
+	margin-left: 10px;
+
+	font-size: 16px;
+	color: #cccccc;
+	text-shadow: 2px 2px 2px #000000;
+
+	align: center center;
+}
+
+.ready .AddonLoadingPlayerStatus {
+	color: #0e5a0e;
+}
+
+.failed .AddonLoadingPlayerStatus {
+	color: #b11818;
+}
+
+.AddonLoadingPlayerHero {
+	width: 60px;
+	height: 30px;
+	background-color: black;
 }

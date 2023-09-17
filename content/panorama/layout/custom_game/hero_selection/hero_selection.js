@@ -230,11 +230,10 @@ function AddPassElement(parent){
 
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
 	imgContainer.SetImage("file://{resources}/imgs/pass_icon.png");
-	
 
 	scenario_button.SetPanelEvent("onmouseover", function () {
-		$.Msg("hover");
-		$.Msg(scenario);
+		// $.Msg("hover");
+		// $.Msg(scenario);
 		//$('#ScenarioImg').SetImage("file://{resources}/imgs/"+img);
 		//$('#ScenarioDescriptionTxt').text = "pass on scenario voting";
 	})
@@ -261,8 +260,8 @@ function AddCustomScenarioElement(parent){
 	imgContainer.SetImage("file://{resources}/imgs/image_15.png");
 	
 	scenario_button.SetPanelEvent("onmouseover", function () {
-		$.Msg("hover");
-		$.Msg(scenario);
+		// $.Msg("hover");
+		// $.Msg(scenario);
 	});
 
 	scenario_button.SetPanelEvent("onactivate", function () {
@@ -293,7 +292,7 @@ function AddPredefinedScenarios(data) {
 }
 
 function GenerateScenarioUI(data) {
-	$.Msg("GenerateScenarioUI");
+	// $.Msg("GenerateScenarioUI");
 
 	AddPredefinedScenarios(data.screnarios);
 	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
