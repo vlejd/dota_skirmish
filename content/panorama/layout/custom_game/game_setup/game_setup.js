@@ -89,6 +89,25 @@ function OverrideVanillaUI() {
 			DireTeamImage.style.backgroundPosition = "0% 80%";
 		}
 	}
+
+	const main_parent = $.GetContextPanel().GetParent().GetParent().GetParent();
+	const button_parent = main_parent.FindChildTraverse("ButtonBar");
+	const parent = main_parent.FindChildTraverse("CustomTopBar");
+
+	if (main_parent && button_parent && parent) {
+		const dashboard = parent.FindChildTraverse("DashboardButton");
+		const settings = parent.FindChildTraverse("SettingsButton");
+
+		if (settings) {
+			settings.SetParent(button_parent);
+			button_parent.MoveChildBefore(settings, button_parent.GetChild(0));
+		}
+
+		if (dashboard) {
+			dashboard.SetParent(button_parent);
+			button_parent.MoveChildBefore(dashboard, button_parent.GetChild(0));
+		}
+	}
 }
 
 function GeneratePlayerStatusUI() {

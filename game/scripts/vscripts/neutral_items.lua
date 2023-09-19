@@ -108,8 +108,8 @@ function TableContains(table, element)
 end
 
 function NeutralItems:GetPotentialNeutralItemDrop(tier, team)
-	print("GetPotentialNeutralItemDrop", tier, team)
-	print(NeutralItems.neutral_items_in_game)
+	-- print("GetPotentialNeutralItemDrop", tier, team)
+	-- print(NeutralItems.neutral_items_in_game)
 	local possible_drops = {}
 	local team_str = GetTeamString(team)
 	if team_str == nil then

@@ -22,7 +22,7 @@
 	</snippets>
 
 
-	<Panel hittest="false" style="width: 100%; height: 100%;">
+	<Panel hittest="false" hittestchildren="false" style="width: 100%; height: 100%;">
 		<Panel class="Timers">
 			<Panel class="GameTimeWrapp">
 				<Label class="GameTimer" id="GameTimerMsg" text="" />
