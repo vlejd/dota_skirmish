@@ -61,7 +61,7 @@
 			<Panel id="CustomTopBar" hittest="true" style="width:100%; height: 100%; horizontal-align:left; background-color: #00000000;">
 				<Panel id="LogoWrapper" hittest="true">
 					<Image class="Logo" src="file://{resources}/imgs/logo.png" style="width:75px; height:75px; vertical-align:center;margin-left:120px;"/>
-					<Label id="SkirmishName" text="Dota 2 but TI 2022" style="vertical-align:center; font-size:22px; margin-left:7px; color:#FFFFFF;" />
+					<Label id="SkirmishName" text="Dota 2 but Skirmish" style="vertical-align:center; font-size:22px; margin-left:7px; color:#FFFFFF;" />
 				</Panel>
 			</Panel>
 		</Panel>
@@ -105,7 +105,7 @@
 				</Panel>
 			</Panel>
 			
-			<Label id="Version" text="Version: 2023_07_31_1605" />
+			<Label id="Version" text="Version: 2023_09_23_2248" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/pass_icon.png" style="width:0px; height:0px;"/>
