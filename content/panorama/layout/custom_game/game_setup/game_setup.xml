@@ -1,0 +1,42 @@
+<root>
+	<!-- Include stylesheets -->
+	<styles>
+		<include src="file://{resources}/layout/custom_game/game_setup/game_setup.css" />
+	</styles>
+
+	<!-- Include script files -->
+	<scripts>
+		<include src="file://{resources}/layout/custom_game/game_setup/game_setup.js" />
+	</scripts>
+
+	<snippets>
+		<snippet name="PlayerContainer">
+			<Panel class="AddonLoadingPlayer">
+				<DOTAAvatarImage class="AddonLoadingPlayerAvatar" id="PlayerAvatar" />
+				<Label class="AddonLoadingPlayerName" id="PlayerName" />
+				<DOTAHeroImage class="AddonLoadingPlayerHero" id="PlayerHero" />
+				<Label class="AddonLoadingPlayerName" id="PlayerHeroName" />
+				<Label class="AddonLoadingPlayerStatus" id="PlayerStatus" />
+			</Panel>
+		</snippet>
+	</snippets>
+
+
+	<Panel hittest="false" hittestchildren="false" style="width: 100%; height: 100%;">
+		<Panel class="Timers">
+			<Panel class="GameTimeWrapp">
+				<Label class="GameTimer" id="GameTimerMsg" text="" />
+				<Label class="GameTimer" id="GameTimerId" text="--:--" />
+			</Panel>
+		</Panel>
+
+		<Panel id="game_setup" class="AddonLoadingPlayerContainer">
+			<Panel class="AddonLoadingTitle">
+				<Label class="AddonLoadingTitleText" id="TitleText" text="#loading_screen_player_status_text" />
+			</Panel>
+
+			<!-- Players are added dynamically through JS -->
+			<Panel id="PlayerContainer"/>
+		</Panel>
+	</Panel>
+</root>

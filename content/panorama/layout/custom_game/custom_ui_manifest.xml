@@ -1,0 +1,39 @@
+<root> 
+	<scripts>
+<!--	<include src="file://{resources}/scripts/util.js" /> -->
+	</scripts>
+
+	<script>
+			// These lines set up the panorama colors used by each team (for game select/setup, etc)
+			GameUI.CustomUIConfig().team_colors = {}
+			GameUI.CustomUIConfig().team_colors[1] = "#400040;";
+			GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_GOODGUYS] = "#004080;";
+			GameUI.CustomUIConfig().team_colors[DOTATeam_t.DOTA_TEAM_BADGUYS ] = "#802020;";
+
+			var hudElements = $.GetContextPanel().GetParent().GetParent().FindChildTraverse("HUDElements")
+			// hudElements.FindChildTraverse("topbar").FindChildTraverse("GameTime").style.visibility = "collapse";
+
+			GameEvents.Subscribe("CreateIngameErrorMessage", function(data) {
+				GameEvents.SendEventClientSide("dota_hud_error_message", 
+				{
+					"splitscreenplayer": 0,
+					"reason": data.reason || 80,
+					"message": data.message
+				})
+			})
+			GameUI.CustomUIConfig().team_select = {
+				"bShowSpectatorTeam" : true
+			};
+
+			var Parent = $.GetContextPanel().GetParent().GetParent();
+			var PreGame = Parent.FindChildTraverse("PreGame");
+
+			if (PreGame)
+				PreGame.visible = false;
+	</script> 
+
+	<Panel>
+		<CustomUIElement type="HeroSelection" layoutfile="file://{resources}/layout/custom_game/hero_selection/hero_selection.xml" />
+		<CustomUIElement type="Hud" layoutfile="file://{resources}/layout/custom_game/game_setup/game_setup.xml" />
+	</Panel>
+</root>
