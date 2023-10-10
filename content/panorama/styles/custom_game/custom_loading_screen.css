@@ -5,3 +5,13 @@
 	background-size: cover;
 	background-image: url("file://panorama/imgs/loading_screen_bg.png");
 }
+
+.SpectatorLabel {
+	color: #FFFFFF;
+	font-size: 40px;
+	font-weight: bold;
+	text-align: center;
+	align: center center;
+
+	visibility: collapse;
+}

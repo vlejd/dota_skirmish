@@ -4,9 +4,12 @@
 		<include src="file://{resources}/styles/custom_game/custom_loading_screen.css"/>
 	</styles>
 
-	<!-- <scripts>
+	<scripts>
 		<include src="file://{resources}/scripts/custom_game/custom_loading_screen.js"/>
-	</scripts> -->
+	</scripts>
 
-	<Panel class="addon-root"/>
+	<Panel class="addon-root">
+		<!-- Label to inform spectators they can not watch the game -->
+		<Label id="SpectatorLabel" class="SpectatorLabel" text="#DOTA_SpectatorLabel" />
+	</Panel>
 </root>
