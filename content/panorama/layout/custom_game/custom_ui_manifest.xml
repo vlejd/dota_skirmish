@@ -31,14 +31,6 @@
 			if (PreGame)
 				PreGame.visible = false;
 
-			if (Game.IsInToolsMode()) {
-				const team_parent = $.GetContextPanel().GetParent().GetParent().FindChildTraverse("TeamSelectContainer");
-
-				if (team_parent) {
-					team_parent.visible = false;
-				}
-			}
-
 			const ConnectionClock = Parent.FindChildTraverse("ConnectionClock");
 
 			if (ConnectionClock) {

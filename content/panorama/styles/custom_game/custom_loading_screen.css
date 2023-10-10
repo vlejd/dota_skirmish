@@ -8,10 +8,12 @@
 
 .SpectatorLabel {
 	color: #FFFFFF;
-	font-size: 40px;
+	font-size: 60px;
 	font-weight: bold;
 	text-align: center;
 	align: center center;
+	background-color: #000000da;
+	padding: 10px;
 
 	visibility: collapse;
 }
