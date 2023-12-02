@@ -236,7 +236,12 @@ function CreepReconstruction:MakeCreeps()
 	for _, creepData in pairs(GameReader:GetCreepsInfo() or {}) do
 		
 		local skip = false
-		local skip_list = {"npc_dota_visage_familiar", "npc_dota_broodmother_web", "npc_dota_broodmother_spiderling"}
+		local skip_list = {
+			"npc_dota_visage_familiar", "npc_dota_broodmother_web", "npc_dota_broodmother_spiderling", 
+			"npc_dota_techies_land_mine", "npc_dota_beastmaster_hawk_2", "npc_dota_necronomicon_archer"}
+			-- none of these units have the correct abilities
+			-- npc_dota_beastmaster_hawk_2 breaks the game :(
+			-- npc_dota_necronomicon_archer needs a number at the end _1
 		for _, skip_name in pairs(skip_list) do
 			local find_res = string.find(creepData["name"], skip_name) 
 			if find_res ~= nil then
@@ -251,6 +256,12 @@ function CreepReconstruction:MakeCreeps()
 			
 			local cPoz = Util:fixPosition(creepData["position"])
 			local hCreep = CreateUnitByName(creepData["name"], cPoz, true, nil, nil, creepData["team"])
+			if hCreep == nil then
+				print(creepData)
+				print(cPoz)
+				print(creepData["name"])
+			end
+
 
 			if creepData["health"] ~= nil then
 				hCreep:SetHealth(creepData["health"])
