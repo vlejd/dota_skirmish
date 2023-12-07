@@ -5,6 +5,7 @@ if SkirmishGameMode == nil then
 	SkirmishGameMode.random_hero_to_playerID = {}
 	SkirmishGameMode.hero_selection_ended = false
 	SkirmishGameMode.human_player_names = {}
+	SkirmishGameMode.setup_stage = -2
 end
 
 
@@ -65,6 +66,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetCreepSpawningEnabled(false)
 	GameRules:GetGameModeEntity():SetPauseEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+	ListenToGameEvent("player_reconnected", Dynamic_Wrap(self, "HideLoadingElement"), self)
 
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
@@ -92,28 +94,27 @@ function SkirmishGameMode:ReportLoadingProgress(loading_text)
 	CustomGameEventManager:Send_ServerToAllClients("set_loading_text", data)
 end
 
-setup_stage = -2
 
 function SkirmishGameMode:WaitForSetup()
-	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. setup_stage)
+	print("SkirmishGameMode:WaitForSetup " .. GameRules:State_Get() .. "  " .. SkirmishGameMode.setup_stage)
 	Util:log_players("WaitForSetup start")
-	if setup_stage == -2 then
+	if SkirmishGameMode.setup_stage == -2 then
 		-- print("make_screen_dark")
 		-- CustomGameEventManager:Send_ServerToAllClients("make_screen_dark", {})
-		setup_stage = setup_stage + 1
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 		DayNight:Init(TimeUtils.masterTime)
 		return 0.01
-	elseif setup_stage == -1 then
+	elseif SkirmishGameMode.setup_stage == -1 then
 		SkirmishGameMode:ReportLoadingProgress("Waiting for hero selection")
 		if SkirmishGameMode.hero_selection_ended then
 			print("Hero selection ended")
-			setup_stage = 0
+			SkirmishGameMode.setup_stage = 0
 			return 0.01
 		else
 			print("Hero selection not ended yet")
 			return 1.
 		end
-	elseif setup_stage == 0 then
+	elseif SkirmishGameMode.setup_stage == 0 then
 		SkirmishGameMode:ReportLoadingProgress("Mastering time")
 		GameRules:GetGameModeEntity():SetThink("UpdateTime", self, "UpdateTimeGlobalThink", 0.1)
 		SkirmishGameMode:ReportLoadingProgress("Planting flowers")
@@ -127,9 +128,9 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Neutralizing items")
 		NeutralItems:Setup(TimeUtils.masterTime)
 
-		setup_stage = setup_stage + 1
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 		return 0.01
-	elseif setup_stage == 1 then
+	elseif SkirmishGameMode.setup_stage == 1 then
 		SkirmishGameMode:ReportLoadingProgress("Stealing neutral items")
 		GameStateRecreationFunctions:FixNeutralCreeps()
 		SkirmishGameMode:ReportLoadingProgress("Summoning Roshan")
@@ -145,12 +146,12 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Making sure you can win")
 		GameStateRecreationFunctions:SetWinconText()
 
-		setup_stage = setup_stage + 1
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 		return 0.01
-	elseif setup_stage == 2 then
-		setup_stage = setup_stage + 1
+	elseif SkirmishGameMode.setup_stage == 2 then
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 		return 0.01
-	elseif setup_stage == 3 then
+	elseif SkirmishGameMode.setup_stage == 3 then
 		local num_players = SkirmishGameMode:LoadedHeroes()
 		local num_disconnects = SkirmishGameMode:NumDisconnects()
 		local num_handles = SkirmishGameMode:NumValidPlayerHandles()
@@ -170,12 +171,12 @@ function SkirmishGameMode:WaitForSetup()
 		else
 			print("players loaded")
 			PlayerRecreation:SpawnDesiredHeroes(SkirmishGameMode.random_hero_to_playerID)
-			setup_stage = setup_stage + 1
+			SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 			return 0.01
 		end
 
 		return 0.01
-	elseif setup_stage == 4 then
+	elseif SkirmishGameMode.setup_stage == 4 then
 		SkirmishGameMode:ReportLoadingProgress("Spawning correct heroes")
 		local replaced = Util:tablelength(HeroSelection.heroes_replaced)
 		print(replaced)
@@ -185,10 +186,10 @@ function SkirmishGameMode:WaitForSetup()
 			return 1
 		else
 			print("all heroes replaced")
-			setup_stage = setup_stage + 1
+			SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 			return 0.01
 		end
-	elseif setup_stage == 5 then
+	elseif SkirmishGameMode.setup_stage == 5 then
 		SkirmishGameMode:ReportLoadingProgress("Scolding Aghanim")
 		PlayerRecreation:FixUpgrades();
 		SkirmishGameMode:ReportLoadingProgress("Massaging players")
@@ -204,12 +205,11 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")
 		GameStateRecreationFunctions:FixNeutralItems()
 
-		setup_stage = setup_stage + 1
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 		return 0.01
-	elseif setup_stage == 6 then
-		local data = {}
+	elseif SkirmishGameMode.setup_stage == 6 then
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
-		CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
+		SkirmishGameMode:HideLoadingElement()
 		print("master time")
 		print(TimeUtils:GetMasterTime(TimeUtils.masterTime))
 
@@ -219,21 +219,25 @@ function SkirmishGameMode:WaitForSetup()
 			PauseGame(true)
 		end
 
-		setup_stage = setup_stage + 1
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 
 		return 5
-	elseif setup_stage == 7 then
+	elseif SkirmishGameMode.setup_stage == 7 then
 		GameStateRecreationFunctions:SetGlyphCooldowns()
-		setup_stage = setup_stage + 1
+		SkirmishGameMode.setup_stage = SkirmishGameMode.setup_stage + 1
 		return nil
 	else
-		print("Unexpected state: setup_stage " .. setup_stage)
+		print("Unexpected state: setup_stage " .. SkirmishGameMode.setup_stage)
 		return nil
 	end
 end
 
 local next_minute = nil
 
+function SkirmishGameMode:HideLoadingElement()
+	local data = {}
+	CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
+end
 
 function SkirmishGameMode:LoadedHeroes()
 	local num_players = 0
