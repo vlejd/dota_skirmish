@@ -298,7 +298,9 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_WAIT_FOR_PLAYERS_TO_LOAD then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP then
 		-- prevent spectators from watching the game
-		SendToServerConsole("tv_delay 100000")
+		if DISABLE_SPECTATORS_OUTSIDE_LOBBY then
+			SendToServerConsole("tv_delay 100000")
+		end
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_HERO_SELECTION then
 		print("DOTA_GAMERULES_STATE_HERO_SELECTION")
 		-- SkirmishGameMode:MakeEveryoneRadiant()

@@ -57,7 +57,7 @@ function Bots:MakeBotsSmart()
 				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
 				if player_steam_id == 0 then -- this is a bot
 					local bot_hero_name = PlayerResource:GetSelectedHeroEntity(playerID):GetUnitName()
-					Bots.bot_last_human_command[bot_hero_name] = maste_time.skirmishTime
+					Bots.bot_last_human_command[bot_hero_name] = -1000
 				else
 					Bots.player_ids[playerID] = true
 				end
@@ -70,7 +70,12 @@ function Bots:MakeBotsSmart()
 		local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
 
 		local player_id = order.issuer_player_id_const
-		local is_move_order = (order.order_type == DOTA_UNIT_ORDER_MOVE_TO_POSITION)
+		local is_move_order = (
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_POSITION or 
+			order.order_type == DOTA_UNIT_ORDER_ATTACK_MOVE or 
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_DIRECTION or 
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_RELATIVE or 
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET)
 		local issued_by_player = (Bots.player_ids[player_id] ~= nil)
 
 		if is_move_order then
