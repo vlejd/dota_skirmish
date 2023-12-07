@@ -197,6 +197,7 @@ function SkirmishGameMode:WaitForSetup()
 		SkirmishGameMode:ReportLoadingProgress("Making bots obedient")
 		if not SLOW_TIME_FRIENDLY then
 			Bots:MakeBotsControllable()
+			Bots:MakeBotsSmart()
 		end
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
 		if not SLOW_TIME_FRIENDLY then

@@ -8,6 +8,8 @@ require("neutral_items") -- TODO: add check for this
 
 if Bots == nil then
 	Bots = class({})
+	Bots.bot_last_human_command = {}
+	Bots.player_ids = {}
 end
 
 function Bots:MakeBotsControllable()
@@ -41,6 +43,67 @@ function Bots:MakeBotsControllable()
 	end
 	GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)
 end
+
+function Bots:MakeBotsSmart()
+
+	local maste_time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
+
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		local humans = {}
+		local bots = {}
+		for i = 1, DOUBLE_MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
+				if player_steam_id == 0 then -- this is a bot
+					local bot_hero_name = PlayerResource:GetSelectedHeroEntity(playerID):GetUnitName()
+					Bots.bot_last_human_command[bot_hero_name] = maste_time.skirmishTime
+				else
+					Bots.player_ids[playerID] = true
+				end
+			end
+		end
+	end
+
+
+	GameRules:GetGameModeEntity():SetExecuteOrderFilter(function (ctx, order)
+		local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
+
+		local player_id = order.issuer_player_id_const
+		local is_move_order = (order.order_type == DOTA_UNIT_ORDER_MOVE_TO_POSITION)
+		local issued_by_player = (Bots.player_ids[player_id] ~= nil)
+
+		if is_move_order then
+			if issued_by_player then -- exec move order made by player and remeber time for obedience
+				for _, entity_index in pairs(order.units) do
+					local entity = EntIndexToHScript(order.units['0'])
+					local unit_name = entity:GetUnitName()
+					if Bots.bot_last_human_command[unit_name] ~= nil then
+						-- this unit is a bot, update skirmish time
+						Bots.bot_last_human_command[unit_name] = time.skirmishTime;
+
+					end
+				end
+				return true
+			else -- bots are trying to move on their own, allow only if they dont need to be obedient.
+				--BOT_OBEDIENCE_TIME
+				for _, entity_index in pairs(order.units) do
+					local entity = EntIndexToHScript(order.units['0'])
+					local unit_name = entity:GetUnitName()
+					if Bots.bot_last_human_command[unit_name] ~= nil then
+						if time.skirmishTime > Bots.bot_last_human_command[unit_name] + BOT_OBEDIENCE_TIME then
+							return true
+						else
+							return false
+						end
+					end
+				end
+			end
+		end
+		return true
+	end, self);
+end
+
 
 function Bots:AddBots()
 	print("AddBots")
