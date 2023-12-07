@@ -101,9 +101,9 @@ function PlayerRecreation:ReplaceWithCorrectHero(hero_name, playerID)
 		--UTIL_Remove(old_hero)
 
 		PrecacheUnitByNameAsync(hero_name, function()
+			HeroSelection.heroes_replaced[hero_name] = true
 		end)
 
-		HeroSelection.heroes_replaced[hero_name] = true
 	else
 		print("CRITICAL ERROR")
 	end
