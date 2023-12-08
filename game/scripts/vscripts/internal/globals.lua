@@ -8,7 +8,6 @@ START_WITH_PAUSE = true
 CLIENT_PRINT = false
 ALLOW_CUSTOM_SCENARIO = false
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
-BOT_OBEDIENCE_TIME = 10
 INCLUDED_SCENARIOS = {"n1_2v5", "n2_esl_kl", "n3_double_rampage", "n4_ending", "n5_team_wipe"}
 DISABLE_SPECTATORS_OUTSIDE_LOBBY = False
 

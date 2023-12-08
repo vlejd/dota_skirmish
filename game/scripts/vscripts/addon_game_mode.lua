@@ -209,8 +209,8 @@ function SkirmishGameMode:WaitForSetup()
 		return 0.01
 	elseif SkirmishGameMode.setup_stage == 6 then
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
-		
-		GameMode:SetThink("HideLoadingElement", self, "HideLoadingElementTinker", 1)
+		SkirmishGameMode:HideLoadingElement()
+		GameRules:GetGameModeEntity():SetThink("HideLoadingElement", self, "HideLoadingElementTinker", 1)
 		print("master time")
 		print(TimeUtils:GetMasterTime(TimeUtils.masterTime))
 

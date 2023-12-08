@@ -73,39 +73,41 @@ function Bots:MakeBotsSmart()
 
 		local player_id = order.issuer_player_id_const
 		local is_move_order = (
-			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_POSITION or 
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_POSITION or
 			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_TARGET or
-			order.order_type == DOTA_UNIT_ORDER_ATTACK_MOVE or 
-			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_DIRECTION or 
-			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_RELATIVE or 
-			order.order_type == DOTA_UNIT_ORDER_PATROL 
+			order.order_type == DOTA_UNIT_ORDER_ATTACK_MOVE or
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_DIRECTION or
+			order.order_type == DOTA_UNIT_ORDER_MOVE_TO_RELATIVE or
+			order.order_type == DOTA_UNIT_ORDER_PATROL
 		)
 		local issued_by_player = (Bots.player_ids[player_id] ~= nil)
 
-		if is_move_order then
-			if issued_by_player then -- exec move order made by player and remeber time for obedience
-				for _, entity_index in pairs(order.units) do
-					local entity = EntIndexToHScript(entity_index)
-					local unit_name = entity:GetUnitName()
-					if Bots.bot_last_human_command[unit_name] ~= nil then
-						-- this unit is a bot, update skirmish time
-						Bots.bot_last_human_command[unit_name] = time.skirmishTime;
 
-					end
+		if issued_by_player then -- exec move order made by player and remeber time for obedience
+			for _, entity_index in pairs(order.units) do
+				local entity = EntIndexToHScript(entity_index)
+				local unit_name = entity:GetUnitName()
+				if Bots.bot_last_human_command[unit_name] ~= nil then
+					-- this unit is a bot, update skirmish time
+					Bots.bot_last_human_command[unit_name] = time.skirmishTime;
 				end
-				return true
-			else -- bots are trying to move on their own, allow only if they dont need to be obedient.
-				--BOT_OBEDIENCE_TIME
-				for _, entity_index in pairs(order.units) do
-					local entity = EntIndexToHScript(entity_index)
-					local unit_name = entity:GetUnitName()
-					if Bots.bot_last_human_command[unit_name] ~= nil then
-						if time.skirmishTime > Bots.bot_last_human_command[unit_name] + BOT_OBEDIENCE_TIME then
-							return true
-						else
-							return false
-						end
+			end
+			return true
+		else
+			-- bots are trying to move on their own, allow only if they dont need to be obedient.
+			-- BOT_OBEDIENCE_TIME
+			for _, entity_index in pairs(order.units) do
+				local entity = EntIndexToHScript(entity_index)
+				local unit_name = entity:GetUnitName()
+				if Bots.bot_last_human_command[unit_name] ~= nil then
+					local timedif = time.skirmishTime - Bots.bot_last_human_command[unit_name]
+					if timedif < 2 then -- for this time, ignore all orders from bot AI.
+						return false
 					end
+					if timedif < 30 and is_move_order then
+						return false
+					end
+					return true
 				end
 			end
 		end
