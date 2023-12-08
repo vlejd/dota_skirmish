@@ -10,6 +10,7 @@ ALLOW_CUSTOM_SCENARIO = false
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
 INCLUDED_SCENARIOS = {"n1_2v5", "n2_esl_kl", "n3_double_rampage", "n4_ending", "n5_team_wipe"}
 DISABLE_SPECTATORS_OUTSIDE_LOBBY = False
+SKIP_COMMON_NEUTRALS = True
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false

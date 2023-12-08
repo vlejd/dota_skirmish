@@ -44,17 +44,19 @@ end
 -- ## NEUTRAL ITEMS IN STASH ## --
 
 function GameStateRecreationFunctions:FixNeutralItems()
-	-- print("fixing neutral items")
-	for _, item in pairs(GameReader:GetRadiantNeutralItemsInfo() or {}) do
-		-- print("good", item)
-		NeutralItems:AddItemToStash(item, DOTA_TEAM_GOODGUYS)
-	end
+	if not SKIP_COMMON_NEUTRALS then
+		-- print("fixing neutral items")
+		for _, item in pairs(GameReader:GetRadiantNeutralItemsInfo() or {}) do
+			-- print("good", item)
+			NeutralItems:AddItemToStash(item, DOTA_TEAM_GOODGUYS)
+		end
 
-	for _, item in pairs(GameReader:GetDireNeutralItemsInfo() or {}) do
-		-- print("bad", item)
-		NeutralItems:AddItemToStash(item, DOTA_TEAM_BADGUYS)
+		for _, item in pairs(GameReader:GetDireNeutralItemsInfo() or {}) do
+			-- print("bad", item)
+			NeutralItems:AddItemToStash(item, DOTA_TEAM_BADGUYS)
+		end
+		-- print(NeutralItems.neutral_items_in_game)
 	end
-	-- print(NeutralItems.neutral_items_in_game)
 end
 
 -- ## WIN CON TEXT ## --
