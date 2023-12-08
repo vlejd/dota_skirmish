@@ -94,6 +94,16 @@ function Bots:MakeBotsSmart()
 			end
 			return true
 		else
+			-- for some reason, bots like to stay in the base...
+			if order.position_x ~= nil and order.position_y~= nil then
+				if order.position_x < -7000 and order.position_y < -6000 then
+					return false
+				end
+				if order.position_x > 7100 and order.position_y > 5900 then
+					return false
+				end
+			end 
+
 			-- bots are trying to move on their own, allow only if they dont need to be obedient.
 			-- BOT_OBEDIENCE_TIME
 			for _, entity_index in pairs(order.units) do
