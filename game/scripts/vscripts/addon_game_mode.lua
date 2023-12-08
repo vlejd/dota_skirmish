@@ -66,7 +66,6 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetCreepSpawningEnabled(false)
 	GameRules:GetGameModeEntity():SetPauseEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
-	ListenToGameEvent("player_reconnected", Dynamic_Wrap(self, "HideLoadingElement"), self)
 
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
@@ -210,7 +209,8 @@ function SkirmishGameMode:WaitForSetup()
 		return 0.01
 	elseif SkirmishGameMode.setup_stage == 6 then
 		SkirmishGameMode:ReportLoadingProgress("Let there be light!")
-		SkirmishGameMode:HideLoadingElement()
+		
+		GameMode:SetThink("HideLoadingElement", self, "HideLoadingElementTinker", 1)
 		print("master time")
 		print(TimeUtils:GetMasterTime(TimeUtils.masterTime))
 
@@ -238,6 +238,7 @@ local next_minute = nil
 function SkirmishGameMode:HideLoadingElement()
 	local data = {}
 	CustomGameEventManager:Send_ServerToAllClients("make_screen_not_dark", data)
+	return 1
 end
 
 function SkirmishGameMode:LoadedHeroes()
