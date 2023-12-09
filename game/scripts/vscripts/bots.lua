@@ -48,7 +48,7 @@ function Bots:MakeBotsControllable()
 			end 
 		end
 	end
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(false)  -- TODO fix to WORKINF_BOTS
+	GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)  -- TODO fix to WORKINF_BOTS
 end
 
 function Bots:MakeBotsSmart()
@@ -88,6 +88,8 @@ function Bots:CustomBotAI()
 			
 			local enemy = nil
 
+			local is_in_base = Bots:IsInBase(hBot)
+
 			-- if something near by
 			enemy = Bots:FindEnemyNearBy(hBot)
 			if enemy ~= nil then
@@ -111,26 +113,21 @@ function Bots:CustomBotAI()
 			-- if something near by
 			if enemy ~= nil then
 				if Bots.bot_state_data[bot_unit_name]["deffender"] == nil then
-					-- Bots.bot_state_data[bot_unit_name]["deffender"] = (RandomInt(1, 3) == 1)
-					-- TODO or you are already in base
+					Bots.bot_state_data[bot_unit_name]["deffender"] = (RandomInt(1, 3) == 1)
 				end
 				print(hBot:GetUnitName(), "killing in base")
-				if Bots.bot_state_data[bot_unit_name]["deffender"] then
-					print("deffender")
+				if Bots.bot_state_data[bot_unit_name]["deffender"] or is_in_base then
+					print("defending", Bots.bot_state_data[bot_unit_name]["deffender"], is_in_base)
 					-- TODO add port.
+
 					BotExecuteOrderFromTable({
 						UnitIndex=hBot:entindex(),
-						OrderType=DOTA_UNIT_ORDER_ATTACK_TARGET,
-						TargetIndex=enemy:entindex(),
-					})
-					BotExecuteOrderFromTable({
-						UnitIndex=hBot:entindex(),
-						OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
+						OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
 						TargetIndex=enemy:entindex(),
 					})
 					goto next_unit
 				else
-					print("attacker")
+					print("Base on fire, I attack")
 				end
 			else
 				Bots.bot_state_data[bot_unit_name]["deffender"] = nil
@@ -144,6 +141,19 @@ function Bots:CustomBotAI()
 	end
 
 	return 1
+end
+
+function Bots:IsInBase(hBot)
+	local my_base = nil
+	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+		my_base = Bots.good_base
+	else
+		my_base = Bots.bad_base
+	end
+
+	local dist_to_base = Util:dist2(hBot:GetAbsOrigin(), my_base:GetAbsOrigin())
+	return dist_to_base < 3000*2
+
 end
 
 function BotExecuteOrderFromTable(order_table)
@@ -258,20 +268,9 @@ function Bots:SetOrderFilter()
 			return true
 		end
 
+		-- order done by custom ai
 		if order.entindex_ability == -2 then
 			return true
-		end
-
-		-- for some reason, bots like to stay in the base...
-		if false then
-			if order.position_x ~= nil and order.position_y~= nil then
-				if order.position_x < -7000 and order.position_y < -6000 then
-					return false
-				end
-				if order.position_x > 7100 and order.position_y > 5900 then
-					return false
-				end
-			end 
 		end
 
 		-- bots are trying to do something on their own, allow only if they dont need to be obedient.
@@ -284,7 +283,7 @@ function Bots:SetOrderFilter()
 					return false
 				end
 				if is_move_order then
-					return false  -- TODO, execute some orders :D
+					return false
 				end
 				
 				-- bots often get stucked on this... like picking up gem when the already have one.
