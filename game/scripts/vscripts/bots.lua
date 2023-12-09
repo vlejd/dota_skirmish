@@ -5,11 +5,18 @@ require("internal/util")
 require("time_utils")
 require("neutral_items") -- TODO: add check for this
 
+BOT_STATE_OBEY = 0
+BOT_STATE_OBEY_NOT_MOVE = 1
+BOT_STATE_READY = 2
 
 if Bots == nil then
 	Bots = class({})
 	Bots.bot_last_human_command = {}
+	Bots.bot_state = {}
+	Bots.bot_state_data = {}
 	Bots.player_ids = {}
+	Bots.good_base = nil
+	Bots.bad_base = nil
 end
 
 function Bots:MakeBotsControllable()
@@ -41,31 +48,185 @@ function Bots:MakeBotsControllable()
 			end 
 		end
 	end
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)
+	GameRules:GetGameModeEntity():SetBotThinkingEnabled(false)  -- TODO fix to WORKINF_BOTS
 end
 
 function Bots:MakeBotsSmart()
+	if not WORKING_BOTS then return nil end
+	Bots:Init()
+	Bots:SetOrderFilter()
+	GameRules:GetGameModeEntity():SetThink("CustomBotAI", self, "CustomBotAIThink", 1)
+
+end
+
+function Bots:CustomBotAI()
+	--GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)
 
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
-
-	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
-		local humans = {}
-		local bots = {}
-		for i = 1, DOUBLE_MAX_PLAYERS do
-			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
-			if playerID ~= nil and playerID ~= -1 then
-				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
-				if player_steam_id == 0 then -- this is a bot
-					local bot_hero_name = PlayerResource:GetSelectedHeroEntity(playerID):GetUnitName()
-					Bots.bot_last_human_command[bot_hero_name] = -100
-				else
-					Bots.player_ids[playerID] = true
-				end
-			end
-		end
+	print(Bots.bot_state)
+	local enemy_in_base = {}
+	for team = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		enemy_in_base[team] = Bots:FindEnemyInBase(team)
 	end
 
+	for bot_unit_name, current_state in pairs(Bots.bot_state) do
+		if current_state == BOT_STATE_OBEY then
+			if time.skirmishTime > Bots.bot_last_human_command[bot_unit_name] + 2 then
+				Bots.bot_state[bot_unit_name] = BOT_STATE_OBEY_NOT_MOVE
+			end
+		end
+		if current_state == BOT_STATE_OBEY_NOT_MOVE then
+			if time.skirmishTime > Bots.bot_last_human_command[bot_unit_name] + 10 then
+				Bots.bot_state[bot_unit_name] = BOT_STATE_READY
+			end
+		end
+		if current_state == BOT_STATE_READY then
+			local hBot = Entities:FindByName(nil, bot_unit_name)
+			if hBot == nil or (not hBot:IsAlive()) then
+				goto next_unit
+			end
+			
+			local enemy = nil
 
+			-- if something near by
+			enemy = Bots:FindEnemyNearBy(hBot)
+			if enemy ~= nil then
+				print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
+				BotExecuteOrderFromTable({
+					UnitIndex=hBot:entindex(),
+					OrderType=DOTA_UNIT_ORDER_ATTACK_TARGET,
+					TargetIndex=enemy:entindex(),
+				})
+				BotExecuteOrderFromTable({
+					UnitIndex=hBot:entindex(),
+					OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
+					TargetIndex=enemy:entindex(),
+				})
+
+				goto next_unit
+			end
+
+			-- if enemy in base
+			enemy = enemy_in_base[hBot:GetTeamNumber()]
+			-- if something near by
+			if enemy ~= nil then
+				if Bots.bot_state_data[bot_unit_name]["deffender"] == nil then
+					-- Bots.bot_state_data[bot_unit_name]["deffender"] = (RandomInt(1, 3) == 1)
+					-- TODO or you are already in base
+				end
+				print(hBot:GetUnitName(), "killing in base")
+				if Bots.bot_state_data[bot_unit_name]["deffender"] then
+					print("deffender")
+					-- TODO add port.
+					BotExecuteOrderFromTable({
+						UnitIndex=hBot:entindex(),
+						OrderType=DOTA_UNIT_ORDER_ATTACK_TARGET,
+						TargetIndex=enemy:entindex(),
+					})
+					BotExecuteOrderFromTable({
+						UnitIndex=hBot:entindex(),
+						OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
+						TargetIndex=enemy:entindex(),
+					})
+					goto next_unit
+				else
+					print("attacker")
+				end
+			else
+				Bots.bot_state_data[bot_unit_name]["deffender"] = nil
+			end
+
+			-- if nothing to do, go to enemy base :D
+			Bots:GoToEnemyAncient(hBot)
+
+		end
+		::next_unit::
+	end
+
+	return 1
+end
+
+function BotExecuteOrderFromTable(order_table)
+	-- ExecuteOrderFromTable still go through order filter. funny
+	-- signals to order filter that this order must be obeyed.
+	order_table["AbilityIndex"] = -2
+	ExecuteOrderFromTable(order_table)
+end
+
+function Bots:GoToEnemyAncient(hBot)
+	-- If nothing to do, run to enemy base :D
+	-- if you have nothing to do, got to enemy ancient :D
+	local enemy_base = nil
+	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+		enemy_base = Bots.bad_base
+	else
+		enemy_base = Bots.good_base
+	end
+	print(hBot:GetUnitName(), "moving to enemy", enemy_base:entindex(),  enemy_base:GetOrigin())
+	BotExecuteOrderFromTable({
+		UnitIndex=hBot:entindex(),
+		OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
+		-- Position=enemy_base:GetOrigin(),
+		TargetIndex = enemy_base:entindex(),
+		Queue = false,
+	})
+end
+
+function get_priority(target)
+	if target:IsHero() then return 0 end
+	if target:IsCreep() then return 1 end
+	if target:IsBuilding() then return 2 end
+	return 3
+end	
+
+function Bots:FindEnemyNearBy(hBot)
+	local search_radius = 1000 
+	local targets = FindUnitsInRadius(
+		hBot:GetTeamNumber(),	-- int, your team number
+		hBot:GetOrigin(),	-- point, center point
+		nil,	-- handle, cacheUnit. (not known)
+		search_radius,	-- float, radius. or use FIND_UNITS_EVERYWHERE
+		DOTA_UNIT_TARGET_TEAM_ENEMY,	-- int, team filter
+		DOTA_UNIT_TARGET_ALL,	-- int, type filter
+		DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE,	-- int, flag filter
+		FIND_CLOSEST,	-- int, order filter
+		false	-- bool, can grow cache
+	)
+	if targets == nil or #targets == 0 then
+		return nil
+	end
+	table.sort(targets, function(a,b) return get_priority(a)<get_priority(b) end)
+	return targets[1]
+end
+
+function Bots:FindEnemyInBase(team)
+	local base_poz = nil
+	if team == DOTA_TEAM_GOODGUYS then
+		base_poz = Bots.good_base:GetOrigin()
+	else
+		base_poz = Bots.bad_base:GetOrigin()
+	end
+	local search_radius = 2500.0
+	local targets = FindUnitsInRadius(
+		team,	-- int, your team number
+		base_poz,	-- point, center point
+		nil,	-- handle, cacheUnit. (not known)
+		search_radius,	-- float, radius. or use FIND_UNITS_EVERYWHERE
+		DOTA_UNIT_TARGET_TEAM_ENEMY,	-- int, team filter
+		DOTA_UNIT_TARGET_ALL,	-- int, type filter
+		DOTA_UNIT_TARGET_FLAG_FOW_VISIBLE + DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE,	-- int, flag filter
+		FIND_CLOSEST,	-- int, order filter
+		false	-- bool, can grow cache
+	)
+	if targets == nil or #targets == 0 then
+		return nil
+	end
+	table.sort(targets, function(a,b) return get_priority(a)<get_priority(b) end)
+	return targets[1]
+end
+
+
+function Bots:SetOrderFilter()
 	GameRules:GetGameModeEntity():SetExecuteOrderFilter(function (ctx, order)
 		-- looks like DOTA_UNIT_ORDER_PING_ABILITY is not it.
 		local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
@@ -90,11 +251,19 @@ function Bots:MakeBotsSmart()
 				if Bots.bot_last_human_command[unit_name] ~= nil then
 					-- this unit is a bot, update skirmish time
 					Bots.bot_last_human_command[unit_name] = time.skirmishTime;
+					Bots.bot_state[unit_name] = BOT_STATE_OBEY
+					Bots.bot_state_data[unit_name] = {}
 				end
 			end
 			return true
-		else
-			-- for some reason, bots like to stay in the base...
+		end
+
+		if order.entindex_ability == -2 then
+			return true
+		end
+
+		-- for some reason, bots like to stay in the base...
+		if false then
 			if order.position_x ~= nil and order.position_y~= nil then
 				if order.position_x < -7000 and order.position_y < -6000 then
 					return false
@@ -103,27 +272,60 @@ function Bots:MakeBotsSmart()
 					return false
 				end
 			end 
+		end
 
-			-- bots are trying to move on their own, allow only if they dont need to be obedient.
-			-- BOT_OBEDIENCE_TIME
-			for _, entity_index in pairs(order.units) do
-				local entity = EntIndexToHScript(entity_index)
-				local unit_name = entity:GetUnitName()
-				if Bots.bot_last_human_command[unit_name] ~= nil then
-					local timedif = time.skirmishTime - Bots.bot_last_human_command[unit_name]
-					if timedif < 2 then -- for this time, ignore all orders from bot AI.
-						return false
-					end
-					if timedif < 30 and is_move_order then
-						return false
-					end
-					return true
+		-- bots are trying to do something on their own, allow only if they dont need to be obedient.
+		-- BOT_OBEDIENCE_TIME
+		for _, entity_index in pairs(order.units) do
+			local entity = EntIndexToHScript(entity_index)
+			local unit_name = entity:GetUnitName()
+			if Bots.bot_last_human_command[unit_name] ~= nil then
+				if Bots.bot_state[unit_name] == BOT_STATE_OBEY then
+					return false
 				end
+				if is_move_order then
+					return false  -- TODO, execute some orders :D
+				end
+				
+				-- bots often get stucked on this... like picking up gem when the already have one.
+				if order.order_type == DOTA_UNIT_ORDER_PICKUP_ITEM then  
+					return false
+				end
+				return true
 			end
 		end
+		
 		return true
 	end, self);
 end
+
+function Bots:Init()
+	-- initialize bots
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
+	Bots.good_base = Entities:FindByName(nil, "dota_goodguys_fort")
+	Bots.bad_base = Entities:FindByName(nil, "dota_badguys_fort")
+
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		local humans = {}
+		local bots = {}
+		for i = 1, DOUBLE_MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
+				if player_steam_id == 0 then -- this is a bot
+					local bot_hero_name = PlayerResource:GetSelectedHeroEntity(playerID):GetUnitName()
+					Bots.bot_state[bot_hero_name] = BOT_STATE_READY
+					Bots.bot_last_human_command[bot_hero_name] = -100
+					Bots.bot_state_data[bot_hero_name] = {}
+				else
+					Bots.player_ids[playerID] = true
+				end
+			end
+		end
+	end
+end
+
+
 
 
 function Bots:AddBots()
