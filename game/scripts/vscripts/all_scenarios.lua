@@ -30,6 +30,18 @@ all_scenarios = {
 		fname = "game_states/og/team_wipe",
 		img = "states/generic.png"
 	},
+	n1_semifinals_throw = {  -- luna too strong, not fun. most bots dont work...
+		name = "TI 2023, LGD vs GG, game 1, lb finals",
+		description = "Even though LGD on radiant is pushing the highground, they can still easily lose.",
+		fname = "game_states/2023_ti/semifinals_throw",
+		img = "states/generic.png"
+	},
+	n2_semifinals_throw2 = {  -- luna too strong, not fun. most bots dont work...
+		name = "TI 2023, LGD vs GG, game 1, lb finals",
+		description = "Even though LGD on radiant and winning, they can still easily lose.",
+		fname = "game_states/2023_ti/semifinals_throw2",
+		img = "states/generic.png"
+	},
 }
 
 return all_scenarios
