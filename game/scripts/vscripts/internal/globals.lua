@@ -6,9 +6,9 @@ SCENARIO_SELECTION_LENGTH = 600
 HERO_SELECTION_LENGTH = 600
 START_WITH_PAUSE = true
 CLIENT_PRINT = false
-ALLOW_CUSTOM_SCENARIO = false
+ALLOW_CUSTOM_SCENARIO = true
 WORKING_BOTS = true		-- BOTS are always added, this just makes them move
-INCLUDED_SCENARIOS = {"n1_2v5", "n2_esl_kl", "n3_double_rampage", "n4_ending", "n5_team_wipe"}
+INCLUDED_SCENARIOS = {"n1_2v5"}
 DISABLE_SPECTATORS_OUTSIDE_LOBBY = False
 SKIP_COMMON_NEUTRALS = True
 
