@@ -53,8 +53,12 @@ function SkirmishGameMode:InitGameMode()
 	print("InitGameMode.")
 	-- LockCustomGameSetupTeamAssignment
 	-- SetIgnoreLobbyTeamsInCustomGame
-	GameRules:EnableCustomGameSetupAutoLaunch(false)
-	-- GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
+	if AUTO_START then
+		GameRules:EnableCustomGameSetupAutoLaunch(true)
+		GameRules:SetCustomGameSetupAutoLaunchDelay(0.0)
+	else
+		GameRules:EnableCustomGameSetupAutoLaunch(false)
+	end
 	GameRules:SetHeroSelectionTime(SCENARIO_SELECTION_LENGTH + HERO_SELECTION_LENGTH)
 	GameRules:SetStrategyTime(0.0)
 	GameRules:SetShowcaseTime(0.0)
@@ -199,7 +203,7 @@ function SkirmishGameMode:WaitForSetup()
 			Bots:MakeBotsSmart()
 		end
 		SkirmishGameMode:ReportLoadingProgress("Raising creeps")
-		if not SLOW_TIME_FRIENDLY then
+		if not SLOW_TIME_FRIENDLY and not SKIP_CREEPS then
 			CreepReconstruction:MakeCreeps()
 		end
 		SkirmishGameMode:ReportLoadingProgress("Hiding items in the forest")

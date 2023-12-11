@@ -36,6 +36,12 @@ function HeroSelection:StartHeroSelection(fun, n_players, fast)
 		HeroSelection:FinishHeroSelection()
 	end
 
+	data = {
+		sHeroName = 'spectre',
+		PlayerID = 0
+		
+	}
+	HeroSelection:RequestHeroPick(data)
 end
 
 function HeroSelection:OnStateChange()

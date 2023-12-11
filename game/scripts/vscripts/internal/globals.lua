@@ -11,9 +11,11 @@ WORKING_BOTS = true		-- BOTS are always added, this just makes them move
 INCLUDED_SCENARIOS = {"n1_2v5"}
 DISABLE_SPECTATORS_OUTSIDE_LOBBY = False
 SKIP_COMMON_NEUTRALS = True
+AUTO_START = true
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false
+SKIP_CREEPS = true
 PRINT_DAY_NIGHT = false
 TRACK_ROSHAN = false
 PLAYER_LARGE_VISSIO = false
@@ -24,4 +26,5 @@ if not IsInToolsMode() then
 	PRINT_DAY_NIGHT = false
 	TRACK_ROSHAN = false
 	PLAYER_LARGE_VISSIO = false
+	SKIP_CREEPS = false
 end

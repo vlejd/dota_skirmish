@@ -20,7 +20,6 @@ if Bots == nil then
 end
 
 function Bots:MakeBotsControllable()
-	-- Looks like this is not needed
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		local humans = {}
 		local bots = {}
@@ -48,7 +47,7 @@ function Bots:MakeBotsControllable()
 			end 
 		end
 	end
-	GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)  -- TODO fix to WORKINF_BOTS
+	GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)
 end
 
 function Bots:MakeBotsSmart()

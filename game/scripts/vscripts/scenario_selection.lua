@@ -32,6 +32,13 @@ function ScenarioSelection:StartScenarioSelection(fun, n_players)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 
 	ScenarioSelection.onFinish = fun
+
+	ScenarioSelection:RequestScenarioPick({
+		PlayerID = 0,
+		scenario = 'n1_2v5',
+		data = {}
+	})
+
 end
 
 function ScenarioSelection:OnStateChange()
