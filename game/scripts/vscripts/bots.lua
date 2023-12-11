@@ -184,7 +184,7 @@ function Bots:AttackTheEnemy(hBot, enemy)
 
 	
 	if wana_cast ~= nil then
-		print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
+		--print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
 		local ability = wana_cast
 		if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
 			-- or do I want an order??
@@ -211,7 +211,7 @@ function Bots:AttackTheEnemy(hBot, enemy)
 			end 
 		end
 	else
-		print("\n casting: "..hBot:GetUnitName().. "  nothing")
+		--print("\n casting: "..hBot:GetUnitName().. "  nothing")
 	end
 
 
@@ -265,11 +265,17 @@ function Bots:GoToEnemyAncient(hBot)
 end
 
 function get_priority(target)
-	if target:IsHero() then return 0 end
-	if target:IsCreep() then return 1 end
-	if target:IsBuilding() then return 2 end
-	return 3
-end	
+	if target:IsHero() then
+		if not target:IsIllusion() then
+			return 0
+		else
+			return 1
+		end
+	end
+	if target:IsCreep() then return 2 end
+	if target:IsBuilding() then return 3 end
+	return 4
+end
 
 function Bots:FindEnemyNearBy(hBot)
 	local search_radius = 1000 

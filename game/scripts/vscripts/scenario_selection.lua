@@ -33,11 +33,13 @@ function ScenarioSelection:StartScenarioSelection(fun, n_players)
 
 	ScenarioSelection.onFinish = fun
 
-	ScenarioSelection:RequestScenarioPick({
-		PlayerID = 0,
-		scenario = 'n1_2v5',
-		data = {}
-	})
+	if false then
+		ScenarioSelection:RequestScenarioPick({
+			PlayerID = 0,
+			scenario = 'n1_2v5',
+			data = {}
+		})
+	end
 
 end
 
