@@ -14,6 +14,7 @@ if Bots == nil then
 	Bots.bot_last_human_command = {}
 	Bots.bot_state = {}
 	Bots.bot_state_data = {}
+	Bots.bot_entity = {}
 	Bots.player_ids = {}
 	Bots.good_base = nil
 	Bots.bad_base = nil
@@ -80,67 +81,149 @@ function Bots:CustomBotAI()
 			end
 		end
 		if current_state == BOT_STATE_READY then
-			local hBot = Entities:FindByName(nil, bot_unit_name)
+			local hBot = Bots.bot_entity[bot_unit_name]
 			if hBot == nil or (not hBot:IsAlive()) then
-				goto next_unit
-			end
-			
-			local enemy = nil
-
-			local is_in_base = Bots:IsInBase(hBot)
-
-			-- if something near by
-			enemy = Bots:FindEnemyNearBy(hBot)
-			if enemy ~= nil then
-				print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
-				BotExecuteOrderFromTable({
-					UnitIndex=hBot:entindex(),
-					OrderType=DOTA_UNIT_ORDER_ATTACK_TARGET,
-					TargetIndex=enemy:entindex(),
-				})
-				BotExecuteOrderFromTable({
-					UnitIndex=hBot:entindex(),
-					OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
-					TargetIndex=enemy:entindex(),
-				})
-
-				goto next_unit
-			end
-
-			-- if enemy in base
-			enemy = enemy_in_base[hBot:GetTeamNumber()]
-			-- if something near by
-			if enemy ~= nil then
-				if Bots.bot_state_data[bot_unit_name]["deffender"] == nil then
-					Bots.bot_state_data[bot_unit_name]["deffender"] = (RandomInt(1, 3) == 1)
-				end
-				print(hBot:GetUnitName(), "killing in base")
-				if Bots.bot_state_data[bot_unit_name]["deffender"] or is_in_base then
-					print("defending", Bots.bot_state_data[bot_unit_name]["deffender"], is_in_base)
-					-- TODO add port.
-
-					BotExecuteOrderFromTable({
-						UnitIndex=hBot:entindex(),
-						OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
-						TargetIndex=enemy:entindex(),
-					})
-					goto next_unit
-				else
-					print("Base on fire, I attack")
-				end
 			else
-				Bots.bot_state_data[bot_unit_name]["deffender"] = nil
+				Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 			end
-
-			-- if nothing to do, go to enemy base :D
-			Bots:GoToEnemyAncient(hBot)
-
 		end
-		::next_unit::
 	end
 
 	return 1
 end
+
+function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
+	local enemy = nil
+
+	local is_in_base = Bots:IsInBase(hBot)
+
+	-- if something near by
+	enemy = Bots:FindEnemyNearBy(hBot)
+	if enemy ~= nil then
+		print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
+		Bots:AttackTheEnemy(hBot, enemy)
+		return nil
+	end
+
+	-- if enemy in base
+	enemy = enemy_in_base[hBot:GetTeamNumber()]
+
+	if enemy ~= nil then
+		if Bots.bot_state_data[bot_unit_name]["deffender"] == nil then
+			Bots.bot_state_data[bot_unit_name]["deffender"] = (RandomInt(1, 3) == 1)
+		end
+		print(hBot:GetUnitName(), "killing in base")
+		if Bots.bot_state_data[bot_unit_name]["deffender"] or is_in_base then
+			print("defending", Bots.bot_state_data[bot_unit_name]["deffender"], is_in_base)
+			-- TODO add port.
+
+			BotExecuteOrderFromTable({
+				UnitIndex=hBot:entindex(),
+				OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
+				TargetIndex=enemy:entindex(),
+			})
+			return nil
+		else
+			print("Base on fire, I attack")
+		end
+	else
+		Bots.bot_state_data[bot_unit_name]["deffender"] = nil
+	end
+
+	-- if nothing to do, go to enemy base :D
+	Bots:GoToEnemyAncient(hBot)
+end
+
+
+function Bots:AttackTheEnemy(hBot, enemy)
+
+	if hBot:IsChanneling() then return nil end
+	local ult = nil
+	local abilities_seen = 0
+	local wana_cast = nil
+
+	for ability_index = 0, hBot:GetAbilityCount() - 1 do
+		local ability = hBot:GetAbilityByIndex(ability_index)
+		local is_ability_viable = (
+			ability and not ability:IsInAbilityPhase() and not ability:IsPassive() and 
+			ability:IsActivated() and ability:IsCooldownReady() and ability:GetLevel() > 0 and
+			not ability:IsHidden()
+		)
+		if is_ability_viable then
+			-- toggle and autocast everything
+			if bit.band(tonumber(tostring(ability:GetBehavior())), DOTA_ABILITY_BEHAVIOR_TOGGLE) == DOTA_ABILITY_BEHAVIOR_TOGGLE then
+				if ability:GetToggleState() == false then
+					ability:ToggleAbility()
+				end
+			end
+			if bit.band(tonumber(tostring(ability:GetBehavior())), DOTA_ABILITY_BEHAVIOR_AUTOCAST) == DOTA_ABILITY_BEHAVIOR_AUTOCAST then
+				if ability:GetAutoCastState() == false then
+					ability:ToggleAutoCast()
+				end
+			end
+
+			if ability:GetAbilityType() == ABILITY_TYPE_ULTIMATE then
+				if enemy:IsHero() then
+					ult = ability
+				end
+			else
+				abilities_seen = abilities_seen+1
+				if RandomInt(1,abilities_seen) == 1 then
+					wana_cast = ability
+				end
+			end
+		end
+	end
+
+	if enemy:IsHero() and ult ~= nil and RandomInt(1,3) == 1 then
+		wana_cast = ult
+	end
+	function check_flag(variable, flag)
+		return bit.band(tonumber(tostring(variable)), flag) == flag
+	end
+
+	
+	if wana_cast ~= nil then
+		print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
+		local ability = wana_cast
+		if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
+			-- or do I want an order??
+			hBot:Stop()
+			hBot:CastAbilityNoTarget(ability, -1)
+		elseif check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_POINT) then
+			hBot:Stop()
+			local position = enemy:GetAbsOrigin()
+
+			ExecuteOrderFromTable({
+				UnitIndex = hBot:entindex(),
+				OrderType = DOTA_UNIT_ORDER_CAST_POSITION,
+				AbilityIndex = ability:entindex(),
+				Position = position,
+				Queue = true
+			})
+		elseif check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_UNIT_TARGET) then
+			if check_flag(ability:GetAbilityTargetTeam(), DOTA_UNIT_TARGET_TEAM_ENEMY) then
+				hBot:Stop() 
+				hBot:CastAbilityOnTarget(enemy, ability, -1) 
+			elseif check_flag(ability:GetAbilityTargetTeam(), DOTA_UNIT_TARGET_TEAM_FRIENDLY) then
+				hBot:Stop() 
+				hBot:CastAbilityOnTarget(hBot, ability, -1) 
+			end 
+		end
+	else
+		print("\n casting: "..hBot:GetUnitName().. "  nothing")
+	end
+
+
+	BotExecuteOrderFromTable({
+		UnitIndex=hBot:entindex(),
+		OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
+		TargetIndex=enemy:entindex(),
+		Queue=true,
+	})
+
+end
+
 
 function Bots:IsInBase(hBot)
 	local my_base = nil
@@ -311,7 +394,9 @@ function Bots:Init()
 			if playerID ~= nil and playerID ~= -1 then
 				local player_steam_id = PlayerResource:GetSteamAccountID(playerID)
 				if player_steam_id == 0 then -- this is a bot
-					local bot_hero_name = PlayerResource:GetSelectedHeroEntity(playerID):GetUnitName()
+					local entity = PlayerResource:GetSelectedHeroEntity(playerID)
+					local bot_hero_name = entity:GetUnitName()
+					Bots.bot_entity[bot_hero_name] = entity
 					Bots.bot_state[bot_hero_name] = BOT_STATE_READY
 					Bots.bot_last_human_command[bot_hero_name] = -100
 					Bots.bot_state_data[bot_hero_name] = {}
