@@ -26,8 +26,9 @@ if Bots == nil then
 	Bots.bad_base = nil
 	-- shredder_timber_chain could be done with FindUnitsInLine... 
 	Bots.ability_skiplist = Set({
-		"morphling_morph_agi", "morphling_morph_str", "furion_teleportation", "pangolier_rollup_stop", "pangolier_gyroshell_stop",
-		"skeleton_king_reincarnation", "shredder_timber_chain"
+		"morphling_morph_agi", "morphling_morph_str", "furion_teleportation", 
+		"pangolier_rollup_stop","pangolier_rollup", "pangolier_gyroshell_stop",
+		"skeleton_king_reincarnation", "shredder_timber_chain",
 	})
 end
 
@@ -112,7 +113,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 	enemy = Bots:FindEnemyNearBy(hBot)
 	if enemy ~= nil then
 		print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
-		Bots:AttackTheEnemy(hBot, enemy)
+		Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		return nil
 	end
 
@@ -146,9 +147,14 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 end
 
 
-function Bots:AttackTheEnemy(hBot, enemy)
+function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	if hBot:IsChanneling() then return nil end
+	if (Bots.bot_state_data[bot_unit_name]["skip_actions_until"] ~= nil and 
+		Bots.bot_state_data[bot_unit_name]["skip_actions_until"] > time.skirmishTime )  then
+		return nil;
+	end
 	local ult = nil
 	local abilities_seen = 0
 	local wana_cast = nil
@@ -195,9 +201,10 @@ function Bots:AttackTheEnemy(hBot, enemy)
 	end
 
 	
-	if wana_cast ~= nil then
+	if wana_cast ~= nil and not enemy:IsBuilding() then
 		--print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
 		local ability = wana_cast
+		Bots.bot_state_data[bot_unit_name]["skip_actions_until"] = time.skirmishTime + ability:GetCastPoint()
 		if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
 			-- or do I want an order??
 			hBot:Stop()
@@ -290,7 +297,7 @@ function get_priority(target)
 end
 
 function Bots:FindEnemyNearBy(hBot)
-	local search_radius = 1000 
+	local search_radius = 1500
 	local targets = FindUnitsInRadius(
 		hBot:GetTeamNumber(),	-- int, your team number
 		hBot:GetOrigin(),	-- point, center point
