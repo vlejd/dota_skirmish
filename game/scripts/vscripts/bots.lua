@@ -137,7 +137,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 			})
 			return nil
 		else
-			print("Base on fire, I attack")
+			print("Base on fire, I dont care")
 		end
 	else
 		Bots.bot_state_data[bot_unit_name]["deffender"] = nil
@@ -229,6 +229,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 				target = hBot
 			end 
 			if target ~= nil then
+				hBot:Stop()
 				ExecuteOrderFromTable({
 					UnitIndex = hBot:entindex(),
 					OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
@@ -247,7 +248,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		UnitIndex=hBot:entindex(),
 		OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
 		TargetIndex=enemy:entindex(),
-		--Queue=true,
+		Queue=true,
 	})
 end
 
@@ -331,13 +332,7 @@ function Bots:GoToEnemyAncient(hBot)
 end
 
 function get_priority(target)
-	if target:IsHero() then
-		if not target:IsIllusion() then
-			return 0
-		else
-			return 1
-		end
-	end
+	if target:IsHero() then return 1 end
 	if target:IsCreep() then return 2 end
 	if target:IsBuilding() then return 3 end
 	return 4
