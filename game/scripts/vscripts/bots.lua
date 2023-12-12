@@ -29,7 +29,9 @@ if Bots == nil then
 		"morphling_morph_agi", "morphling_morph_str", "furion_teleportation", 
 		"pangolier_rollup_stop","pangolier_rollup", "pangolier_gyroshell_stop",
 		"skeleton_king_reincarnation", "shredder_timber_chain",
+		"furion_force_of_nature",
 	})
+
 end
 
 function Bots:MakeBotsControllable()
@@ -100,7 +102,6 @@ function Bots:CustomBotAI()
 			end
 		end
 	end
-
 	return 1
 end
 
@@ -111,7 +112,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 
 	-- if something near by
 	enemy = Bots:FindEnemyNearBy(hBot)
-	if enemy ~= nil then
+	if enemy ~= nil and not Bots:HasBackDoreProtection(enemy) then
 		print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
 		Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		return nil
@@ -146,9 +147,11 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 	Bots:GoToEnemyAncient(hBot)
 end
 
+function check_flag(variable, flag)
+	return bit.band(tonumber(tostring(variable)), flag) == flag
+end
 
 function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
-
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	if hBot:IsChanneling() then return nil end
 	if (Bots.bot_state_data[bot_unit_name]["skip_actions_until"] ~= nil and 
@@ -169,12 +172,12 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 
 		if is_ability_viable and Bots.ability_skiplist[ability:GetAbilityName()] == nil then
 			-- toggle and autocast everything
-			if bit.band(tonumber(tostring(ability:GetBehavior())), DOTA_ABILITY_BEHAVIOR_TOGGLE) == DOTA_ABILITY_BEHAVIOR_TOGGLE then
+			if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_TOGGLE) then
 				if ability:GetToggleState() == false then
 					ability:ToggleAbility()
 				end
 			end
-			if bit.band(tonumber(tostring(ability:GetBehavior())), DOTA_ABILITY_BEHAVIOR_AUTOCAST) == DOTA_ABILITY_BEHAVIOR_AUTOCAST then
+			if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_AUTOCAST) then
 				if ability:GetAutoCastState() == false then
 					ability:ToggleAutoCast()
 				end
@@ -186,7 +189,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 				end
 			else
 				abilities_seen = abilities_seen+1
-				if RandomInt(1,abilities_seen) == 1 then
+				if RandomInt(1, abilities_seen) == 1 then
 					wana_cast = ability
 				end
 			end
@@ -196,10 +199,6 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 	if enemy:IsHero() and ult ~= nil and RandomInt(1,3) == 1 then
 		wana_cast = ult
 	end
-	function check_flag(variable, flag)
-		return bit.band(tonumber(tostring(variable)), flag) == flag
-	end
-
 	
 	if wana_cast ~= nil and not enemy:IsBuilding() then
 		--print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
@@ -218,31 +217,52 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 				OrderType = DOTA_UNIT_ORDER_CAST_POSITION,
 				AbilityIndex = ability:entindex(),
 				Position = position,
-				Queue = true
+				--Queue = true
 			})
 		elseif check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_UNIT_TARGET) then
+			local target = nil
 			if check_flag(ability:GetAbilityTargetTeam(), DOTA_UNIT_TARGET_TEAM_ENEMY) then
-				hBot:Stop() 
-				hBot:CastAbilityOnTarget(enemy, ability, -1) 
+				target = enemy
+			elseif check_flag(ability:GetAbilityTargetTeam(), DOTA_UNIT_TARGET_TEAM_BOTH) then
+				target = enemy
 			elseif check_flag(ability:GetAbilityTargetTeam(), DOTA_UNIT_TARGET_TEAM_FRIENDLY) then
-				hBot:Stop() 
-				hBot:CastAbilityOnTarget(hBot, ability, -1) 
+				target = hBot
 			end 
+			if target ~= nil then
+				ExecuteOrderFromTable({
+					UnitIndex = hBot:entindex(),
+					OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
+					AbilityIndex = ability:entindex(),
+					TargetIndex = target:entindex(),
+					Position = position,
+					--Queue = true
+				})
+			end
 		end
 	else
 		--print("\n casting: "..hBot:GetUnitName().. "  nothing")
 	end
 
-
 	BotExecuteOrderFromTable({
 		UnitIndex=hBot:entindex(),
 		OrderType=DOTA_UNIT_ORDER_ATTACK_MOVE,
 		TargetIndex=enemy:entindex(),
-		Queue=true,
+		--Queue=true,
 	})
-
 end
 
+function Bots:HasBackDoreProtection(enemy)
+	local has_backdor = false
+	if enemy:IsBuilding() then
+		print("fighting a building")
+		for _, modifier in pairs(enemy:FindAllModifiers()) do
+			if modifier:GetName() == "modifier_backdoor_protection_active" then
+				has_backdor = true
+			end
+		end
+	end
+	return has_backdor
+end
 
 function Bots:IsInBase(hBot)
 	local my_base = nil
@@ -251,7 +271,6 @@ function Bots:IsInBase(hBot)
 	else
 		my_base = Bots.bad_base
 	end
-
 	local dist_to_base = Util:dist2(hBot:GetAbsOrigin(), my_base:GetAbsOrigin())
 	return dist_to_base < 3000*2
 
@@ -268,19 +287,47 @@ function Bots:GoToEnemyAncient(hBot)
 	-- If nothing to do, run to enemy base :D
 	-- if you have nothing to do, got to enemy ancient :D
 	local enemy_base = nil
+	local my_base = nil
 	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
 		enemy_base = Bots.bad_base
+		my_base = Bots.good_base
 	else
 		enemy_base = Bots.good_base
+		my_base = Bots.bad_base
 	end
-	print(hBot:GetUnitName(), "moving to enemy", enemy_base:entindex(),  enemy_base:GetOrigin())
-	BotExecuteOrderFromTable({
-		UnitIndex=hBot:entindex(),
-		OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
-		-- Position=enemy_base:GetOrigin(),
-		TargetIndex = enemy_base:entindex(),
-		Queue = false,
-	})
+
+	-- chceck that there is something I could attack on the way there
+	local targets = FindUnitsInLine(
+		hBot:GetTeamNumber(),	-- int, your team number
+		hBot:GetOrigin(),	-- start position
+		enemy_base:GetOrigin(),  -- end position
+		nil,	-- handle, cacheUnit. (not known)
+		1000,   -- width
+		DOTA_UNIT_TARGET_TEAM_ENEMY,	-- int, team filter
+		DOTA_UNIT_TARGET_ALL,	-- int, type filter
+		DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE	-- int, flag filter
+	)
+
+	print(hBot:GetUnitName(), "moving somewhere", enemy_base:entindex(),  enemy_base:GetOrigin())
+	if #targets > 0 then 
+		print("going to enemy base")
+		BotExecuteOrderFromTable({
+			UnitIndex=hBot:entindex(),
+			OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
+			-- Position=enemy_base:GetOrigin(),
+			TargetIndex = enemy_base:entindex(),
+			Queue = false,
+		})
+	else
+		print("going home")
+		-- go home
+		BotExecuteOrderFromTable({
+			UnitIndex=hBot:entindex(),
+			OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
+			TargetIndex = my_base:entindex(),
+			Queue = false,
+		})
+	end
 end
 
 function get_priority(target)
