@@ -205,7 +205,7 @@ local GameState = {
         has_ags = false,
         has_moon_shard = false,
         talents = { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 5, 5, 5, 6, 8, 14, 15, 16 },
-        buyback_cooldown = 43.06689453125
+        buyback_cooldown = 10.06689453125
       },
       luna = {
         name = "luna",

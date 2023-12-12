@@ -112,10 +112,15 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 
 	-- if something near by
 	enemy = Bots:FindEnemyNearBy(hBot)
-	if enemy ~= nil and not Bots:HasBackDoreProtection(enemy) then
-		print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
-		Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
-		return nil
+	if enemy ~= nil then
+		if not Bots:HasBackDoreProtection(enemy) then
+			print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
+			Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
+			return nil
+		else
+			print(hBot:GetUnitName(), "stuff nearby not killable, going home")
+			Bots:GotToMyBase(hBot)
+		end
 	end
 
 	-- if enemy in base
@@ -284,18 +289,51 @@ function BotExecuteOrderFromTable(order_table)
 	ExecuteOrderFromTable(order_table)
 end
 
+function Bots:GetMyBase(hBot)
+	local my_base = nil
+	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+		my_base = Bots.good_base
+	else
+		my_base = Bots.bad_base
+	end
+	return my_base
+end
+
+function Bots:GetEnemyBase(hBot)
+	local enemy_base = nil
+	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
+		enemy_base = Bots.bad_base
+	else
+		enemy_base = Bots.good_base
+	end
+	return enemy_base
+end
+
+
+function Bots:GoToEnemyBase(hBot)
+	BotExecuteOrderFromTable({
+		UnitIndex=hBot:entindex(),
+		OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
+		-- Position=enemy_base:GetOrigin(),
+		TargetIndex = Bots:GetEnemyBase(hBot):entindex(),
+		Queue = false,
+	})
+end
+
+function Bots:GotToMyBase(hBot)
+	BotExecuteOrderFromTable({
+		UnitIndex=hBot:entindex(),
+		OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
+		TargetIndex = Bots:GetMyBase(hBot):entindex(),
+		Queue = false,
+	})
+end
+
 function Bots:GoToEnemyAncient(hBot)
 	-- If nothing to do, run to enemy base :D
 	-- if you have nothing to do, got to enemy ancient :D
-	local enemy_base = nil
-	local my_base = nil
-	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-		enemy_base = Bots.bad_base
-		my_base = Bots.good_base
-	else
-		enemy_base = Bots.good_base
-		my_base = Bots.bad_base
-	end
+	local enemy_base = Bots:GetEnemyBase(hBot)
+	local my_base = Bots:GetMyBase(hBot)
 
 	-- chceck that there is something I could attack on the way there
 	local targets = FindUnitsInLine(
@@ -309,25 +347,14 @@ function Bots:GoToEnemyAncient(hBot)
 		DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE	-- int, flag filter
 	)
 
-	print(hBot:GetUnitName(), "moving somewhere", enemy_base:entindex(),  enemy_base:GetOrigin())
+	print(hBot:GetUnitName(), "moving somewhere")
 	if #targets > 0 then 
 		print("going to enemy base")
-		BotExecuteOrderFromTable({
-			UnitIndex=hBot:entindex(),
-			OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
-			-- Position=enemy_base:GetOrigin(),
-			TargetIndex = enemy_base:entindex(),
-			Queue = false,
-		})
+		Bots:GoToEnemyBase(hBot)
 	else
 		print("going home")
 		-- go home
-		BotExecuteOrderFromTable({
-			UnitIndex=hBot:entindex(),
-			OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
-			TargetIndex = my_base:entindex(),
-			Queue = false,
-		})
+		Bots:GotToMyBase(hBot)
 	end
 end
 
