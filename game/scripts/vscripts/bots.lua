@@ -9,6 +9,12 @@ BOT_STATE_OBEY = 0
 BOT_STATE_OBEY_NOT_MOVE = 1
 BOT_STATE_READY = 2
 
+function Set(list)
+	local set = {}
+	for _, l in ipairs(list) do set[l] = true end
+	return set
+end
+
 if Bots == nil then
 	Bots = class({})
 	Bots.bot_last_human_command = {}
@@ -18,6 +24,11 @@ if Bots == nil then
 	Bots.player_ids = {}
 	Bots.good_base = nil
 	Bots.bad_base = nil
+	-- shredder_timber_chain could be done with FindUnitsInLine... 
+	Bots.ability_skiplist = Set({
+		"morphling_morph_agi", "morphling_morph_str", "furion_teleportation", "pangolier_rollup_stop", "pangolier_gyroshell_stop",
+		"skeleton_king_reincarnation", "shredder_timber_chain"
+	})
 end
 
 function Bots:MakeBotsControllable()
@@ -149,7 +160,8 @@ function Bots:AttackTheEnemy(hBot, enemy)
 			ability:IsActivated() and ability:IsCooldownReady() and ability:GetLevel() > 0 and
 			not ability:IsHidden()
 		)
-		if is_ability_viable then
+
+		if is_ability_viable and Bots.ability_skiplist[ability:GetAbilityName()] == nil then
 			-- toggle and autocast everything
 			if bit.band(tonumber(tostring(ability:GetBehavior())), DOTA_ABILITY_BEHAVIOR_TOGGLE) == DOTA_ABILITY_BEHAVIOR_TOGGLE then
 				if ability:GetToggleState() == false then
