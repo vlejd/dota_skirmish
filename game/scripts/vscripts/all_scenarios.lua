@@ -42,6 +42,18 @@ all_scenarios = {
 		fname = "game_states/2023_ti/semifinals_throw2",
 		img = "states/generic.png"
 	},
+	n1_blck_gg = {  -- luna too strong, not fun. most bots dont work...
+		name = "ESL ONE KL, Group stage, BLACKLIST vs GG",
+		description = "Can you come back from the 11k deficit as radiant GG?",
+		fname = "game_states/2023_esl_kl/blck_gg",
+		img = "states/generic.png"
+	},
+	n2_g2_liquid = {  -- luna too strong, not fun. most bots dont work...
+		name = "ESL ONE KL, Group stage, Liquid vs G2.IG",
+		description = "The Wraithking is just asking to be killed.",
+		fname = "game_states/2023_esl_kl/g2_liquid",
+		img = "states/generic.png"
+	},
 }
 
 return all_scenarios
