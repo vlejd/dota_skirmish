@@ -54,6 +54,12 @@ all_scenarios = {
 		fname = "game_states/2023_esl_kl/g2_liquid",
 		img = "states/generic.png"
 	},
+	n3_comeback31k = {  -- luna too strong, not fun. most bots dont work...
+		name = "ESL ONE KL, Group stage, Thundra vs LGD",
+		description = "LGD made a 31k comeback. What happened? What should have Thundra done differently.",
+		fname = "game_states/2023_esl_kl/comeback31k",
+		img = "states/generic.png"
+	},
 }
 
 return all_scenarios
