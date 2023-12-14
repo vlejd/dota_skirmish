@@ -15,7 +15,7 @@ AUTO_START = true
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false
-SKIP_CREEPS = true
+SKIP_CREEPS = false
 PRINT_DAY_NIGHT = false
 TRACK_ROSHAN = false
 PLAYER_LARGE_VISSIO = false
