@@ -24,6 +24,7 @@ if Bots == nil then
 	Bots.player_ids = {}
 	Bots.good_base = nil
 	Bots.bad_base = nil
+	Bots.num_bots = {}
 	-- shredder_timber_chain could be done with FindUnitsInLine... 
 	Bots.ability_skiplist = Set({
 		"morphling_morph_agi", "morphling_morph_str", "furion_teleportation", 
@@ -83,6 +84,25 @@ function Bots:CustomBotAI()
 		enemy_in_base[team] = Bots:FindEnemyInBase(team)
 	end
 
+	local num_alive = {}
+	num_alive[DOTA_TEAM_BADGUYS] = 0
+	num_alive[DOTA_TEAM_GOODGUYS] = 0
+
+
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, DOUBLE_MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			if playerID ~= nil and playerID ~= -1 then
+				local entity = PlayerResource:GetSelectedHeroEntity(playerID)
+				if entity:IsAlive() then
+					num_alive[teamNum] = num_alive[teamNum] + 1
+				end
+			end
+		end
+	end
+
+	print("num_alive", num_alive)
+
 	for bot_unit_name, current_state in pairs(Bots.bot_state) do
 		if current_state == BOT_STATE_OBEY then
 			if time.skirmishTime > Bots.bot_last_human_command[bot_unit_name] + 2 then
@@ -98,14 +118,14 @@ function Bots:CustomBotAI()
 			local hBot = Bots.bot_entity[bot_unit_name]
 			if hBot == nil or (not hBot:IsAlive()) then
 			else
-				Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
+				Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 			end
 		end
 	end
 	return 1
 end
 
-function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
+function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 	local enemy = nil
 
 	local is_in_base = Bots:IsInBase(hBot)
@@ -119,7 +139,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 			return nil
 		else
 			print(hBot:GetUnitName(), "stuff nearby not killable, going home")
-			Bots:GotToMyBase(hBot)
+			Bots:GoToMyBase(hBot)
 		end
 	end
 
@@ -130,9 +150,9 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 		if Bots.bot_state_data[bot_unit_name]["deffender"] == nil then
 			Bots.bot_state_data[bot_unit_name]["deffender"] = (RandomInt(1, 3) == 1)
 		end
-		print(hBot:GetUnitName(), "killing in base")
+
 		if Bots.bot_state_data[bot_unit_name]["deffender"] or is_in_base then
-			print("defending", Bots.bot_state_data[bot_unit_name]["deffender"], is_in_base)
+			print(hBot:GetUnitName(), "killing in base", enemy:GetUnitName(), enemy:IsAlive())
 			-- TODO add port.
 
 			BotExecuteOrderFromTable({
@@ -142,14 +162,34 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base)
 			})
 			return nil
 		else
-			print("Base on fire, I dont care")
+			print(hBot:GetUnitName(), "should go base but I attack")
 		end
 	else
 		Bots.bot_state_data[bot_unit_name]["deffender"] = nil
 	end
 
 	-- if nothing to do, go to enemy base :D
-	Bots:GoToEnemyAncient(hBot)
+	local team = hBot:GetTeamNumber()
+	if num_alive[team] >= num_alive[getOtherTeamNumber(team)] then
+		print(hBot:GetUnitName(), "pushing")
+		Bots:GoToSomeBase(hBot)
+	else
+		if not is_in_base then
+			print(hBot:GetUnitName(), "running home, too many enemies")
+			Bots:GoToMyBase(hBot)
+		else
+			print(hBot:GetUnitName(), "waiting in base")
+			Bots:GoToEnemyBase(hBot)
+		end
+	end
+end
+
+function getOtherTeamNumber(team_number)
+	if team_number == DOTA_TEAM_GOODGUYS then
+		return DOTA_TEAM_BADGUYS
+	else
+		return DOTA_TEAM_GOODGUYS
+	end
 end
 
 function check_flag(variable, flag)
@@ -271,14 +311,9 @@ function Bots:HasBackDoreProtection(enemy)
 end
 
 function Bots:IsInBase(hBot)
-	local my_base = nil
-	if hBot:GetTeamNumber() == DOTA_TEAM_GOODGUYS then
-		my_base = Bots.good_base
-	else
-		my_base = Bots.bad_base
-	end
+	local my_base = Bots:GetMyBase(hBot)
 	local dist_to_base = Util:dist2(hBot:GetAbsOrigin(), my_base:GetAbsOrigin())
-	return dist_to_base < 3000*2
+	return dist_to_base < 3000*3000
 
 end
 
@@ -320,7 +355,7 @@ function Bots:GoToEnemyBase(hBot)
 	})
 end
 
-function Bots:GotToMyBase(hBot)
+function Bots:GoToMyBase(hBot)
 	BotExecuteOrderFromTable({
 		UnitIndex=hBot:entindex(),
 		OrderType=DOTA_UNIT_ORDER_MOVE_TO_TARGET,
@@ -329,7 +364,7 @@ function Bots:GotToMyBase(hBot)
 	})
 end
 
-function Bots:GoToEnemyAncient(hBot)
+function Bots:GoToSomeBase(hBot)
 	-- If nothing to do, run to enemy base :D
 	-- if you have nothing to do, got to enemy ancient :D
 	local enemy_base = Bots:GetEnemyBase(hBot)
@@ -354,7 +389,7 @@ function Bots:GoToEnemyAncient(hBot)
 	else
 		print("going home")
 		-- go home
-		Bots:GotToMyBase(hBot)
+		Bots:GoToMyBase(hBot)
 	end
 end
 
@@ -392,7 +427,7 @@ function Bots:FindEnemyInBase(team)
 	else
 		base_poz = Bots.bad_base:GetOrigin()
 	end
-	local search_radius = 2500.0
+	local search_radius = 3000.0
 	local targets = FindUnitsInRadius(
 		team,	-- int, your team number
 		base_poz,	-- point, center point
@@ -479,6 +514,9 @@ function Bots:Init()
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
 	Bots.good_base = Entities:FindByName(nil, "dota_goodguys_fort")
 	Bots.bad_base = Entities:FindByName(nil, "dota_badguys_fort")
+
+	Bots.num_bots[DOTA_TEAM_BADGUYS] = 0
+	Bots.num_bots[DOTA_TEAM_GOODGUYS] = 0
 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		local humans = {}
