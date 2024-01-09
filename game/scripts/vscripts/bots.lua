@@ -262,14 +262,22 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 	if wana_cast ~= nil and not enemy:IsBuilding() then
 		--print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
 		local ability = wana_cast
-		Bots.bot_state_data[bot_unit_name]["skip_actions_until"] = time.skirmishTime + ability:GetCastPoint()
+		Bots.bot_state_data[bot_unit_name]["skip_actions_until"] = time.skirmishTime + ability:GetCastPoint() + 0.5
 		if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
 			-- or do I want an order??
 			hBot:Stop()
-			hBot:CastAbilityNoTarget(ability, -1)
+			--print("CastAbilityNoTarget")
+			-- TODO only if enemy is in radius! 
+			local aoe = ability:GetAOERadius()
+			local enemy_poz = enemy:GetAbsOrigin()
+			if aoe == 0 or Util:dist2(enemy_poz, hBot:GetAbsOrigin()) <= aoe*aoe then
+				hBot:CastAbilityNoTarget(ability, -1)
+			end
+
 		elseif check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_POINT) then
 			hBot:Stop()
 			local position = enemy:GetAbsOrigin()
+			--print("DOTA_UNIT_ORDER_CAST_POSITION")
 
 			ExecuteOrderFromTable({
 				UnitIndex = hBot:entindex(),
@@ -289,6 +297,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 			end 
 			if target ~= nil then
 				hBot:Stop()
+				--print("DOTA_ABILITY_BEHAVIOR_UNIT_TARGET "..target:GetName())
 				ExecuteOrderFromTable({
 					UnitIndex = hBot:entindex(),
 					OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
@@ -533,7 +542,6 @@ function Bots:SetOrderFilter()
 						--	print(unit_name.." Casting ".. ability_name)
 						-- end
 					end
-					return false
 				end
 
 				return true
