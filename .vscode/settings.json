@@ -938,7 +938,7 @@
 	"Lua.codeLens.enable": true,
 	"Lua.completion.autoRequire": false,
 	"[lua]": {
-		"editor.defaultFormatter": "sumneko.lua"
+		"editor.defaultFormatter": "yinfei.luahelper"
 	},
 	"editor.wordWrap": "off",
 	"editor.wordWrapColumn": 9999,

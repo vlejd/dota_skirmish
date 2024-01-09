@@ -514,7 +514,30 @@ function Bots:SetOrderFilter()
 				if order.order_type == DOTA_UNIT_ORDER_PICKUP_ITEM then  
 					return false
 				end
+
+				-- bots can not recognize that they are in the late game
+				if order.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM then  
+					return false
+				end
+				
+				-- no random TPs!
+				if (order.order_type == DOTA_UNIT_ORDER_CAST_TARGET or order.order_type == DOTA_UNIT_ORDER_CAST_POSITION or order.order_type==DOTA_UNIT_ORDER_CAST_NO_TARGET) then
+					local ability = EntIndexToHScript(order.entindex_ability)
+					if ability ~= nil then
+						local ability_name = ability:GetAbilityName()
+						if ability_name == "item_tpscroll" then
+							return false
+						end
+						-- if ability_name ~= "item_power_treads" and string.find(ability_name, "item_")~= nil then
+						--	print(unit_name.." Casting ".. ability_name)
+						-- end
+					end
+					return false
+				end
+
 				return true
+			else
+				-- This can happen for some funky non hero unit. we dont care about those
 			end
 		end
 		

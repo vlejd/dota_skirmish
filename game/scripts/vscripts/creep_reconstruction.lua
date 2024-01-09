@@ -238,7 +238,8 @@ function CreepReconstruction:MakeCreeps()
 		local skip = false
 		local skip_list = {
 			"npc_dota_visage_familiar", "npc_dota_broodmother_web", "npc_dota_broodmother_spiderling", 
-			"npc_dota_techies_land_mine", "npc_dota_beastmaster_hawk", "npc_dota_necronomicon_archer", 
+			"npc_dota_techies_land_mine", "npc_dota_beastmaster_hawk", "npc_dota_necronomicon_archer",
+			"npc_dota_furion_treant",
 			"npc_dota_beastmaster_boar", "npc_dota_invoker_forged_spirit"}
 			-- none of these units have the correct abilities
 			-- npc_dota_beastmaster_hawk_2 breaks the game :(
