@@ -141,6 +141,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 		else
 			print(hBot:GetUnitName(), "stuff nearby not killable, going home")
 			Bots:GoToMyBase(hBot)
+			return nil
 		end
 	end
 
