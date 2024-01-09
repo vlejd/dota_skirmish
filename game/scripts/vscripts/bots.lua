@@ -250,7 +250,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		local this_team_humans = Bots.num_human_players[hBot:GetTeamNumber()]
 		local other_team_humans = Bots.num_human_players[getOtherTeamNumber(hBot:GetTeamNumber())]
 		if this_team_humans > 0 and other_team_humans == 0 then
-			if RandomInt(1,10) <= 7 then
+			if RandomInt(1,10) <= 3 then
 				print(hBot:GetUnitName(),"playing dumb, doing nothing")
 				wana_cast = nil
 			end
@@ -511,12 +511,12 @@ function Bots:SetOrderFilter()
 				end
 				
 				-- bots often get stucked on this... like picking up gem when the already have one.
-				if order.order_type == DOTA_UNIT_ORDER_PICKUP_ITEM then  
+				if order.order_type == DOTA_UNIT_ORDER_PICKUP_ITEM then
 					return false
 				end
 
 				-- bots can not recognize that they are in the late game
-				if order.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM then  
+				if order.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM then
 					return false
 				end
 				
