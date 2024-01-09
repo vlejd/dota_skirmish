@@ -24,7 +24,7 @@ if Bots == nil then
 	Bots.player_ids = {}
 	Bots.good_base = nil
 	Bots.bad_base = nil
-	Bots.num_bots = {}
+	Bots.num_human_players = {}
 	-- shredder_timber_chain could be done with FindUnitsInLine... 
 	Bots.ability_skiplist = Set({
 		"morphling_morph_agi", "morphling_morph_str", "furion_teleportation", 
@@ -126,6 +126,7 @@ function Bots:CustomBotAI()
 end
 
 function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
+
 	local enemy = nil
 
 	local is_in_base = Bots:IsInBase(hBot)
@@ -241,10 +242,22 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		end
 	end
 
-	if enemy:IsHero() and ult ~= nil and RandomInt(1,3) == 1 then
+	if enemy:IsHero() and ult ~= nil and RandomInt(1,2) == 1 then
 		wana_cast = ult
 	end
-	
+
+	if BOTS_ARE_DUMMER_IN_SINGLE_PLAYER and wana_cast ~= nil  then
+		local this_team_humans = Bots.num_human_players[hBot:GetTeamNumber()]
+		local other_team_humans = Bots.num_human_players[getOtherTeamNumber(hBot:GetTeamNumber())]
+		if this_team_humans > 0 and other_team_humans == 0 then
+			if RandomInt(1,10) <= 7 then
+				print(hBot:GetUnitName(),"playing dumb, doing nothing")
+				wana_cast = nil
+			end
+		end
+	end
+
+
 	if wana_cast ~= nil and not enemy:IsBuilding() then
 		--print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
 		local ability = wana_cast
@@ -515,8 +528,8 @@ function Bots:Init()
 	Bots.good_base = Entities:FindByName(nil, "dota_goodguys_fort")
 	Bots.bad_base = Entities:FindByName(nil, "dota_badguys_fort")
 
-	Bots.num_bots[DOTA_TEAM_BADGUYS] = 0
-	Bots.num_bots[DOTA_TEAM_GOODGUYS] = 0
+	Bots.num_human_players[DOTA_TEAM_BADGUYS] = 0
+	Bots.num_human_players[DOTA_TEAM_GOODGUYS] = 0
 
 	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		local humans = {}
@@ -534,6 +547,7 @@ function Bots:Init()
 					Bots.bot_state_data[bot_hero_name] = {}
 				else
 					Bots.player_ids[playerID] = true
+					Bots.num_human_players[teamNum] = Bots.num_human_players[teamNum] + 1 
 				end
 			end
 		end
