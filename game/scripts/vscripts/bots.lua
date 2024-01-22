@@ -530,6 +530,11 @@ function Bots:SetOrderFilter()
 					return false
 				end
 				
+				-- no random glyphs
+				if order.order_type == DOTA_UNIT_ORDER_GLYPH  then
+					return false
+				end
+
 				-- no random TPs!
 				if (order.order_type == DOTA_UNIT_ORDER_CAST_TARGET or order.order_type == DOTA_UNIT_ORDER_CAST_POSITION or order.order_type==DOTA_UNIT_ORDER_CAST_NO_TARGET) then
 					local ability = EntIndexToHScript(order.entindex_ability)
