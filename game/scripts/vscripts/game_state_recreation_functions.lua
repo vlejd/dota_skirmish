@@ -117,17 +117,24 @@ end
 
 function GameStateRecreationFunctions:FixNeutralCreeps()
 	GameRules:SpawnNeutralCreeps()
-	-- neutralcamp_good_8
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 
-	for i = 1, 10, 1 do
-		-- camps are evil vs good vs bad. omggg
-		local spawner_name = "neutralcamp_evil_" .. i
-		local spawner = Entities:FindByName(nil, spawner_name)
-		print("spawner", spawner_name, spawner)
-		if spawner ~= nil then
-			--spawner.SpawnNextBatch(false)
-		end
-	end
+	local elapsed_sec = time.skirmishTime - math.floor(time.skirmishTime/60)*60
+	local next_spawn = 60-elapsed_sec
+	print("offset")
+	print(elapsed_sec)
+	print(time.skirmishTime)
+	print(next_spawn)
+	GameRules:GetGameModeEntity():SetThink("RealignNeutralCreeps", self, "RealignNeutralCreepsGlobalThink", next_spawn)
+	
+end
+
+function GameStateRecreationFunctions:RealignNeutralCreeps()
+	GameRules:SpawnNeutralCreeps()
+	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
+	local elapsed_sec = time.skirmishTime - math.floor(time.skirmishTime/60)*60
+	local next_spawn = 60-elapsed_sec	
+	return next_spawn
 end
 
 -- ## RUNES ## --

@@ -17,11 +17,12 @@ function TimeUtils:InitialTimeComputations()
 
 	local data = {
 		buffer = buffer,
-		skimishNextMin = skirmishNextMin,
+		skirmishNextMin = skirmishNextMin,
 		pregameLength = pregameLength,
 		realPregameLength = realPregameLength,
 		skirmishStartTime = skirmishStartTime,
-		skirmishNextWave = skirmishNextWave
+		skirmishNextWave = skirmishNextWave,
+		skirmishLastMin = skirmishLastMin
 	}
 	TimeUtils.masterTime = data
 end
@@ -37,7 +38,7 @@ function TimeUtils:GetMasterTime(masterTime)
 	local realGameTime = masterTime.pregameLength + gameTimeNegative
 
 	local skirmishTime4 = gameTimeWithPregame + masterTime.skirmishStartTime - masterTime.buffer
-	local skirmishTime2 = gameTime + masterTime.skimishNextMin
+	local skirmishTime2 = gameTime + masterTime.skirmishNextMin
 	local skirmishTime3 = gameTime + masterTime.pregameLength + masterTime.skirmishStartTime
 
 	local skirmishTime = realGameTime + masterTime.skirmishStartTime
