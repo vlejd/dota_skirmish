@@ -20,6 +20,9 @@ function GameStateRecreationFunctions:FixBuildings()
 
 	for _, building in pairs(GameReader:GetBuildingsInfo() or {}) do
 		local hBuilding = Entities:FindByName(nil, building["name"])
+		if string.find(building["name"], "guys_tower1_")~=nil and TimeUtils.masterTime.skirmishStartTime > 0 then
+			hBuilding:RemoveAllModifiersOfName("modifier_invulnerable")
+		end
 		if building["health"] ~= -1 then
 			if building["health"] == 0 then
 				hBuilding:Kill(nil, nil)
