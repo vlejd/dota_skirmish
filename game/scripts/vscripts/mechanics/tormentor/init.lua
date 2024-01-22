@@ -19,11 +19,7 @@ if not Tormentors then
 	Tormentors.deaths = {}
 
 
-	if IsInToolsMode() then
-		Tormentors.reSpawnTime = 10.0
-	else
-		Tormentors.reSpawnTime = 600.0
-	end
+	Tormentors.reSpawnTime = 10*60
 
 	ListenToGameEvent('npc_spawned', Dynamic_Wrap(Tormentors, 'OnNPCSpawned'), Tormentors)
 	ListenToGameEvent('entity_killed', Dynamic_Wrap(Tormentors, 'OnEntityKilled'), Tormentors)
@@ -33,10 +29,10 @@ function Tormentors:Init(spawnTimes, initial_daths)
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime)
 	
 	-- TODO get this from state
-	local spawn = math.max(1200-time.skirmishTime, 0) 
+	local spawn = math.max(20*60-time.skirmishTime, 0) 
 	spawnTimes = {[DOTA_TEAM_GOODGUYS]=spawn, [DOTA_TEAM_BADGUYS]=spawn} 
 
-	local level = math.max(math.floor((time.skirmishTime-1200)/600), 0) 
+	-- local level = math.max(math.floor((time.skirmishTime-1200)/600), 0) 
 	initial_daths = {[DOTA_TEAM_GOODGUYS]=1, [DOTA_TEAM_BADGUYS]=1}
 
 	-- iterate from team 2 to team 3
