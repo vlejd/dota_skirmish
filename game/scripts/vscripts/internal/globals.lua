@@ -21,6 +21,18 @@ PRINT_DAY_NIGHT = false
 TRACK_ROSHAN = false
 PLAYER_LARGE_VISSIO = false
 
+IS_PRO_VERSION = false
+
+if IS_PRO_VERSION then
+	WORKING_BOTS = false           -- BOTS are always added, this just makes them move
+	INCLUDED_SCENARIOS = {"n3_comeback31k"}
+	DISABLE_SPECTATORS_OUTSIDE_LOBBY = true
+	SKIP_COMMON_NEUTRALS = false
+	AUTO_START = false
+	BOTS_ARE_DUMMER_IN_SINGLE_PLAYER = false
+end
+
+
 if not IsInToolsMode() then
 	DEBUG = false
 	SLOW_TIME_FRIENDLY = false
