@@ -22,7 +22,7 @@ PRINT_DAY_NIGHT = false
 TRACK_ROSHAN = false
 PLAYER_LARGE_VISSIO = false
 
-IS_PRO_VERSION = false
+IS_PRO_VERSION = true
 
 if IS_PRO_VERSION then
 	WORKING_BOTS = false           -- BOTS are always added, this just makes them move
