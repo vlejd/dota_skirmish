@@ -105,7 +105,7 @@
 				</Panel>
 			</Panel>
 			
-			<Label id="Version" text="Version: 2024_01_09_1915" />
+			<Label id="Version" text="Version: 2024_01_22_1338" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/pass_icon.png" style="width:0px; height:0px;"/>
