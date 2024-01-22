@@ -78,7 +78,7 @@ function Bots:CustomBotAI()
 	--GameRules:GetGameModeEntity():SetBotThinkingEnabled(WORKING_BOTS)
 
 	local time = TimeUtils:GetMasterTime(TimeUtils.masterTime);
-	print(Bots.bot_state)
+	-- print(Bots.bot_state)
 	local enemy_in_base = {}
 	for team = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
 		enemy_in_base[team] = Bots:FindEnemyInBase(team)
@@ -101,7 +101,7 @@ function Bots:CustomBotAI()
 		end
 	end
 
-	print("num_alive", num_alive)
+	-- print("num_alive", num_alive)
 
 	for bot_unit_name, current_state in pairs(Bots.bot_state) do
 		if current_state == BOT_STATE_OBEY then
@@ -135,11 +135,11 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 	enemy = Bots:FindEnemyNearBy(hBot)
 	if enemy ~= nil then
 		if not Bots:HasBackDoreProtection(enemy) then
-			print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
+			-- print(hBot:GetUnitName(), "killing nearby", enemy:GetUnitName(), enemy:IsAlive())
 			Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 			return nil
 		else
-			print(hBot:GetUnitName(), "stuff nearby not killable, going home")
+			-- print(hBot:GetUnitName(), "stuff nearby not killable, going home")
 			Bots:GoToMyBase(hBot)
 			return nil
 		end
@@ -154,7 +154,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 		end
 
 		if Bots.bot_state_data[bot_unit_name]["deffender"] or is_in_base then
-			print(hBot:GetUnitName(), "killing in base", enemy:GetUnitName(), enemy:IsAlive())
+			-- print(hBot:GetUnitName(), "killing in base", enemy:GetUnitName(), enemy:IsAlive())
 			-- TODO add port.
 
 			BotExecuteOrderFromTable({
@@ -164,7 +164,7 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 			})
 			return nil
 		else
-			print(hBot:GetUnitName(), "should go base but I attack")
+			-- print(hBot:GetUnitName(), "should go base but I attack")
 		end
 	else
 		Bots.bot_state_data[bot_unit_name]["deffender"] = nil
@@ -173,14 +173,14 @@ function Bots:DoSomethingSmart(bot_unit_name, hBot, enemy_in_base, num_alive)
 	-- if nothing to do, go to enemy base :D
 	local team = hBot:GetTeamNumber()
 	if num_alive[team] >= num_alive[getOtherTeamNumber(team)] then
-		print(hBot:GetUnitName(), "pushing")
+		-- print(hBot:GetUnitName(), "pushing")
 		Bots:GoToSomeBase(hBot)
 	else
 		if not is_in_base then
-			print(hBot:GetUnitName(), "running home, too many enemies")
+			-- print(hBot:GetUnitName(), "running home, too many enemies")
 			Bots:GoToMyBase(hBot)
 		else
-			print(hBot:GetUnitName(), "waiting in base")
+			-- print(hBot:GetUnitName(), "waiting in base")
 			Bots:GoToEnemyBase(hBot)
 		end
 	end
@@ -252,7 +252,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		local other_team_humans = Bots.num_human_players[getOtherTeamNumber(hBot:GetTeamNumber())]
 		if this_team_humans > 0 and other_team_humans == 0 then
 			if RandomInt(1,10) <= 3 then
-				print(hBot:GetUnitName(),"playing dumb, doing nothing")
+				-- print(hBot:GetUnitName(),"playing dumb, doing nothing")
 				wana_cast = nil
 			end
 		end
@@ -260,7 +260,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 
 
 	if wana_cast ~= nil and not enemy:IsBuilding() then
-		--print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
+		-- print("\n casting: "..hBot:GetUnitName().. "  " .. wana_cast:GetAbilityName())
 		local ability = wana_cast
 		Bots.bot_state_data[bot_unit_name]["skip_actions_until"] = time.skirmishTime + ability:GetCastPoint() + 0.5
 		if check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_NO_TARGET) then
@@ -277,7 +277,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 		elseif check_flag(ability:GetBehavior(), DOTA_ABILITY_BEHAVIOR_POINT) then
 			hBot:Stop()
 			local position = enemy:GetAbsOrigin()
-			--print("DOTA_UNIT_ORDER_CAST_POSITION")
+			-- print("DOTA_UNIT_ORDER_CAST_POSITION")
 
 			ExecuteOrderFromTable({
 				UnitIndex = hBot:entindex(),
@@ -297,7 +297,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 			end 
 			if target ~= nil then
 				hBot:Stop()
-				--print("DOTA_ABILITY_BEHAVIOR_UNIT_TARGET "..target:GetName())
+				-- print("DOTA_ABILITY_BEHAVIOR_UNIT_TARGET "..target:GetName())
 				ExecuteOrderFromTable({
 					UnitIndex = hBot:entindex(),
 					OrderType = DOTA_UNIT_ORDER_CAST_TARGET,
@@ -309,7 +309,7 @@ function Bots:AttackTheEnemy(hBot, enemy, bot_unit_name)
 			end
 		end
 	else
-		--print("\n casting: "..hBot:GetUnitName().. "  nothing")
+		-- print("\n casting: "..hBot:GetUnitName().. "  nothing")
 	end
 
 	BotExecuteOrderFromTable({
@@ -323,7 +323,7 @@ end
 function Bots:HasBackDoreProtection(enemy)
 	local has_backdor = false
 	if enemy:IsBuilding() then
-		print("fighting a building")
+		-- print("fighting a building")
 		for _, modifier in pairs(enemy:FindAllModifiers()) do
 			if modifier:GetName() == "modifier_backdoor_protection_active" then
 				has_backdor = true
@@ -405,12 +405,12 @@ function Bots:GoToSomeBase(hBot)
 		DOTA_UNIT_TARGET_FLAG_NO_INVIS + DOTA_UNIT_TARGET_FLAG_NOT_ATTACK_IMMUNE	-- int, flag filter
 	)
 
-	print(hBot:GetUnitName(), "moving somewhere")
+	-- print(hBot:GetUnitName(), "moving somewhere")
 	if #targets > 0 then 
-		print("going to enemy base")
+		-- print("going to enemy base")
 		Bots:GoToEnemyBase(hBot)
 	else
-		print("going home")
+		-- print("going home")
 		-- go home
 		Bots:GoToMyBase(hBot)
 	end
