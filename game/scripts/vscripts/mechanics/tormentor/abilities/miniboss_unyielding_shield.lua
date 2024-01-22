@@ -1,4 +1,5 @@
 LinkLuaModifier("modifier_miniboss_unyielding_shield_custom", "mechanics/tormentor/abilities/miniboss_unyielding_shield.lua", LUA_MODIFIER_MOTION_NONE)
+-- TODO: Fix visual glitch where max shild is also changed  
 
 miniboss_unyielding_shield_custom = miniboss_unyielding_shield_custom or class({})
 
