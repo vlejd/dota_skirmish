@@ -203,3 +203,23 @@ function HeroSelection:TotalyRandomForNoHeroSelected()
 		end
 	end
 end
+
+
+function HeroSelection:GiveRandomHeroToAll()
+	print("GiveRandomHeroToAll")
+	for teamNum = DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS do
+		for i = 1, MAX_PLAYERS do
+			local playerID = PlayerResource:GetNthPlayerIDOnTeam(teamNum, i)
+			print(teamNum.." "..i.." "..playerID)
+			if playerID ~= nil and playerID ~= -1 then
+				print(PlayerResource:HasSelectedHero(playerID), PlayerResource:GetSelectedHeroName(playerID))
+				local hPlayer = PlayerResource:GetPlayer(playerID)
+				if hPlayer ~= nil then
+					print("random hero", hPlayer, playerID)
+					hPlayer:MakeRandomHeroSelection()
+				end
+				print(PlayerResource:HasSelectedHero(playerID), PlayerResource:GetSelectedHeroName(playerID))
+			end
+		end
+	end
+end

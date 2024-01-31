@@ -319,6 +319,12 @@ function SkirmishGameMode:OnStateChange()
 		GameRules:GetGameModeEntity():SetThink("WaitForSetup", self, "WaitForSetupGlobalThink", 0.1)
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
+	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_POST_GAME then
+		-- DisconnectClient
+		-- maybe listen to game_end event insteadm or ancient died event
+		if SCRAMBLE_POST_GAME_SUMMARY then
+			HeroSelection:GiveRandomHeroToAll()
+		end
 	end
 end
 
