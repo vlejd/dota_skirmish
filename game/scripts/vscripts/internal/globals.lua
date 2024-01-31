@@ -7,13 +7,13 @@ HERO_SELECTION_LENGTH = 600
 START_WITH_PAUSE = true
 CLIENT_PRINT = false
 ALLOW_CUSTOM_SCENARIO = true
-WORKING_BOTS = false		-- BOTS are always added, this just makes them move
+WORKING_BOTS = true		-- BOTS are always added, this just makes them move
 INCLUDED_SCENARIOS = {"n1_blck_gg", "n2_g2_liquid", "n3_comeback31k"}
 DISABLE_SPECTATORS_OUTSIDE_LOBBY = false
 SKIP_COMMON_NEUTRALS = true
 AUTO_START = true
 BOTS_ARE_DUMMER_IN_SINGLE_PLAYER = true
-SCRAMBLE_POST_GAME_SUMMARY = true
+SCRAMBLE_POST_GAME_SUMMARY = false
 
 DEBUG = false
 SLOW_TIME_FRIENDLY = false
