@@ -70,6 +70,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:SetCreepSpawningEnabled(false)
 	GameRules:GetGameModeEntity():SetPauseEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
+	ListenToGameEvent("dota_match_done", Dynamic_Wrap(self, "GameEnd"), self)
 
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
@@ -320,13 +321,20 @@ function SkirmishGameMode:OnStateChange()
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_SCENARIO_SETUP then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_GAME_IN_PROGRESS then
 	elseif GameRules:State_Get() == DOTA_GAMERULES_STATE_POST_GAME then
-		-- DisconnectClient
-		-- maybe listen to game_end event insteadm or ancient died event
-		if SCRAMBLE_POST_GAME_SUMMARY then
-			HeroSelection:GiveRandomHeroToAll()
-		end
+		print("state DOTA_GAMERULES_STATE_POST_GAME")
 	end
 end
+
+function SkirmishGameMode:GameEnd()
+	print("GameEnd")
+	-- DisconnectClient
+	-- maybe listen to game_end event insteadm or ancient died event
+	if SCRAMBLE_POST_GAME_SUMMARY then
+		HeroSelection:GiveRandomHeroToAll()
+	end
+
+end
+
 
 function TriggerStartHeroSelection(fast)
 	SkirmishGameMode:InitializeTime()
