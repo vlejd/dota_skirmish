@@ -347,6 +347,10 @@ function SkirmishGameMode:PlayerChat(data)
 			GameRules:SetGameWinner(DOTA_TEAM_NEUTRALS)
 		end
 	end
+	if data.text == "-reset" then
+		-- TODO, maybe one day
+		-- GameRules:ResetToHeroSelection()
+	end
 end
 
 function TriggerStartHeroSelection(fast)
