@@ -71,6 +71,7 @@ function SkirmishGameMode:InitGameMode()
 	GameRules:GetGameModeEntity():SetPauseEnabled(false)
 	ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(self, "OnStateChange"), self)
 	ListenToGameEvent("dota_match_done", Dynamic_Wrap(self, "GameEnd"), self)
+	ListenToGameEvent("player_chat", Dynamic_Wrap(self, "PlayerChat"), self)
 
 	HeroSelection:ListenToHeroPick()
 	ScenarioSelection:ListenToScenarioPick()
@@ -335,6 +336,18 @@ function SkirmishGameMode:GameEnd()
 
 end
 
+function SkirmishGameMode:PlayerChat(data)
+	print("PlayerChat")
+	print(data)
+	print(data.text)
+	if data.text == "-endpractice" then
+		if SCRAMBLE_POST_GAME_SUMMARY then
+			HeroSelection:GiveRandomHeroToAll()
+			GameRules:ForceGameStart()
+			GameRules:SetGameWinner(DOTA_TEAM_NEUTRALS)
+		end
+	end
+end
 
 function TriggerStartHeroSelection(fast)
 	SkirmishGameMode:InitializeTime()
