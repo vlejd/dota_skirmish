@@ -73,7 +73,7 @@
 				</Panel>
 				-->
 				<Panel ittest="true" id="ScenarioSelectionContainerWrapper">
-					<Label id="ScenarioTitle" text="Select Scenario" />
+					<Label id="ScenarioTitle" text="Select Scenario: BetBoom Dacha Dubai 2024" />
 					<Panel hittest="true" id="ScenarioSelectionContainer">
 					</Panel>
 					<Panel id="AddSpace">
@@ -105,7 +105,7 @@
 				</Panel>
 			</Panel>
 			
-			<Label id="Version" text="Version: 2024_02_04_1542" />
+			<Label id="Version" text="Version: 2024_02_09_1210" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/pass_icon.png" style="width:0px; height:0px;"/>

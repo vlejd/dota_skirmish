@@ -60,6 +60,25 @@ all_scenarios = {
 		fname = "game_states/2023_esl_kl/comeback31k",
 		img = "states/generic.png"
 	},
+	n1_dacha_group_ts_bb = {
+		name = "Deciding push in 68th minute, good for 1v1",
+		description = "Team Spirit vs BetBoom. Can Spirit make it to BBs base?",
+		fname = "game_states/2024_betboom_dacha/group_spirit_betboom_late",
+		img = "states/generic.png"
+	},
+	n2_dacha_group_lgd_liquid = {
+		name = "Weaver vs the world, good for 5v5",
+		description = "Team Liquid vs LGD. There is a weaver on the highground.",
+		fname = "game_states/2024_betboom_dacha/group_lgd_liquid",
+		img = "states/generic.png"
+	},
+	n3_dacha_group_liquid_vp = {
+		name = "31k gold comeback, good for solo play",
+		description = "Team Liquid vs VP. Liquid won. I bet you cant win for Dire even against bots.",
+		fname = "game_states/2024_betboom_dacha/group_liquid_vp",
+		img = "states/generic.png"
+	},
+	
 }
 
 return all_scenarios
