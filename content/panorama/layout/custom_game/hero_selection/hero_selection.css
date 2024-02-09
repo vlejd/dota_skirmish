@@ -232,17 +232,17 @@
 
 #ScenarioSelectionContainer {
 	horizontal-align: center;
-	flow-children: right-wrap;
+	flow-children: down;
 	background-color: #06631900;
 	width: 1600px;
-	//height: 700px; 
 }
 
 #AddSpace {
 	margin-top: 50px;
 	width: 1570px;
-	height: 200px;
+	height: 150px;
 	horizontal-align: center;
+	vertical-align: bottom;
 	background-color: #3A4551;
 	background-image: url("file://{resources}/imgs/web_background_original.jpg");
 	background-size: cover;
@@ -295,7 +295,7 @@
 #Version {
 	margin-bottom: 15px;
 	margin-left: 15px;
-	font-size: 20px;
+	font-size: 15px;
 	color: #7F91A3;
 	vertical-align: bottom;
 	horizontal-align: left;
@@ -331,18 +331,17 @@
 
 .ScenarioSelectionColumn {
 	flow-children: down;
-	horizontal-align: left;
-	width: 400px;
-	margin-top: 15px;
-	margin-bottom: 15px;
-	margin-left: 0px;
-	margin-right: 0px;
+	horizontal-align: center;
+	width: 90%;
+	margin-top: 25px;
+	margin-bottom: 25px;
 	padding-left: 15px;
 	padding-right: 15px;
 }
 
 .ScenarioSelectionColumnInside {
-	horizontal-align: center;
+	horizontal-align: left;
+	width:100%;
 	flow-children: down;
 	background-color: #3A4551;
 }
@@ -365,29 +364,31 @@
 .WillBeButton {
 	vertical-align: top;
 	horizontal-align: left; 
-	flow-children: down;
+	flow-children: right;
+	width: 100%;
 }
 
 .ScenarioImg {
-	width:370px; 
-	height:208px; 
-	horizontal-align:center; 
+	max-height:120px; 
+	horizontal-align:right; 
 	vertical-align: top;
 }
 
 .ScenarioSelectionTextContainer {
+	horizontal-align:left; 
 	flow-children: down;
 	padding-left: 15px;
 	padding-right: 15px;
 	padding-top: 15px;
-	width: 100%;
+	width: 90%;
 }
 
 .ScenarioSelectionLabelName {
 	horizontal-align: left;
+	width: 100%;
 	margin-bottom: 7px;
 	font-weight: bolder;
-	font-size: 15px;
+	font-size: 25px;
 	color: #FFFFFF;
 	font-family: Arial,Gulim,MingLiU;
 }
@@ -395,7 +396,7 @@
 .ScenarioSelectionDescription {
 	horizontal-align: left;
 	margin-bottom: 5px;
-	font-size: 15px;
+	font-size: 20px;
 	height: 51px;
 	color: #FFFFFF;
 }
@@ -416,20 +417,19 @@
 .ScenarioSelectionFooter {
 	flow-children: right;
 	vertical-align: bottom;
-	height: 15px;
 	margin-bottom: 15px;
 }
 
 .PreSelectText {
 	horizontal-align: left;
-	font-size: 15px;
+	font-size: 20px;
 	color: #FFFFFF;
 }
 
 #CustomScenarioInput {
-	width: 45px;
-	height: 13px;
+	width: 600px;
 	margin-left: 7px;
+	font-size: 20px;
 	margin-right: 15px;
 	vertical-align: center; 
 	border-bottom: 2px solid #FFF;
@@ -439,7 +439,7 @@
 .SelectText {
 	horizontal-align: left;
 	vertical-align: bottom;
-	font-size: 15px;
+	font-size: 20px;
 	color: #1fa03b;
 }
 

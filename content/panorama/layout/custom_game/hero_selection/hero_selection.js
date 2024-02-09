@@ -257,7 +257,7 @@ function AddCustomScenarioElement(parent){
 	description.text = "Go to https://dota2skirmish.com get your own and paste it here.";
 	
 	var imgContainer = scenario_button.FindChildrenWithClassTraverse("ScenarioImg")[0];
-	imgContainer.SetImage("file://{resources}/imgs/image_15.png");
+	imgContainer.SetImage("file://{resources}/imgs/states/generic.png");
 	
 	scenario_button.SetPanelEvent("onmouseover", function () {
 		// $.Msg("hover");
@@ -298,9 +298,7 @@ function GenerateScenarioUI(data) {
 	var parentTop = $.GetContextPanel().FindChildTraverse("ScenarioSelectionContainer");
 	
 	if (data.settings.ALLOW_CUSTOM_SCENARIO){
-		var parent = $.CreatePanel("Panel", parentTop, "RightAlignedScenarios");
-		// AddPassElement(parent);
-		AddCustomScenarioElement(parent);
+		AddCustomScenarioElement(parentTop);
 	}
 }
 

@@ -20,17 +20,14 @@
 			<Panel class="ScenarioSelectionColumn">
 				<Panel class="ScenarioSelectionColumnInside">
 					<Panel class="WillBeButton"> 
-						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 						<Panel class="ScenarioSelectionTextContainer">
 							<Label class="ScenarioSelectionLabelName" text="Scenario Label" />
 							<Label class="ScenarioSelectionDescription" text="Scenario description" />
 							<!-- Include script files 
 							<Label class="ScenarioSelectionLabelPlayer" text="" />
 							-->
-							<Panel class="ScenarioSelectionFooter" >
-								<Label class="SelectText" text="Select" />
-							</Panel>
 						</Panel>
+						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 					</Panel>
 				</Panel>
 			</Panel>
@@ -39,17 +36,16 @@
 			<Panel class="ScenarioSelectionColumn">
 				<Panel class="ScenarioSelectionColumnInside">
 					<Panel class="WillBeButton"> 
-						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 						<Panel class="ScenarioSelectionTextContainer">
 							<Label class="ScenarioSelectionLabelName" text="Scenario name" />
 							<Label class="ScenarioSelectionDescription" text="Description text" />
-							<Label class="ScenarioSelectionLabelPlayer" text="" />
 							<Panel class="ScenarioSelectionFooter" >
 								<Label class="PreSelectText" text="Paste here:" />
 								<TextEntry id="CustomScenarioInput" multiline="true" placeholder="  " maxchars="10000000" ontextentrychange="UpdateState()" />
 								<Label class="SelectText" text="Select" />
 							</Panel>
 						</Panel>
+						<Image class="ScenarioImg" src="file://{resources}/imgs/placeholder.png"/>
 					</Panel>
 				</Panel>
 			</Panel>
@@ -79,7 +75,7 @@
 					<Panel id="AddSpace">
 						<Panel id="SkirmishLinkWrapper">
 							<Panel id="SkirmishLinkContainer">
-								<Label class="SkirmishLink" text="Visit " />
+								<Label class="SkirmishLink" text="Sign in for FREE to " />
 								<Label class="SkirmishLink red" text="dota2skirmish.com" />
 								<Label class="SkirmishLink" text=" to play other iconic moments even from your own games" />
 							</Panel>
@@ -105,7 +101,7 @@
 				</Panel>
 			</Panel>
 			
-			<Label id="Version" text="Version: 2024_02_09_1210" />
+			<Label id="Version" text="Version: 2024_02_09_1506" />
 			<Image class="Logo" src="file://{resources}/imgs/background.png" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/web_background_original.jpg" style="width:0px; height:0px;"/>
 			<Image class="Logo" src="file://{resources}/imgs/pass_icon.png" style="width:0px; height:0px;"/>
